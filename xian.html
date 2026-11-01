@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "xian"};</script>
-<script>(function(){var B="20261101193442";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261101194355";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>御剑斩妖录</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -770,7 +770,7 @@ const has=k=>!!S&&S.t>=(FEAT[k]??0);
 /* ================= GATES (cultivation) ================= */
 const GT={
   qi:{n:'聚气丹',col:'#2f9bff',fill:'47,155,255'},
-  vein:{n:'灵脉',col:'#2fd3a8',fill:'47,211,168',lock:.5},
+  vein:{n:'灵脉',col:'#2fd3a8',fill:'47,211,168',lock:.65},
   brk:{n:'破境丹',col:'#ffc23a',fill:'255,194,58',lock:.6},
   art:{n:'剑诀',col:'#7fd0ff',fill:'127,208,255',lock:.35},
   fb:{n:'法宝',col:'#e8b93a',fill:'232,185,58',lock:.5},
@@ -796,8 +796,8 @@ function mkGate(type,x0,x1,trap){
   const o={k:'gate',g:type,x0,x1,y:-50,h:trap?66:78,trap:!!trap},T=GT[type],U=lockUnit();
   if(T.lock)o.lock=o.lock0=U*T.lock;
   const G=gm();
-  if(type==='qi'){o.val=o.v0=rand(1,2)*G;o.cap=o.val+G;o.pump=U*PUMP}
-  else if(type==='vein')o.val=rand(3,4)*G;
+  if(type==='qi'){o.val=o.v0=rand(1,1.5)*G;o.cap=o.val+.5*G;o.pump=U*PUMP}   // 聚气丹: walk in and take it
+  else if(type==='vein')o.val=rand(7,9)*G;   // 灵脉: break the lock first, ~6× a 聚气丹
   else if(type==='jie')o.val=G;
   else if(type==='brk')o.val=G;
   else if(type==='art'){o.up=pickUpg();if(!o.up)return mkGate('qi',x0,x1,trap)}
@@ -1865,7 +1865,7 @@ const TIPS={
   elite:{t:'噬元魔',d:'冲线会吸走你的修为（最多一整层）。头上写着它的境界，境界比你高时，你打它很吃力。'},
   zou:{t:'走火入魔',d:'撞上去，剑速变慢一段时间。打它能缩短时间。'},
   shield:{t:'金钟罩',d:'右下角新技能：六秒内妖魔冲线不会伤你，Boss 也不例外。用完要等四十五秒。'},
-  vein:{t:'灵脉（带锁）',d:'修为一次涨三到四层，但锁比较厚。'},
+  vein:{t:'灵脉（带锁）',d:'收益约是聚气丹的 6 倍，但必须先把锁打开才能吃，锁没开撞上去没用。打锁要花火力，这时右边的妖会压上来——吃眼前的聚气丹，还是冒险破锁吃灵脉，看场面决定。'},
   trap:{t:'右道陷阱',d:'右道上的心魔，只占半条道。在右道打妖时侧身让开就行。'},
   freeze:{t:'定身符',d:'右下角新技能：全场的妖定住三秒半，趁机清怪。用完要等三十五秒。'},
   fu:{t:'符箓（带锁）',d:'撞上去：多一张雷劫符，或者让某个技能马上能再用。'},
@@ -1963,7 +1963,7 @@ const COACH={
   run:{t:'跑得快，先打它',slow:.5,max:2.2},brute:{t:'皮厚，漏了损失大',slow:.5,max:2.2},elite:{t:'噬元魔：漏了跌一层',slow:.5,max:2.4},
   four:{t:'全是坏门：挑最轻的',bad:1,slow:.45,max:2.6},dodge:{t:'错开了：等一下再横移',s:'可以一扇都不撞',slow:.45,max:2.8},
   trap:{t:'右道坏门：侧身躲开',bad:1,slow:.5,max:2.2},zou:{t:'走火入魔：撞了会变慢',bad:1,slow:.5,max:2.2},
-  jie:{t:'天劫：集火劈开它！',s:'劈开冲过去＝修为 +1.2 层；劈不开就躲到右道',slow:.4,max:4},vein:{t:'灵脉：锁厚，但涨得多',slow:.5,max:2.4},art:{t:'剑诀：开锁，学一招',slow:.5,max:2.4},
+  jie:{t:'天劫：集火劈开它！',s:'劈开冲过去＝修为 +1.2 层；劈不开就躲到右道',slow:.4,max:4},vein:{t:'灵脉：破锁才能吃，收益约 6 倍',slow:.5,max:2.4},art:{t:'剑诀：开锁，学一招',slow:.5,max:2.4},
   fb:{t:'法宝：开锁，自动帮你打',slow:.5,max:2.4},fu:{t:'符箓：技能多用一次',slow:.5,max:2.2},brk:{t:'破境丹：直接破境！',slow:.5,max:2.4},
   bottle:{t:'九层满了',s:'斩掉这波 Boss 才能破境',banner:1,max:2.6},mech:{t:'灵宠助战！',s:'会定时帮你轰击妖魔',banner:1,max:2.2},
   sk_bomb:{t:'新技能：雷劫符',s:'先留着，该用时我会叫你',slow:.35,max:2.6},sk_bolt:{t:'新技能：掌心雷',s:'先留着，该用时我会叫你',slow:.35,max:2.6},
