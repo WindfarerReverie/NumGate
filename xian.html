@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "xian", "sbjs": "supabase.js"};</script>
-<script>(function(){var B="20261101224440";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261101233028";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>御剑斩妖录</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -87,6 +87,9 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .go.alt{background:linear-gradient(180deg,#d9dee8,#9aa4b6);box-shadow:0 5px 0 #5b6475;color:#1a1f2a}
 .go.alt:active{box-shadow:0 2px 0 #5b6475}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#rankList .nd,.rank .nd{color:#7dffa8}
+#deathOpts .go small{font-size:12px;opacity:.85;font-weight:400}#deathOpts .go{line-height:1.3;padding-top:10px;padding-bottom:10px}
+#petList .item.on{border-color:rgba(255,214,119,.8);box-shadow:0 0 0 1px rgba(255,214,119,.4) inset}#petList .item .info{flex:1}#petList .item p{font-size:12px}
 .slot,.item{background:var(--panel);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:11px 12px;display:flex;align-items:center;gap:10px;text-align:left}
 .slot .info,.item .info{flex:1;min-width:0}
 .slot h3,.item h3{margin:0;font-size:15px;display:flex;gap:6px;align-items:baseline}
@@ -295,12 +298,23 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
       <button class="sb ghost" id="bGiveUp" hidden>放弃这局，重新开始</button>
       <div class="row2">
         <button class="go alt" id="bShop">商 店</button>
-        <button class="go alt" id="bSlots">换存档</button>
+        <button class="go alt" id="bPets">灵 宠</button>
       </div>
       <div class="row2"><button class="go alt" id="bBook">图鉴</button><button class="go alt" id="bRankH" hidden>排行榜</button></div>
+      <button class="sb ghost" id="bSlots">换存档</button>
       <button class="sb ghost" id="bHelp">玩法说明</button>
       <button class="sb ghost" id="bTut">重看新手教程</button>
       <p class="tip" id="tutNote" hidden>下一局会从新手教程开始。</p>
+    </div>
+  </div>
+
+  <div class="ov" id="ovPets" hidden>
+    <div class="card">
+      <h2>灵宠</h2>
+      <p class="tip">花总灵石收服、培养灵宠，上场只带一只，任何流派都能带。灵宠会自己找妖打；它的战力不会让敌人变强。</p>
+      <div class="wallet"><div class="chip coin">灵石<b id="petCoins">0</b></div></div>
+      <div id="petList" style="display:flex;flex-direction:column;gap:8px"></div>
+      <button class="go" id="bPetsBack">返 回</button>
     </div>
   </div>
 
@@ -344,6 +358,15 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
       <button class="go alt" id="bQuit">存档退出</button>
       <p class="tip">存档退出：这一局原样保存，下次从这里接着修炼。只有气血耗尽，这一局才结束。</p>
       <div class="pstat" id="pauseBuild"></div>
+    </div>
+  </div>
+
+  <div class="ov" id="ovDeath" hidden>
+    <div class="card">
+      <h2 class="bad">气血耗尽</h2>
+      <p class="tip" id="deathInfo"></p>
+      <div id="deathOpts" style="display:flex;flex-direction:column;gap:8px"></div>
+      <button class="sb ghost" id="bDeathEnd">结束本局（结算）</button>
     </div>
   </div>
 
@@ -422,7 +445,7 @@ const power=()=>S.count<RBASE?S.count:RBASE*Math.pow(2,PL*effL());
 const bossHpF=()=>.2+.2*Math.min(1,Math.max(0,((S&&S.maxR)||0)-1)/8);   // a boss crossing costs 25% 气血 early, 40% from 合体 on
 const leakHp=o=>(o.boss?bossHpF():(o.type==='elite'?.06:o.type==='brute'?.025:.012)*(.2+.8*Math.min(1,Math.max(0,((S&&S.maxR)||0)-1)/7)))*S.armor*(o.st?0:1);   // early realms forgive more   // share of max 气血 one leaking monster costs (staged tutorial monsters cost nothing)
 function heal(f,lbl){if(!S||!(f>0))return;const b=S.hpF;S.hpF=Math.min(1,S.hpF+f);const v=Math.round((S.hpF-b)*hpCap());if(v>0)ftext(S.x,squadY-96,(lbl?lbl+' · ':'')+'气血 +'+v,'#7dffa8',22)}
-const hpCap=()=>Math.round((100+60*Math.max(0,(S&&S.maxR)||0))*(S&&S.path==='ti'?1.3:1));
+const hpCap=()=>Math.round((100+60*Math.max(0,(S&&S.maxR)||0))*(S&&S.path==='ti'?1.3*(1+.1*tiLv('body')):1));
 function loseHp(f,x,lbl){if(!(f>0)||S.won)return;S.hpF-=f;S.hpHit=(S.hpHit||0)+f;S.hpHitT=.35;S.hpHitX=x;S.hpHitL=lbl||'';S.hpFlash=.6}
 const below=()=>S.peakL-layersOf(S.count)>.05;
 function addLayers(d){const r=Math.max(1,realmOf(S.count).r);if(d>0&&below())d*=3;   // 重修旧境: regaining lost layers is 3× faster
@@ -440,6 +463,8 @@ function norm(d){
   d.lv=(d.lv&&typeof d.lv==='object')?d.lv:{};
   for(const k of ['troops','dmg','rate','armor','gate','coin','start','bomb'])d.lv[k]=Math.max(0,Math.floor(+d.lv[k]||0));
   d.coins=Math.max(0,Math.floor(+d.coins||0));d.life=Math.max(1,Math.floor(+d.life||1));d.clears=Math.max(0,+d.clears||0);d.bestClear=+d.bestClear||0;d.best=+d.best||0;d.bestWave=+d.bestWave||0;d.bestRealm=+d.bestRealm||0;d.runs=+d.runs||0;
+  if(d.deaths===undefined)d.deaths=+d.runs||0;   // 以前每局结束都是倒下或撤退
+  if(!d.pets){const r=rFromCode(+d.bestRealm||0).r,own={0:0};for(let i=1;i<Math.min(17,r);i++)own[i]=0;d.pets={own,sel:Math.max(0,Math.min(16,r-1))}}   // 旧存档：以前按境界跟随的灵宠全部送你
   if(d.tutDone===undefined){d.tutDone=true;d.seen=allSeen()}
   if(d.noTips===undefined)d.noTips=d.tutDone===true;
   d.tutDone=!!d.tutDone;d.seen=(d.seen&&typeof d.seen==='object')?d.seen:{};
@@ -524,8 +549,8 @@ async function netPush(){
   if(!Net.on)return;if(Net.busy){Net.again=true;return}Net.busy=true;Net.last=Date.now();clearTimeout(Net.t);
   try{const uid=Net.user.id;
     await Net.sb.from('saves').upsert({id:uid,ver:NGV(),data:{slots:JSON.parse(JSON.stringify(Save.slots))},updated_at:new Date().toISOString()});
-    const rows=[];for(let i=1;i<=SLOTS;i++){const d=Save.slots[i];if(d&&(d.bestRealm||d.runs))rows.push({id:uid,ver:NGV(),slot:i,score:d.bestScore||0,name:Net.name.slice(0,16),best_realm:d.bestRealm||0,best_wave:d.bestWave||0,clears:d.clears||0,best_clear:d.clears?Math.round(d.bestClear):null,life:d.life||1,updated_at:new Date().toISOString()})}
-    if(rows.length)await Net.sb.from('scores').upsert(rows);
+    const rows=[];for(let i=1;i<=SLOTS;i++){const d=Save.slots[i];if(d&&(d.bestRealm||d.runs))rows.push({id:uid,ver:NGV(),slot:i,score:d.bestScore||0,name:Net.name.slice(0,16),best_realm:d.bestRealm||0,best_wave:d.bestWave||0,clears:d.clears||0,best_clear:d.clears?Math.round(d.bestClear):null,life:d.life||1,deaths:d.deaths||0,updated_at:new Date().toISOString()})}
+    if(rows.length){const r=await Net.sb.from('scores').upsert(rows);if(r&&r.error&&/deaths/.test(r.error.message||'')){for(const x of rows)delete x.deaths;await Net.sb.from('scores').upsert(rows)}}
   }catch(e){}
   Net.busy=false;if(Net.again){Net.again=false;netPush()}
 }
@@ -539,7 +564,7 @@ function rankRows(el,rows,max){
   const show=[];rows.forEach((r,i)=>{if(i<max||i===mine)show.push(i)});
   for(const i of show){const r=rows[i],d=document.createElement('div');d.className='rk'+(i===mine?' me':'');
     const what=r.clears?'证道成圣 · 通关 '+r.clears+' 次 · 最快 '+mmss(r.best_clear):rName(rFromCode(r.best_realm))+' · 第 '+r.best_wave+' 波';
-    d.innerHTML='<b>'+(i+1)+'</b><div><div class="who"></div><div class="what">'+what+(r.life>1?' · 第'+CNN(r.life)+'世':'')+'</div></div><span class="sc">'+fmt(r.score||0)+'<small>分</small></span>';
+    d.innerHTML='<b>'+(i+1)+'</b><div><div class="who"></div><div class="what">'+what+(r.life>1?' · 第'+CNN(r.life)+'世':'')+(r.deaths!=null?(r.deaths?' · 倒下 '+r.deaths+' 次':' · <b class="nd">不死</b>'):'')+'</div></div><span class="sc">'+fmt(r.score||0)+'<small>分</small></span>';
     d.querySelector('.who').textContent=r.name+' · 存档'+r.slot;el.appendChild(d)}
   if(!rows.length)el.innerHTML='<p class="sync">还没有人上榜</p>';
 }
@@ -574,6 +599,37 @@ async function doAuth(signup){
 /* ================= 图鉴 / collection ================= */
 function petName(l){return (XPETS[l-1]||XPETS[0]).n}
 function petCount(){return 17}
+/* ===== 灵宠（11-01 23:16）：花总灵石收服、培养；上场只带一只；自己找妖打；战力不算进敌人强度 ===== */
+const PET_ROLE=['claw','orb','stomp','dive','claw','orb','stomp','dive','orb','breath','slam','dive','stomp','slam','breath','dive','breath'];
+const PET_RD={claw:{n:'扑咬',d:'冲上去扑咬一只妖，优先噬元魔和 Boss',p:1.2},orb:{n:'法球',d:'守在身边，连发追踪法球打离防线最近的妖',p:1.5},
+  dive:{n:'俯冲',d:'俯冲到妖最密的地方，小范围爆炸',p:2},stomp:{n:'镇守',d:'守在防线前，震伤并震退冲上来的妖',p:2.5},
+  breath:{n:'吐息',d:'飞到妖群上方吐息，中范围灼烧',p:3},slam:{n:'翻海',d:'跃起砸向妖最密处，大范围冲击',p:4}};
+const petTier=i=>1+.2*i,petPow=(i,l)=>petTier(i)*(1+.1*l);
+const petUnlockCost=i=>i===0?0:Math.round(2000*Math.pow(2.05,i));
+const petLvCost=(i,l)=>Math.round(150*(1+.6*i)*Math.pow(1.2,l));
+const PET_BASE=.1;   // 灵猫 0 级 ≈ 每秒 0.1 秒基础火力
+function petsOf(s){s=s||slot();if(!s)return {own:{0:0},sel:0};if(!s.pets||typeof s.pets!=='object')s.pets={own:{0:0},sel:0};if(!s.pets.own||typeof s.pets.own!=='object')s.pets.own={0:0};if(s.pets.own[s.pets.sel]==null)s.pets.sel=0;return s.pets}
+function petCur(){const P=petsOf();return {i:+P.sel||0,l:+P.own[P.sel]||0}}
+const petRate=()=>{const c=petCur();return PET_BASE*petPow(c.i,c.l)};
+function petBuy(i,act){const s=slot();if(!s)return false;const P=petsOf(s);
+  if(act==='unlock'){if(P.own[i]!=null)return false;const c=petUnlockCost(i);if(s.coins<c)return false;s.coins-=c;P.own[i]=0;P.sel=i}
+  else if(act==='up'){if(P.own[i]==null)return false;const c=petLvCost(i,P.own[i]);if(s.coins<c)return false;s.coins-=c;P.own[i]++}
+  else if(act==='sel'){if(P.own[i]==null)return false;P.sel=i;if(S&&S.pet)S.pet.cd=Math.min(S.pet.cd,1)}
+  commit(Save.cur);sfx(660,.08,'square',.05);setTimeout(()=>sfx(990,.12,'square',.05),70);return true}
+function renderPets(){
+  const s=slot();if(!s)return;const P=petsOf(s);$('petCoins').textContent=fmt(s.coins);const L=$('petList');L.innerHTML='';
+  for(let i=0;i<petCount();i++){const own=P.own[i]!=null,l=own?P.own[i]:0,role=PET_RD[PET_ROLE[i]],row=document.createElement('div');row.className='item'+(P.sel===i&&own?' on':'');
+    const cv2=document.createElement('canvas');cv2.width=112;cv2.height=112;cv2.style.width='56px';cv2.style.height='56px';const g=cv2.getContext('2d');g.scale(2,2);drawFaxiang(g,28,42,.95,1.3,i+1);
+    if(!own){g.globalCompositeOperation='source-atop';g.fillStyle='rgba(30,26,46,.72)';g.fillRect(0,0,56,56)}
+    const inf=document.createElement('div');inf.className='info';
+    inf.innerHTML='<h3>'+petName(i+1)+'<span>'+(own?'Lv'+l:'未收服')+'</span></h3><p>'+role.n+'：'+role.d+'<br>战力 <b>×'+petPow(i,l).toFixed(1)+'</b>'+(own?'（下一级 ×'+petPow(i,l+1).toFixed(1)+'）':'')+(P.sel===i&&own?' · <b>出战中</b>':'')+'</p>';
+    const bx=document.createElement('div');bx.style.cssText='display:flex;flex-direction:column;gap:6px';
+    const mk=(t,c,fn,dis)=>{const b=document.createElement('button');b.className='sb';b.textContent=t;b.disabled=!!dis;b.onclick=()=>{if(fn())renderPets()};bx.appendChild(b)};
+    if(!own){const c=petUnlockCost(i);mk('收服 💰'+fmt(c),c,()=>petBuy(i,'unlock'),s.coins<c)}
+    else{const c=petLvCost(i,l);mk('培养 💰'+fmt(c),c,()=>petBuy(i,'up'),s.coins<c);if(P.sel!==i)mk('出战',0,()=>petBuy(i,'sel'))}
+    row.append(cv2,inf,bx);L.appendChild(row)}
+}
+
 function renderBook(){
   const s=slot();if(!s)return;const maxR=rFromCode(s.bestRealm||0).r;
   const tile=(box,draw,on,label)=>{const d=document.createElement('div');d.className='bt'+(on?'':' lk');const cv2=document.createElement('canvas');cv2.width=144;cv2.height=168;
@@ -581,8 +637,8 @@ function renderBook(){
     d.appendChild(cv2);const sp=document.createElement('span');sp.textContent=on?label:'？？？';d.appendChild(sp);box.appendChild(d)};
   const H=$('bookHero');H.innerHTML='';let nh=0;
   for(let r=0;r<REALMS.length;r++){const on=r<=maxR;if(on)nh++;const sc=1.3-r*.028;tile(H,g=>drawHero(g,36,74,r,1.3,sc),on,REALMS[r])}
-  const P=$('bookPet');P.innerHTML='';let np=0;const pm=Math.max(0,maxR);
-  for(let l=1;l<=petCount();l++){const on=l<=pm;if(on)np++;tile(P,g=>drawFaxiang(g,36,70,1.15,1.3,l),on,petName(l))}
+  const P=$('bookPet');P.innerHTML='';let np=0;const PO=petsOf(s).own;
+  for(let l=1;l<=petCount();l++){const on=PO[l-1]!=null;if(on)np++;tile(P,g=>drawFaxiang(g,36,70,1.15,1.3,l),on,petName(l))}
   const B=$('bookBoss');B.innerHTML='';let nb=0;const seen=s.bossSeen||{};
   BOSSES.forEach((b,i)=>{const sp=document.createElement('span');const on=!!seen[i];if(on)nb++;sp.className=on?'':'lk';sp.textContent=on?b.n+(seen[i]>1?' ×'+seen[i]:''):'？？？';B.appendChild(sp)});
   $('bookSum').textContent='已收集：形象 '+nh+'/'+REALMS.length+' · 灵宠 '+np+'/'+petCount()+' · Boss '+nb+'/'+BOSSES.length;
@@ -619,7 +675,7 @@ function renderShop(){
 }
 
 /* ================= MENUS ================= */
-const OVS=['ovLogin','ovRank','ovBook','ovHelp','ovTitle','ovHub','ovShop','ovPause','ovOver'];
+const OVS=['ovLogin','ovRank','ovBook','ovHelp','ovTitle','ovHub','ovShop','ovPets','ovPause','ovOver','ovDeath'];let petsBack='ovHub';
 let shopBack='ovHub';
 function show(id){for(const o of OVS)$(o).hidden=(o!==id);$('skills').hidden=!(running&&!id);$('goal').hidden=!(running&&!id)}
 function hhmm(t){const h=Math.floor(t/3600),m=Math.floor(t%3600/60);return h?h+' 小时 '+m+' 分':m+' 分钟'}
@@ -695,11 +751,12 @@ const jieOn=()=>S.objs.some(o=>o.g==='jie'&&!o.dead);
 const LOCKG=['vein','art','fb','fu','brk'];   // no gates in the monster lane right before / during a surge (they would eat your fire)
 function target(){
   const k=kEff(),ph=wph(),LH=1+.15*(S.life-1),late=1-Math.exp(-Math.max(0,k-8)/10),lo=(.15+.2*(1-Math.exp(-k/12))+.05*late)*LH,hi=(.55+1.3*(1-Math.exp(-k/14))+.05*late)*LH;   // base curve is gentle; the director (S.M) raises it for strong players   // early curve unchanged; extra pressure only after wave 8   // ramps over ~40 min instead of 10
-  if(ph<MOW)return lo;
+  const hard=1+.4*(1-Math.exp(-k/6));   // 11-01 23:16：死亡不再清档，整体加难（前期几乎不变，后期 +20%）
+  if(ph<MOW)return lo*(1+(hard-1)/2);
   const hb=S.bottle?.8:1;   // a heart-demon wave is a little easier, so breaking through stays reachable
-  return (lo+(hi-lo)*Math.min(1,(ph-MOW)/3))*hb;
+  return (lo*(1+(hard-1)/2)+(hi*hard-lo*(1+(hard-1)/2))*Math.min(1,(ph-MOW)/3))*hb;
 }
-const refDps=()=>dps()/pathAtk()/tempMul()/((1+.35*spr())/(1+.35*S.spread))*Math.sqrt(expBuild()/build())/Math.sqrt(S.permMul)/(S.hexT>0?.75:1)/(S.zouT>0?.7:1);   // shop bonuses keep half their edge (sqrt) instead of all of it; debuffs don't lower the reference
+const refDps=()=>dps()/pathAtk()/tempMul()/((1+.35*spr())/(1+.35*S.spread))*Math.pow(expBuild()/build(),.35)/Math.sqrt(S.permMul)/(S.hexT>0?.75:1)/(S.zouT>0?.7:1);   // shop bonuses keep half their edge (sqrt) instead of all of it; debuffs don't lower the reference
 const zBase=()=>(1+Math.min(2,Math.floor(S.t/90)))*(curTrait()==='swarm'?1.7:1);                                  // monsters per spawn (plus 0-1 random)
 const zIv=()=>1.05/(1+Math.min(S.t,300)/200)*(inSurge()?.65:1);                // seconds between spawns
 function zps(){return (zBase()+.5)/zIv()}
@@ -726,7 +783,8 @@ function zProbs(){const sg=inSurge(),P=[];   // [type, chance]; the rest are pla
   if(has('elite'))P.push(['elite',(sg?.04:.018)*f('elite')]);if(has('hex'))P.push(['hex',(sg?.07:.05)*f('hex')]);if(has('guard'))P.push(['guard',.05*f('guard')]);
   if(has('run'))P.push(['run',.2*f('run')]);if(has('brute'))P.push(['brute',.12*f('brute')]);return P}
 const zMix=()=>{let m=0,rest=1;for(const [ty,pp] of zProbs()){m+=pp*ZHP[ty];rest-=pp}return m+Math.max(0,rest)};
-const hpUnit=()=>target()*S.Dref*(S.M||1)*(S.surgeOn?(S.sb||1):1)/(zps()*zMix());
+const rwF=()=>S&&S.rwF<1?S.rwF:1;   // 重修：死亡后回到之前的波次，敌人按当时的强度，逐步追回来
+const hpUnit=()=>target()*S.Dref*(S.M||1)*rwF()*(S.surgeOn?(S.sb||1):1)/(zps()*zMix());
 const speed=()=>H*.2*(1+Math.min(S.t,300)/750);   // slower ramp: ×1.4 at 5 min (was ×1.8 at 2 min)
 const sw=()=>Math.min((roadW/4)*.78,16+Math.sqrt(Math.max(1,S.count))*6);
 const minX=()=>roadX+sw()/2+4;
@@ -735,7 +793,7 @@ const maxX=()=>roadX+roadW-sw()/2-4;
 const tempOn=k=>!!(S&&S.temp&&S.temp.k===k&&S.surgeOn&&waveK()===S.temp.wave);
 const spr=()=>S.spread+(tempOn('swarm')?3:0);
 const tempMul=()=>tempOn('power')?1.8:1;
-const FA_ATKR=[.7,.7,.7,.7,.55,.45,.35,.27,.2,.15,.1],TI_ATK=1.5,faAtk=()=>FA_ATKR[Math.min(FA_ATKR.length-1,S.maxR)],pathAtk=()=>S&&S.path==='fa'?faAtk():S&&S.path==='ti'?TI_ATK:1;   // 法修普攻：筑基 ×0.6，越往后越弱（渡劫后 ×0.1）   // 流派普攻倍率：敌人强度不跟着它走，所以玩家真能感觉到
+const FA_ATKR=[.7,.7,.7,.7,.55,.45,.35,.27,.2,.15,.1],TI_ATK=1.5,tiAtk=()=>TI_ATK*(1+.12*tiLv('heavy'))*(1+.1*tiLv('lian'))*(1+.3*tiLv('zhan')*(1-clamp(S.hpF,0,1))),faAtk=()=>FA_ATKR[Math.min(FA_ATKR.length-1,S.maxR)],pathAtk=()=>S&&S.path==='fa'?faAtk():S&&S.path==='ti'?tiAtk():1;   // 法修普攻：筑基 ×0.6，越往后越弱（渡劫后 ×0.1）   // 流派普攻倍率：敌人强度不跟着它走，所以玩家真能感觉到
 const dps=()=>pathAtk()*.12*power()*S.dmg*S.rate*(S&&S.zouT>0?.7:1)*(S&&S.hexT>0?.75:1)*(1+.35*spr())*tempMul();
 const mechX=()=>{const side=S.x<mid?1:-1;return clamp(S.x+side*(sw()/2+16+7*S.mech),roadX+18,roadX+roadW-18)};
 
@@ -949,7 +1007,7 @@ function bossEvoFront(o,glowCol){
   if(ri>=12){const n=Math.min(6,ri-10);for(let i=0;i<n;i++){const a=t*1.6+i*6.283/n;const ox=x+Math.cos(a)*r*1.45,oy=y+Math.sin(a)*r*.55;ctx.fillStyle=glowCol;ctx.globalAlpha=.9;ctx.beginPath();ctx.arc(ox,oy,4+ri*.15,0,6.283);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(ox,oy,2,0,6.283);ctx.fill()}ctx.globalAlpha=1}
 }
 function spawnBoss(){
-  const k=waveK(),heart=S.bottle,fin=heart&&S.maxR>=TOPR,hp=S.Dref*(S.M||1)*(fin?7:heart?2.5:4.5)*(1+.03*kEff())*(1+.15*(S.life-1)),look=fin?Object.assign({},BOSSES[17],{hue:45,stage:3,horns:10,aura:true,n:'天道',bi:17,ri:17,name:'天道'}):bossLook(k,S.peakR);
+  const k=waveK(),heart=S.bottle,fin=heart&&S.maxR>=TOPR,hp=S.Dref*(S.M||1)*rwF()*(fin?7:heart?2.5:4.5)*(1+.03*kEff())*(1+.15*(S.life-1)),look=fin?Object.assign({},BOSSES[17],{hue:45,stage:3,horns:10,aura:true,n:'天道',bi:17,ri:17,name:'天道'}):bossLook(k,S.peakR);
   if(heart)look.name=(fin?'最终劫 · ':'心魔 · ')+look.name;
   S.objs.push({k:'z',boss:true,type:'boss',look,heart,heartR:S.maxR,fin,realm:S.peakR,x:(mid+roadX+roadW)/2,y:-60,r:Math.min(64,34+Math.max(k*.8,S.peakR*1.7)),hp,hp0:hp,atk:0,pct:0,sp:0,ph:0,hit:0,coin:25*(1+.5*k)});
   S.bossAlive=true;if(fin)toast('天道降临','斩了它就证道成圣，通关！冲线扣 '+Math.round(bossHpF()*100)+'% 气血');else toast((heart?'心魔 · ':'')+look.n+(look.stage?' '+CNN(look.stage+1)+'阶':''),heart?'斩了它就能破境！冲线扣 '+Math.round(bossHpF()*100)+'% 气血':REALMS[S.peakR]+'的魔头 · 冲线扣 '+Math.round(bossHpF()*100)+'% 气血');
@@ -964,10 +1022,12 @@ function fire(){
   const SP=spr(),total=dps()*interval,per=total/(streams+SP*2);
   const w=sw()*.8,y=squadY-sw()*.18-14;
   if(S.bullets.length<450){
-    for(let i=0;i<streams;i++){const x=S.x+(streams===1?0:(i/(streams-1)-.5)*w);S.bullets.push({x,y,vx:0,vy:-950,dmg:per,p:S.pierce})}
+    const PP=S.pierce+(tiEvo('jin')?1:0);
+    for(let i=0;i<streams;i++){const x=S.x+(streams===1?0:(i/(streams-1)-.5)*w);S.bullets.push({x,y,vx:0,vy:-950,dmg:per,p:PP})}
+    if(S.path==='ti'&&tiLv('jj')){S.jjN=(S.jjN||0)+1;if(S.jjN>=8-tiLv('jj')){S.jjN=0;S.bullets.push({x:S.x,y:y-6,vx:0,vy:-760,dmg:total*3.2,p:99,big:true})}}
     for(let i=1;i<=SP;i++){const a=i*.13;
-      S.bullets.push({x:S.x-6,y,vx:-Math.sin(a)*950,vy:-Math.cos(a)*950,dmg:per,p:S.pierce});
-      S.bullets.push({x:S.x+6,y,vx:Math.sin(a)*950,vy:-Math.cos(a)*950,dmg:per,p:S.pierce})}
+      S.bullets.push({x:S.x-6,y,vx:-Math.sin(a)*950,vy:-Math.cos(a)*950,dmg:per,p:PP});
+      S.bullets.push({x:S.x+6,y,vx:Math.sin(a)*950,vy:-Math.cos(a)*950,dmg:per,p:PP})}
   }
   return interval;
 }
@@ -1027,7 +1087,7 @@ function minions(o,n,f){const hpB=hpUnit();for(let i=0;i<n&&S.objs.length<260;i+
 function dangerRaw(){
   if(!S||!S.objs)return 0;
   const line=cLine(),r=Math.max(1,realmOf(S.count).r);
-  const D=Math.max(1e-9,dps()*.7+(S.path==='fa'?dps()/pathAtk()*.6*(mpReg()*FA_E*faG()*(1+.12*((faLv('fire')+faLv('bolt'))/2))+psG()*(.1*faLv('crow')+.07*faLv('orb')+.12*faLv('cloud'))):0)),v=speed();   // 法修：把灵力能持续打出的法术和被动法术也算进去
+  const D=Math.max(1e-9,dps()*.7+(S.path==='fa'?dps()/pathAtk()*.6*(mpReg()*FA_E*faG()*(1+.12*((faLv('fire')+faLv('bolt'))/2))+psG()*(.1*faLv('crow')+.07*faLv('orb')+.12*faLv('cloud'))):0)+dps()/pathAtk()*petRate()*.6),v=speed();   // 法修：把灵力能持续打出的法术和被动法术也算进去
   const zs=[];for(const z of S.objs){if(z.k!=='z'||z.dead||z.hp<=0)continue;
     const sp=z.boss?v*.3:(v*.5+(z.sp||0))*(z.fast||1)*(S.surgeOn?1.1:1);zs.push([z,Math.max(.3,(line-z.y-z.r)/Math.max(1,sp))+(S.freezeT||0)])}
   zs.sort((a,b)=>a[1]-b[1]);
@@ -1065,7 +1125,7 @@ function dangerTick(dt){
    Enemy strength = what an AVERAGE player should have at this wave (expBuild), blended 50/50 (in log scale) with
    your actual build. Pick well and you really are ahead (√ of your edge stays with you); pick badly and you feel it.
    On top of that the director (S.M) only steps in when monsters keep dying far up the screen (clear overpower). */
-function build(){return S.upMul*(1+.35*S.spread)*(1+.15*S.pierce)*(1+.04*S.fb.gourd)*(1+.03*S.fb.bell)*(1+.06*S.fb.mirror)*(1+.04*S.armorUp)*faBuild()}
+function build(){return S.upMul*(1+.35*S.spread)*(1+.15*S.pierce)*(1+.04*S.fb.gourd)*(1+.03*S.fb.bell)*(1+.06*S.fb.mirror)*(1+.04*S.armorUp)*faBuild()*tiBuild()}
 const EXPG=1.22;   // average build growth per wave (one pick per boss + gates)
 function expBuild(){return Math.min(2500,Math.pow(EXPG,kEff()))}   // S.expK: waves of growth; grows at 30% speed while you sit at a bottleneck, so a stuck player still gets a fair shot at the 心魔
 function kdNote(d){d=Math.min(1,d);S.kdSum=(S.kdSum||0)+d;S.kdN=(S.kdN||0)+1;S.kdEma=S.kdEma==null?d:S.kdEma+(d-S.kdEma)*.04}
@@ -1074,7 +1134,7 @@ function director(dt){   // evaluated once per phase (end of each mow / surge): 
   if(S.dirPh===undefined){S.dirPh=sg;S.kdSum=0;S.kdN=0;return}
   if(sg===S.dirPh)return;
   const n=S.kdN||0,d=n?S.kdSum/n:1,T=S.dirPh?.38:.2;   // only clear overpower (monsters dying this high up) moves the director
-  if(S.t>40&&n>=12&&d<T)S.M*=1+Math.min(S.dirPh?.12:.05,(T-d)*(S.dirPh?.6:.25));
+  if(S.t>40&&n>=12&&d<T&&!(S.rwF<1))S.M*=1+Math.min(S.dirPh?.12:.05,(T-d)*(S.dirPh?.6:.25));
   S.dirPh=sg;S.kdSum=0;S.kdN=0;
 }
 function dNote(k,v){if(!S||!(v>0))return;const d=S.dsrc||(S.dsrc={});d[k]=(d[k]||0)+v}   // 输出构成统计（近 1 分钟，指数衰减）
@@ -1082,6 +1142,7 @@ function dmgMul(o){
   let m=1;if(S.iceAmp>0&&S.slowT>0)m*=S.iceAmp;
   if(o.realm!=null){const gap=(o.boss?o.realm:Math.min(o.realm,S.rR+1))-S.rR;m=gap>0?Math.pow(.5,gap):gap<0?Math.min(3,1-.5*gap):1}   // realm suppression
   if((o.boss||o.type==='elite')&&S.fb.mirror)m*=1+.3*S.fb.mirror;
+  if((o.boss||o.type==='elite')&&S.path==='ti')m*=1+.2*tiLv('pojun');
   if(o.type==='brute')m*=tempOn('armor')?2.5:Math.min(1,.55+.06*S.lv.dmg);
   if(o.type==='elite'&&tempOn('elite'))m*=3;   // 石甲护甲：剑意越高越破得开
   if(o.type!=='guard'&&S.guards&&!S.pierce&&!tempOn('guard'))for(const g of S.guards){const dx=g.x-o.x,dy=g.y-o.y;if(dx*dx+dy*dy<3600){m*=.6;break}}
@@ -1162,10 +1223,13 @@ const POPT={
   inf_dmg:{ok:()=>(S.inf.dmg||0)<infCap(),line:()=>'伤害 +12%（已叠 '+(S.inf.dmg||0)+'/'+infCap()+'，境界越高上限越高）',ic:{g:'art',o:{up:'dmg'}},go:()=>{S.inf.dmg=(S.inf.dmg||0)+1;S.dmg*=1.12;S.upMul*=1.12}},
   inf_rate:{ok:()=>(S.inf.rate||0)<infCap(),line:()=>'剑速 +10%（已叠 '+(S.inf.rate||0)+'/'+infCap()+'，境界越高上限越高）',ic:{g:'art',o:{up:'rate'}},go:()=>{S.inf.rate=(S.inf.rate||0)+1;S.rate*=1.1;S.upMul*=1.1}},
   inf_hp:{ok:()=>(S.inf.hp||0)<infCap(),line:()=>'气血立刻回 30%，冲线伤害 −5%（已叠 '+(S.inf.hp||0)+'/'+infCap()+'）',ic:{e:'❤️'},go:()=>{S.inf.hp=(S.inf.hp||0)+1;S.armor*=.95;heal(.3,'淬体')}}};
-POPT.path_ti={ok:()=>true,line:()=>'以剑破万法：靠剑气硬推。剑气伤害 ×1.5（敌人不跟着变强）、受伤 −30%、气血上限 ×1.3、剑雨和破甲上限各 +1；技能冷却 +40%、技能威力 −30%',ic:{g:'art',o:{up:'dmg'}},go:()=>{S.pathV2=S.pathV3=S.pathV4=true;S.path='ti';S.armor*=.7;toast('走上体修之路','剑气 ×1.5、更抗打、气血更厚')}};
-POPT.path_fa={ok:()=>true,line:()=>'以法御万剑：前期剑气还能帮忙（×0.6），越往后越弱，到'+REALMS[10]+'只剩 ×0.1，主要靠法术。七种法术立刻全会，用「灵力」施法：灵力一直在回，法术间隔很短，想放就放；还能修被动法术（火鸦、护法飞剑、雷云）自动清怪，大境界时法术会进化',ic:{g:'fu',o:{fu:'bomb'}},go:()=>{S.pathV2=S.pathV3=S.pathV4=true;S.path='fa';S.fa={};S.mp=mpMax();S.fireCd=0;S.iceCd=0;S.swordCd=0;effectPop('fa_intro','法修 · 灵力施法','右下角的蓝色圆球是灵力：每个法术耗灵力，灵力一直在回。剑气越往后越弱，要多放法术；三选一里会出现法术升级和被动法术。',{e:'💧'});toast('走上法修之路','七种法术全会，靠灵力施法；剑气越往后越弱');skillUI()}};
+POPT.path_ti={ok:()=>true,line:()=>'以剑破万法：靠剑气硬推、更抗打。剑气伤害 ×1.5（敌人不跟着变强）、受伤 −30%、气血上限 ×1.3、剑雨和破甲上限各 +1；技能冷却 +40%、威力 −30%。三选一会出现体修被动（剑罡护体、战意、剑气纵横）和体修升级（重剑、连斩、金身、破军）；大境界时剑气会进化',ic:{g:'art',o:{up:'dmg'}},go:()=>{S.pathV2=S.pathV3=S.pathV4=true;S.path='ti';S.ti={};S.pathAnim={k:'ti',t:0};S.armor*=.7;toast('走上体修之路','剑气 ×1.5、更抗打、气血更厚')}};
+POPT.path_fa={ok:()=>true,line:()=>'以法御万剑：前期剑气还能帮忙（×'+FA_ATKR[3]+'），越往后越弱，到'+REALMS[10]+'只剩 ×0.1，主要靠法术。七种法术立刻全会，用「灵力」施法：灵力一直在回，法术间隔很短，想放就放；还能修被动法术（火鸦、护法飞剑、雷云）自动清怪，大境界时法术会进化',ic:{g:'fu',o:{fu:'bomb'}},go:()=>{S.pathV2=S.pathV3=S.pathV4=true;S.path='fa';S.fa={};S.mp=mpMax();S.fireCd=0;S.iceCd=0;S.swordCd=0;S.pathAnim={k:'fa',t:0};setTimeout(()=>effectPop('fa_intro','法修 · 灵力施法','右下角的蓝色圆球是灵力：每个法术耗灵力，灵力一直在回。剑气越往后越弱，要多放法术；三选一里会出现法术升级和被动法术。',{e:'💧'}),2800);toast('走上法修之路','七种法术全会，靠灵力施法；剑气越往后越弱');skillUI()}};
 for(const k of ['crow','orb','cloud'])POPT['fa_'+k]={ok:()=>S.path==='fa'&&faLv(k)<fbCap(),line:()=>{const L=faLv(k)+1;return '被动法术 Lv'+L+'：'+FA_PS[k].d(L)+(L<5?'\n满级：'+FA_PS[k].d(5):'')},ic:{e:{crow:'🐦',orb:'🗡',cloud:'⛈'}[k]},go:()=>{(S.fa=S.fa||{})[k]=faLv(k)+1}};
 for(const k of ['fire','sword','ice','bolt','mp'])POPT['fa_'+k]={ok:()=>S.path==='fa'&&faLv(k)<fbCap(),line:()=>FA_UPD[k]+(k==='fire'&&faLv(k)===2?'；Lv3 起一次两颗':'')+'（Lv'+(faLv(k)+1)+' / 本境界上限 '+fbCap()+'）',ic:{e:{fire:'🔥',sword:'🗡',ice:'❄️',bolt:'⚡',mp:'💧'}[k]},go:()=>{(S.fa=S.fa||{})[k]=faLv(k)+1}};
+for(const k of ['gang','zhan','jj'])POPT['ti_'+k]={ok:()=>S.path==='ti'&&tiLv(k)<fbCap(),line:()=>{const L=tiLv(k)+1;return '体修被动 Lv'+L+'：'+TI_PS[k].d(L)+(L<5?'\n满级：'+TI_PS[k].d(5):'')},ic:{e:{gang:'🔰',zhan:'🔥',jj:'🗡'}[k]},go:()=>{(S.ti=S.ti||{})[k]=tiLv(k)+1}};
+for(const k of ['heavy','lian','body','pojun'])POPT['ti_'+k]={ok:()=>S.path==='ti'&&tiLv(k)<fbCap(),line:()=>TI_UPD[k]+'（Lv'+(tiLv(k)+1)+' / 本境界上限 '+fbCap()+'）',ic:{e:{heavy:'⚔️',lian:'💨',body:'🛡',pojun:'💢'}[k]},go:()=>{(S.ti=S.ti||{})[k]=tiLv(k)+1;if(k==='body')S.hpF=Math.min(1,S.hpF+.05)}};
+Object.assign(PNAME,{ti_gang:'剑罡护体',ti_zhan:'战意',ti_jj:'剑气纵横',ti_heavy:'重剑',ti_lian:'连斩',ti_body:'金身',ti_pojun:'破军'});
 Object.assign(PNAME,{fa_crow:'火鸦',fa_orb:'护法飞剑',fa_cloud:'雷云',fa_fire:'火符升级',fa_sword:'万剑诀升级',fa_ice:'寒冰诀升级',fa_bolt:'掌心雷升级',fa_mp:'灵力'});
 POPT.coin={ok:()=>true,line:()=>'本境界能强化的都满了：灵石 +'+fmt(coinPack())+'（突破大境界后上限会提高）',ic:{e:'💰'},go:()=>{S.coins+=coinPack()}};
 const coinPack=()=>Math.round(40*(1+S.maxR)*S.coinMul);
@@ -1176,13 +1240,13 @@ const TEMPS={   // 限时符 for the next surge, one per trait (+ a generic one)
   armor:{n:'破甲符',d:'下一波：对石甲妖伤害 ×2.5，无视护甲'},guard:{n:'破法符',d:'下一波：无视护法减伤'},
   swarm:{n:'万剑符',d:'下一波：剑雨临时 +3 对'},fast:{n:'缚足符',d:'下一波：疾风妖速度减半'},
   elite:{n:'斩魔符',d:'下一波：对噬元魔伤害 ×3'},hex:{n:'清心符',d:'下一波：咒怨减速对你无效'},power:{n:'聚灵符',d:'下一波：伤害 +80%'}};
-const LONGK=['gourd','mirror','bell'],PERMK=['rate','dmg','spread','pierce','armor','cd'],FA_LONG=['fa_crow','fa_orb','fa_cloud'],FA_PERM=['fa_fire','fa_sword','fa_ice','fa_bolt','fa_mp'];
+const LONGK=['gourd','mirror','bell'],PERMK=['rate','dmg','spread','pierce','armor','cd'],FA_LONG=['fa_crow','fa_orb','fa_cloud'],FA_PERM=['fa_fire','fa_sword','fa_ice','fa_bolt','fa_mp'],TI_LONG=['ti_gang','ti_zhan','ti_jj'],TI_PERM=['ti_heavy','ti_lian','ti_body','ti_pojun'];
 let pickOpts=null;
 function fbLine(k){const L=S.fb[k]+1;return 'Lv'+L+'：'+FBROAD[k][L]+(L<5?'\n满级：'+FBROAD[k][5].replace(/^满级/,''):'')}
 function queuePick(why){S.pickQ=(S.pickQ||0)+1;S.pickWhy=why}
 function rollPick(){   // always: one 短期 (this next wave), one 长期 (grows into a late-game engine), one 常驻
   const tr=nextTrait(),out=['t_'+(tr&&TEMPS[tr]?tr:'power')];
-  const fa=S.path==='fa',lg=LONGK.concat(fa?FA_LONG:[]).filter(k=>POPT[k].ok()),fu=fa?FA_PERM.filter(k=>POPT[k].ok()):[],pm=PERMK.filter(k=>POPT[k].ok()).concat(fu);
+  const fa=S.path==='fa',ti=S.path==='ti',lg=LONGK.concat(fa?FA_LONG:ti?TI_LONG:[]).filter(k=>POPT[k].ok()),fu=fa?FA_PERM.filter(k=>POPT[k].ok()):ti?TI_PERM.filter(k=>POPT[k].ok()):[],pm=PERMK.filter(k=>POPT[k].ok()).concat(fu);
   if(lg.length)out.push(lg[ri(0,lg.length-1)]);
   const pc=pm.filter(k=>tr&&TRAITS[tr].c.includes(k)),pp=pc.length&&Math.random()<.5?pc:fu.length&&Math.random()<.6?fu:pm;
   if(pp.length)out.push(pp[ri(0,pp.length-1)]);
@@ -1199,7 +1263,7 @@ function pickScan(){
   $('pickWhy').textContent=pathNow?'踏入'+REALMS[S.maxR]+' · 选择修炼路线':S.pickWhy||'选一个强化';
   $('pickNext').innerHTML=pathNow?'两条路的数值都跟着境界涨。选了就不能改。':tr?'下一波：<b>'+TRAITS[tr].n+'</b> · '+TRAITS[tr].d:'下一波：普通妖潮';
   for(const k of o){const tk=k.startsWith('t_')?k.slice(2):null,P=tk?{ic:{g:'fu',o:{fu:'bomb'}},line:()=>TEMPS[tk].d}:POPT[k],b=document.createElement('button');b.className='pk';
-    const cnt=!tk&&tr&&TRAITS[tr].c.includes(k),kind=tk?['短期 · 只管下一波','ts']:LONGK.includes(k)||FA_LONG.includes(k)?['长期 · 越养越强','tl']:INFK.includes(k)?['已满级 · 精进（上限随境界）','ti']:k.startsWith('path_')?['路线 · 二选一，不可更改','tl']:['常驻','tp'];
+    const cnt=!tk&&tr&&TRAITS[tr].c.includes(k),kind=tk?['短期 · 只管下一波','ts']:LONGK.includes(k)||FA_LONG.includes(k)||TI_LONG.includes(k)?['长期 · 越养越强','tl']:INFK.includes(k)?['已满级 · 精进（上限随境界）','ti']:k.startsWith('path_')?['路线 · 二选一，不可更改','tl']:['常驻','tp'];
     const cv2=document.createElement('canvas');cv2.width=88;cv2.height=88;const g=cv2.getContext('2d');g.scale(2,2);
     if(P.ic.g)gateIcon(P.ic.g,P.ic.o,22,22,1.1,1,false,g);else{g.font='26px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(P.ic.e,22,23)}
     const tx=document.createElement('div');tx.innerHTML='<span class="ptag '+kind[1]+'">'+kind[0]+'</span><h4></h4><p></p>'+(cnt?'<em>也克制下一波</em>':'');tx.querySelector('h4').textContent=tk?TEMPS[tk].n:PNAME[k];tx.querySelector('p').textContent=P.line();
@@ -1209,16 +1273,17 @@ function pickScan(){
 function choosePick(k){
   if(!pickOpts)return;
   if(k.startsWith('t_')){const tk=k.slice(2);S.temp={k:tk,wave:inSurge()?waveK()+1:waveK()};toast(TEMPS[tk].n+' 已备好',TEMPS[tk].d);pickOpts=null;$('pickBox').hidden=true;paused=false;return}
-  const ln=POPT[k].line();POPT[k].go();renderUps();effectPop('pk_'+k,PNAME[k],ln,POPT[k].ic);
+  const ln=POPT[k].line();POPT[k].go();renderUps();if(!k.startsWith('path_'))effectPop('pk_'+k,PNAME[k],ln,POPT[k].ic);
   pickOpts=null;$('pickBox').hidden=true;paused=false;sfx(660,.08,'square',.05);setTimeout(()=>sfx(990,.12,'square',.05),70);
 }
 function unlockList(r){   // what reaching realm r unlocks
   const L=['新形象'];const nm={dmg:'剑意',rate:'剑速',spread:'剑雨',pierce:'破甲'};
   for(const k of ['dmg','rate','spread','pierce'])if(upCap(k,r)>upCap(k,r-1))L.push(nm[k]+'上限 Lv'+upCap(k,r));
-  if(fbCap(r)>fbCap(r-1))L.push('法宝上限 Lv'+fbCap(r));if(r>=1)L.push((r===1?'灵宠认主：':'灵宠进化：')+petName(r));if(r===3)L.push('灵宠开始助战');
+  if(fbCap(r)>fbCap(r-1))L.push('法宝上限 Lv'+fbCap(r));
   return L;
 }
 function goalText(){
+  if(S&&S.rwF<1)return '重修中：敌人约为倒下时的 <b>'+Math.round(S.rwF*100)+'%</b>，正在慢慢追回 · 趁现在多吃门、攒灵石';
   if(!S)return '';const rr=realmOf(S.count),cur=Math.max(1,rr.r);
   if(S.maxR>=TOPR&&S.bottle)return '圣人九层圆满 · <b>下一波斩「天道」即可通关</b>';
   if(S.bottle)return '九层圆满 · <b>斩下一个 Boss（心魔）破境</b> → '+REALMS[S.maxR+1]+'：'+unlockList(S.maxR+1).slice(0,3).join('、');
@@ -1238,7 +1303,7 @@ function breakthrough(){
   S.count=Math.max(S.count,RBASE*Math.pow(2,RSTART[S.maxR])*1.0001);
   S.dmg*=1.15;heal(.3,'破境');{const n=skillPool(BOMB_S,()=>true,.2);S.fxBomb=.7;S.shake=14;ftext(S.x,squadY-130,'破境天雷'+(n?' · 劈散 '+n+' 只':''),'#fff3c4',24)}S.brkPend=S.maxR;queuePick('破境奖励');
   toast('破境！踏入'+REALMS[S.maxR],'气血 +30%、上限提升，剑意 +15%，天雷护体');S.flash=0;S.fxBreak=1.2;S.shake=10;
-  if(S.path==='fa'){S.mp=mpMax();faEvoPop()}sfx(523,.15);setTimeout(()=>sfx(659,.15),120);setTimeout(()=>sfx(784,.15),240);setTimeout(()=>sfx(1046,.35),360);renderUps();
+  if(S.path==='fa'){S.mp=mpMax();faEvoPop()}if(S.path==='ti')tiEvoPop();sfx(523,.15);setTimeout(()=>sfx(659,.15),120);setTimeout(()=>sfx(784,.15),240);setTimeout(()=>sfx(1046,.35),360);renderUps();
 }
 function dropCoins(x,y,base){
   const v=base*(1+Math.min(S.t,600)/60)*S.coinMul;   // value per drop stops growing after 10 min, so long runs don't break the shop
@@ -1279,7 +1344,7 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
     S.regroup=Math.max(0,(S.regroup||0)-dt);
     S.spawnR-=dt;if(S.spawnR<=0&&!(S.regroup>0)){spawnZombies();S.spawnR=(S.bossAlive?1.4:1)*rand(.85,1.15)*zIv()}
     const sg=inSurge();
-    if(sg&&!S.surgeOn){S.surgeOn=true;S.Dref=Math.max(S.Dref,refDps());S.maxWave=Math.max(S.maxWave,waveK()+1);{const tr=traitOf(waveK());toast('第 '+(waveK()+1)+' 波妖潮'+(tr?' · '+TRAITS[tr].n:''),tr?TRAITS[tr].d+'（克制：'+TRAITS[tr].c.map(x=>PNAME[x]).join('、')+'）':'撑住 20 秒，多去右道清怪')}sfx(140,.5,'sawtooth',.06,.6)}
+    if(sg&&!S.surgeOn){S.surgeOn=true;S.Dref=Math.max(S.Dref,refDps());if(!(S.rwF<1)){(S.cks=S.cks||[]).push({w:waveK()+1,f:S.Dref*(S.M||1),t:S.t});if(S.cks.length>60)S.cks.shift()}S.maxWave=Math.max(S.maxWave,waveK()+1);{const tr=traitOf(waveK());toast('第 '+(waveK()+1)+' 波妖潮'+(tr?' · '+TRAITS[tr].n:''),tr?TRAITS[tr].d+'（克制：'+TRAITS[tr].c.map(x=>PNAME[x]).join('、')+'）':'撑住 20 秒，多去右道清怪')}sfx(140,.5,'sawtooth',.06,.6)}
     for(const k of ['surge','bomb','bolt','shield','freeze'])if(has(k)&&!S.unl[k]){S.unl[k]=1;if(k!=='surge')toast('解锁新技能：'+TIPS[k].t,'在右下角，点一下就能用')}
     if(!sg&&S.surgeOn){S.surgeOn=false;queuePick('撑过第 '+(waveK()+1)+' 波');const add=S.bombs<bombCap();if(add)S.bombs++;toast('妖潮退去',add?'雷劫符 +1，抓紧刷兵':'抓紧刷兵');sfx(520,.12);setTimeout(()=>sfx(780,.18),90)}
     if(sg&&S.bossK<waveK()&&wph()>=MOW+8){S.bossK=waveK();spawnBoss()}
@@ -1296,7 +1361,7 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
     if(k){S.fxGourd={pts,t:.9,k};sfx(700,.2,'sine',.05,.4);if(all){ftext(mid+roadW/4,H*.35,'紫金葫芦 · 吞天！',C.gold,24);S.fxBomb=.4}else ftext(S.x,squadY-150,'紫金葫芦 · 收 '+k+' 只',C.gold,18)}}}
   if(S.fb.bell>0){S.bellT-=dt;S.bellGuard=Math.max(0,(S.bellGuard||0)-dt);if(S.bellT<=0){const L=S.fb.bell;S.bellT=12-L;const push=H*(.05+.025*L);
     for(const z of S.objs)if(z.k==='z'&&!z.dead)z.y=Math.max(-40,z.y-push*(z.boss?.4:1));if(L>=3)S.freezeT=Math.max(S.freezeT,.6+.2*L);S.fxBell=.9;{let n=0;for(const z of S.objs)if(z.k==='z'&&!z.dead&&z.y>0)n++;ftext(S.x,squadY-150,'镇魂钟 · 震退 '+n+' 只'+(L>=3?' · 震晕':''),C.gold,18)}sfx(300,.5,'sine',.06,.8)}}
-  if(S.mech>0){S.mechT-=dt;if(S.mechT<=0){S.mechT=1.3;const mx=mechX();
+  if(false&&S.mech>0){S.mechT-=dt;if(S.mechT<=0){S.mechT=1.3;const mx=mechX();
     const sh=S.mech>=8?[-16,0,16]:S.mech>=4?[-12,12]:[0];for(const ox of sh)S.bullets.push({x:mx+ox,y:squadY-34,vx:0,vy:-650,dmg:dps()*(.2+.03*S.mech)/sh.length,p:0,shell:true});burst(mx,squadY-36,'#ffb347',6,90,3);sfx(150,.12,'square',.04,.5)}}
   S.fireT-=dt;let guard=0;
   while(S.fireT<=0&&guard++<5){const it=fire();if(!it){S.fireT=.1;break}S.fireT+=it}
@@ -1324,7 +1389,8 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
             if(b.shell){const R=46+4*S.mech;
               for(const z of S.objs){if(z.k!=='z'||z.dead)continue;const ex=z.x-b.x,ey=z.y-b.y;if(ex*ex+ey*ey<(R+z.r)*(R+z.r)){const dd=b.dmg*dmgMul(z);dNote('pet',Math.min(z.hp,dd));z.hp-=dd;z.hit=.08;if(z.hp<=0){z.dead=true;killZ(z)}}}
               burst(b.x,b.y,'#ffb347',26,260,4);burst(b.x,b.y,'#fff3c4',10,140,3);S.shake=Math.min(10,S.shake+2);dead=true;break}
-            {const dd=b.dmg*dmgMul(o);dNote('atk',Math.min(o.hp,dd));o.hp-=dd}o.hit=.06;
+            {const dd=b.dmg*dmgMul(o);dNote(b.big?'jj':'atk',Math.min(o.hp,dd));o.hp-=dd;
+             if(tiEvo('splash'))for(const q of S.objs){if(q===o||q.k!=='z'||q.dead)continue;const ex=q.x-o.x,ey=q.y-o.y;if(ex*ex+ey*ey<900){const d2=b.dmg*.3*dmgMul(q);dNote('atk',Math.min(q.hp,d2));q.hp-=d2;q.hit=.05;if(q.hp<=0){q.dead=true;killZ(q)}}}}o.hit=.06;
             if(o.hp<=0){o.dead=true;if(!o.boss)kdNote(o.y/cLine());killZ(o)}
             if(b.p>0){b.p--;b.dmg*=.8}else dead=true;
             break;
@@ -1344,6 +1410,8 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
     if(o.dead)continue;
     if(o.k==='z'){
       if(o.y+o.r>=line&&(o.boss||o.type==='elite')&&S.fb.bell>=5&&!(S.bellGuard>0)&&S.shieldT<=0){S.bellGuard=25;o.y=line*.4;S.fxBell=.8;ftext(o.x,line-40,'镇魂钟：镇住了！',C.gold,20);sfx(260,.6,'sine',.07,.7);continue}
+      if(o.y+o.r>=line&&S.path==='ti'&&tiLv('gang')&&!o.ganged&&S.shieldT<=0){o.ganged=true;const L=tiLv('gang'),dd=Math.min(o.hp,dps()/pathAtk()*(.8+.5*L)*psG()*dmgMul(o)*(o.boss?.3:1));dNote('gang',dd);o.hp-=dd;o.hit=.12;burst(o.x,o.y,'#ffd677',12,200,3);
+        if(o.hp<=0){o.dead=true;killZ(o);continue}o.y-=o.boss?H*.08:40+8*L;(S.fxGang=S.fxGang||[]).push({x:o.x,y:line,t:.35});continue}
       if(o.y+o.r>=line){o.dead=true;burst(o.x,o.y,o.boss?C.boss:C.zomb,o.boss?40:10,200);leakHit(o);if(o.boss)S.bossAlive=false}
     } else if(o.y>=line){
       o.dead=true;
@@ -1367,13 +1435,15 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
    else if(rr.r<S.rR)toast('境界跌落','跌回 '+rName(rr));
    S.rcode=code;S.rR=rr.r;S.peakCode=Math.max(S.peakCode,code);S.peakR=Math.max(S.peakR,rr.r);
    {const L=layersOf(S.count);if(!(S.peakL>=L))S.peakL=L;
-    if(S.hpF<=0&&!S.won){S.hpF=0;S.collapse=true;endRun(true);return}
+    if(S.hpF<=0&&!S.won&&tiEvo('immortal')&&S.immR!==S.maxR){S.immR=S.maxR;S.hpF=.3;S.lastHp=.3;toast('不灭金身','气血归零时保住 30%（每个大境界一次）');S.fxBreak=Math.max(S.fxBreak||0,.8);S.flash=.3;heal(0,'不灭金身')}
+    if(S.hpF<=0&&!S.won){S.hpF=0;deathOffer();return}
     if(S.hpF<.5&&!S.hpTold){S.hpTold=true;toast('气血过半','气血不会自己回：破境、斩 Boss 后整顿、选「淬体精进」才回')}}
    if(S.bottle&&!S.bottleShown){S.bottleShown=true;if(S.maxR>=TOPR)toast('圣人九层圆满','下一波斩「天道」，即可证道通关');else toast('瓶颈：'+REALMS[S.maxR]+'九层圆满','斩本波 Boss（心魔）或吃破境丹才能破境')}}
   S.bankT-=dt;if(S.bankT<=0){S.bankT=8;bankCoins()}
   for(const k of ['fire','ice','sword'])S[k+'Cd']=Math.max(0,(S[k+'Cd']||0)-dt);S.slowT=Math.max(0,(S.slowT||0)-dt);
   if(S.fxFires&&S.fxFires.length){for(const f of S.fxFires){f.t+=dt/(f.crow?.4:.3);if(f.t>=1)fireHit(f)}S.fxFires=S.fxFires.filter(f=>f.t<1)}
-  faTick(dt);if(S.kdEma!=null)S.kdEma+=(.2-S.kdEma)*Math.min(1,dt*.05);if(S.dsrc){const q=Math.exp(-dt/60);for(const k in S.dsrc)S.dsrc[k]*=q}
+  if(S.rwF<1){S.rwF=Math.min(1,S.rwF*Math.exp((S.rwK||.002)*dt));if(S.rwF>=1){S.rwF=1;toast('重修结束','敌人回到你倒下时的强度')}}
+  faTick(dt);tiTick(dt);petTick(dt);petOrbTick(dt);if(S.fxPet){for(const f of S.fxPet)f.t-=dt;S.fxPet=S.fxPet.filter(f=>f.t>0)}if(S.kdEma!=null)S.kdEma+=(.2-S.kdEma)*Math.min(1,dt*.05);if(S.dsrc){const q=Math.exp(-dt/60);for(const k in S.dsrc)S.dsrc[k]*=q}
   if(S.swordT>0){S.swordT-=dt;S.swordTick-=dt;if(S.swordTick<=0){S.swordTick=S.swordPer||.2;let zs=S.objs.filter(z=>z.k==='z'&&!z.dead&&z.y>0);if(faEvo('sword')){const big=zs.filter(z=>z.boss||z.type==='elite');if(big.length&&Math.random()<.6)zs=big}
     if(zs.length){const z=zs[ri(0,zs.length-1)],before=S.kills;skillPool(S.swordHit||3*skPow()/15,q=>q===z,S.path==='fa'?.015:.01,'sword');S.swordKill+=S.kills-before;(S.fxSwords=S.fxSwords||[]).push({x:z.x,y:z.y,t:.25})}}
     if(S.swordT<=0&&S.swordKill)ftext(mid+roadW/4,H*.36,'万剑诀 · 斩 '+S.swordKill+' 只','#d8f4ff',18)}
@@ -1598,7 +1668,7 @@ function drawZ(o){
 }
 const BT=[['120,230,255',3],['255,225,90',4],['255,150,50',5],['225,110,255',6]];
 function drawBullets(){
-  const tier=S.lv.dmg>=11?3:S.lv.dmg>=7?2:S.lv.dmg>=3?1:0,[rgb,lw]=BT[tier],tr=S.pierce>0?.035+.01*S.pierce:.018;
+  const tier=S.lv.dmg>=11?3:S.lv.dmg>=7?2:S.lv.dmg>=3?1:0,[rgb0,lw]=BT[tier],rgb=tiEvo('jin')?'255,214,119':rgb0,tr=S.pierce>0?.035+.01*S.pierce:.018;
   ctx.globalCompositeOperation='lighter';ctx.lineCap='round';
   if(tier>=2){ctx.strokeStyle='rgba('+rgb+',.25)';ctx.lineWidth=lw*2.6;ctx.beginPath();
     for(const b of S.bullets){if(b.shell)continue;ctx.moveTo(b.x,b.y);ctx.lineTo(b.x-b.vx*tr,b.y-b.vy*tr)}ctx.stroke()}
@@ -1608,6 +1678,8 @@ function drawBullets(){
   ctx.strokeStyle='rgba(255,255,255,.9)';ctx.lineWidth=Math.max(1.2,lw*.4);ctx.beginPath();
   for(const b of S.bullets){if(b.shell)continue;ctx.moveTo(b.x,b.y);ctx.lineTo(b.x-b.vx*tr*.5,b.y-b.vy*tr*.5)}
   ctx.stroke();
+  for(const b of S.bullets){if(!b.big)continue;ctx.save();ctx.translate(b.x,b.y);ctx.fillStyle='rgba(255,214,119,.35)';ctx.beginPath();ctx.ellipse(0,8,9,26,0,0,6.283);ctx.fill();
+    ctx.fillStyle='#fff3c4';ctx.beginPath();ctx.moveTo(0,-20);ctx.lineTo(5,-8);ctx.lineTo(4,22);ctx.lineTo(-4,22);ctx.lineTo(-5,-8);ctx.closePath();ctx.fill();ctx.fillStyle='#ffc23a';ctx.fillRect(-9,22,18,3.5);ctx.fillRect(-2,25,4,8);ctx.restore()}
   for(const b of S.bullets){if(!b.shell)continue;
     ctx.fillStyle='rgba(255,140,40,.35)';ctx.beginPath();ctx.arc(b.x,b.y+10,10,0,6.28);ctx.fill();
     ctx.fillStyle='#ffb347';ctx.beginPath();ctx.arc(b.x,b.y,5.5,0,6.28);ctx.fill();ctx.fillStyle='#fff3c4';ctx.beginPath();ctx.arc(b.x,b.y-1,2.5,0,6.28);ctx.fill()}
@@ -1873,8 +1945,9 @@ function drawSquad(){
       if(R>=11){ctx.fillStyle='#ffd34a';ctx.fillRect(x-1.2,y-7.6,2.4,1.2)}
     }
   }
-  {const pl=Math.min(petCount(),S.rR||0);if(pl>=1)drawFaxiang(ctx,mechX(),squadY-2,.9+.03*pl,S.t,pl)}
-  drawHero(ctx,S.x,squadY+2,S.rR,S.t,1.35);
+  {const c=petCur(),P=S.pet||petHome(),au=S.path==='ti'?'255,200,80':S.path==='fa'?'120,190,255':null;if(au){ctx.fillStyle='rgba('+au+',.18)';ctx.beginPath();ctx.ellipse(P.x,P.y+4,22,7,0,0,6.283);ctx.fill()}
+   ctx.save();if(S.pet&&S.pet.face<0){ctx.translate(P.x,0);ctx.scale(-1,1);ctx.translate(-P.x,0)}drawFaxiang(ctx,P.x,P.y,.85+.02*c.i,S.t,c.i+1);ctx.restore()}
+  drawPathBack(ctx,S.x,squadY+2,S.rR,S.t);drawHero(ctx,S.x,squadY+2,S.rR,S.t,1.35);drawPathFront(ctx,S.x,squadY+2,S.rR,S.t);
   const by=squadY-heroTop(S.rR)*1.35-8,txt=(S.life>1?CNN(S.life)+'世 · ':'')+rName(realmOf(S.count));
   ctx.font='bold 16px '+CN;const tw=ctx.measureText(txt).width+20;
   ctx.fillStyle='rgba(10,14,22,.88)';rr(S.x-tw/2,by-14,tw,28,14);ctx.fill();
@@ -1916,7 +1989,7 @@ const TIPS={
   path:{t:'体修 / 法修',d:'踏入筑基时二选一，选了就不能改。体修靠剑气硬推：剑气伤害 ×1.5、受伤 −30%、气血上限 ×1.3、剑雨和破甲上限各 +1，但技能冷却 +40%、威力 −30%。法修靠法术：七种法术立刻全会，用「灵力」施法（灵力一直在回，法术间隔很短）；剑气前期 ×0.7，越往后越弱，到'+REALMS[10]+'只剩 ×0.1；三选一会出现法术升级和被动法术（火鸦、护法飞剑、雷云，自动清怪）；'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时各进化一种法术。两条路的数值都跟着境界涨。'},
   save:{t:'存档与长线修炼',d:'这是一场长线修炼：前几个大境界十几分钟，越往后越久，修到圣人要几十个小时。随时点暂停 →「存档退出」，下次从原地接着打；平时每 30 秒也会自动存。只有气血耗尽，这一局才结束。'},
   hp:{t:'气血',d:'左上角的红条。小妖冲线扣 1.2%，石甲妖 2.5%，噬元魔 6%，Boss 20%～40%（境界越高越多），同时少掉一点修为。气血不会自己回，只有破境（+30%）、斩 Boss 后整顿（+15%）、选「淬体精进」（+30%）才回。气血归零，这局就结束。'},
-  mech:{t:'灵宠',d:'踏入炼体就有灵宠跟着你，每个大境界换一只更神异的（灵猫 → 白狐 → … → 祖龙）。到了筑基，灵宠开始定时轰击妖魔，境界越高轰得越狠。'}
+  mech:{t:'灵宠',d:'在主页「灵宠」里花总灵石收服、培养灵宠，上场只带一只，任何流派都能带。灵宠会自己找妖打：扑咬、法球、俯冲、镇守、吐息、翻海，各有打法；等级越高越强，越珍稀的灵宠底子越好。灵宠的战力不会让敌人变强，灵石花下去就是实打实变强。暂停页也能直接培养。'},
 };
 const TUT=[
   {gap:3.4,f:()=>tutRow(['add',5],['add',12])},
@@ -2005,7 +2078,7 @@ const COACH={
   trap:{t:'右道坏门：侧身躲开',bad:1,slow:.5,max:2.2},zou:{t:'走火入魔：撞了会变慢',bad:1,slow:.5,max:2.2},
   jie:{t:'天劫：集火劈开它！',s:'劈开冲过去＝修为 +1.2 层；劈不开就躲到右道',slow:.4,max:4},vein:{t:'灵脉：破锁才能吃，收益约 6 倍',slow:.5,max:2.4},art:{t:'剑诀：开锁，学一招',slow:.5,max:2.4},
   fb:{t:'法宝：开锁，自动帮你打',slow:.5,max:2.4},fu:{t:'符箓：技能多用一次',slow:.5,max:2.2},brk:{t:'破境丹：直接破境！',slow:.5,max:2.4},
-  bottle:{t:'九层满了',s:'斩掉这波 Boss 才能破境',banner:1,max:2.6},mech:{t:'灵宠助战！',s:'会定时帮你轰击妖魔',banner:1,max:2.2},
+  bottle:{t:'九层满了',s:'斩掉这波 Boss 才能破境',banner:1,max:2.6},mech:{t:'灵宠助战！',s:'它会自己找妖打',banner:1,max:2.2},
   sk_bomb:{t:'新技能：雷劫符',s:'先留着，该用时我会叫你',slow:.35,max:2.6},sk_bolt:{t:'新技能：掌心雷',s:'先留着，该用时我会叫你',slow:.35,max:2.6},
   sk_shield:{t:'新技能：金钟罩',s:'先留着，该用时我会叫你',slow:.35,max:2.6},sk_freeze:{t:'新技能：定身符',s:'先留着，该用时我会叫你',slow:.35,max:2.6},
   hex:{t:'咒怨妖：先打它！',s:'读条满了，你的剑速会变慢',slow:.45,max:3},guard:{t:'护法妖：先打它',s:'圈里的妖受伤减少',slow:.45,max:3},
@@ -2067,7 +2140,7 @@ function coachScan(dt){
   for(const k of ['bomb','bolt','shield','freeze'])if(has(k)&&!cSeen('sk_'+k)){if(startCoach('sk_'+k))return}
   if(S.surgeOn&&!cSeen('surge')&&wph()<MOW+3){startCoach('surge');return}
   if(S.bottle&&!cSeen('bottle')){startCoach('bottle');return}
-  if(S.mech>0&&!cSeen('mech')){startCoach('mech');return}
+  if(S.pet&&S.pet.hits>0&&!cSeen('mech')){startCoach('mech');return}
   for(const o of S.objs){
     if(o.dead||o.y<H*.16||o.y>line*.72)continue;
     let key;
@@ -2141,9 +2214,10 @@ function effectPop(key,title,line,icon,bad){
   const s=slot();if(!s||s.seen['e_'+key])return;s.seen['e_'+key]=true;commit(Save.cur);
   pop={title,line,icon,bad,t:0,dur:1.9};
 }
-function tScale(){if(pop&&pop.t<1.1)return .12;if(coach&&coach.C.slow)return coach.C.slow;return 1}
+function tScale(){if(S&&S.pathAnim)return .04;if(pop&&pop.t<1.1)return .12;if(coach&&coach.C.slow)return coach.C.slow;return 1}
 function drawCoach(dt){
   if(!S||!running)return;
+  if(S.pathAnim){S.pathAnim.t+=dt;drawPathAnim(S.pathAnim);if(S.pathAnim.t>2.7)S.pathAnim=null}
   if(pop){pop.t+=dt;if(pop.t>pop.dur)pop=null}
   if(pop){const a=Math.min(1,pop.t/.18,(pop.dur-pop.t)/.3),sc=.7+.3*Math.min(1,pop.t/.18),cx=W/2,cy=H*.42;
     ctx.save();ctx.globalAlpha=a;ctx.fillStyle='rgba(0,0,0,.35)';ctx.fillRect(0,0,W,H);ctx.translate(cx,cy);ctx.scale(sc,sc);
@@ -2417,6 +2491,54 @@ function faTick(dt){   // 每帧：灵力回复、火海、被动法术
   if(S.fxOrb){for(const f of S.fxOrb)f.t-=dt;S.fxOrb=S.fxOrb.filter(f=>f.t>0)}
   if(S.fxClouds){for(const f of S.fxClouds)f.t-=dt;S.fxClouds=S.fxClouds.filter(f=>f.t>0)}
 }
+function petHome(){return {x:mechX(),y:squadY-2}}
+function petZs(){return S.objs.filter(z=>z.k==='z'&&!z.dead&&z.y>20)}
+function denseZ(R){const zs=petZs();let best=null,bn=-1;for(const z of zs){let n=z.y/H;for(const q of zs)if((q.x-z.x)**2+(q.y-z.y)**2<R*R)n++;if(n>bn){bn=n;best=z}}return best}
+function nearZ(pref){const zs=petZs();if(pref){const e=zs.filter(z=>z.type==='elite'||z.boss).sort((a,b)=>b.y-a.y)[0];if(e&&e.y>H*.2)return e}return zs.sort((a,b)=>b.y-a.y)[0]}
+function petHit(x,y,R,pool,cap,kb){const n=skillPool(pool,q=>(q.x-x)**2+(q.y-y)**2<(R+q.r)*(R+q.r),cap,'pet');if(kb)for(const z of S.objs)if(z.k==='z'&&!z.dead&&!z.boss&&(z.x-x)**2+(z.y-y)**2<(R+z.r)**2)z.y=Math.max(-30,z.y-kb);
+  (S.fxPet=S.fxPet||[]).push({x,y,R,t:.45,k:PET_ROLE[petCur().i]});S.pet.hits=(S.pet.hits||0)+1;return n}
+function petTick(dt){   // 灵宠自主作战：找目标 → 飞过去出手 → 回到身边
+  if(S.tut)return;const hm=petHome();const P=S.pet||(S.pet={x:hm.x,y:hm.y,st:'home',cd:1.5,face:1});const c=petCur(),role=PET_ROLE[c.i],RD=PET_RD[role],rate=petRate()*(S.path?1:1);
+  const base=dps()/pathAtk(),pool=base*rate*RD.p;P.cd-=dt;
+  const mv=(tx,ty,sp)=>{const dx=tx-P.x,dy=ty-P.y,d=Math.hypot(dx,dy);if(d>1){const st=Math.min(d,sp*dt);P.x+=dx/d*st;P.y+=dy/d*st;if(Math.abs(dx)>2)P.face=dx>=0?1:-1}return d<10};
+  if(P.st==='home'){mv(hm.x,hm.y,520);if(P.cd>0)return;
+    if(role==='orb'){const zs=petZs().sort((a,b)=>b.y-a.y).slice(0,3);if(!zs.length){P.cd=.4;return}for(const z of zs)(S.petOrbs=S.petOrbs||[]).push({x:P.x,y:P.y-14,tg:z,pool:pool/zs.length});P.cd=RD.p;sfx(900,.06,'sine',.03,1.5);return}
+    let tx,ty,tg=null;
+    if(role==='claw'){tg=nearZ(true);if(tg){tx=tg.x;ty=tg.y}}
+    else if(role==='stomp'){const z=nearZ(false);if(z&&z.y>cLine()*.45){tx=clamp(z.x,mid+20,roadX+roadW-20);ty=cLine()-40}}
+    else{const z=denseZ(role==='slam'?120:role==='breath'?100:60);if(z){tx=z.x;ty=role==='breath'?z.y+60:role==='slam'?z.y-50:z.y}}
+    if(tx==null){P.cd=.4;return}P.st='go';P.tg=tg;P.tx=tx;P.ty=ty;P.gt=0;return}
+  if(P.st==='go'){P.gt+=dt;if(P.tg){if(P.tg.dead){const n=nearZ(true);if(!n){P.st='back';return}P.tg=n}P.tx=P.tg.x;P.ty=P.tg.y}
+    if(mv(P.tx,P.ty,role==='claw'?820:640)||P.gt>2.2){
+      if(role==='claw'){if(P.tg&&!P.tg.dead)petHit(P.tg.x,P.tg.y,6,pool,.04,0)}
+      else if(role==='dive')petHit(P.x,P.y,60,pool,.03,0);
+      else if(role==='stomp')petHit(P.x,P.y-20,90,pool*.85,.03,26);
+      else if(role==='breath')petHit(P.x,P.y-60,100,pool,.03,0);
+      else if(role==='slam'){petHit(P.x,P.y+50,120,pool*1.05,.03,0);S.shake=Math.min(10,S.shake+3)}
+      sfx(role==='claw'?520:260,.12,'triangle',.04,.6);P.st='back';P.cd=RD.p}
+    return}
+  if(P.st==='back'){if(mv(hm.x,hm.y,700))P.st='home'}
+}
+function petOrbTick(dt){if(!S.petOrbs||!S.petOrbs.length)return;for(const o of S.petOrbs){if(o.tg.dead){o.done=true;continue}const dx=o.tg.x-o.x,dy=o.tg.y-o.y,d=Math.hypot(dx,dy),st=560*dt;
+  if(d<=st+o.tg.r){skillPool(o.pool,q=>q===o.tg,.03,'pet');o.done=true;burst(o.tg.x,o.tg.y,'#bfe0ff',6,120,3);if(S.pet)S.pet.hits=(S.pet.hits||0)+1}else{o.x+=dx/d*st;o.y+=dy/d*st}}S.petOrbs=S.petOrbs.filter(o=>!o.done)}
+/* ===== 体修特色（11-01 23:16）：被动 + 升级 + 大境界进化；数值靠剑气硬推 ===== */
+const tiLv=k=>(S&&S.path==='ti'&&S.ti&&S.ti[k])||0;
+const tiBuild=()=>!S||S.path!=='ti'?1:(1+.04*(tiLv('heavy')+tiLv('lian')+tiLv('pojun')))*(1+.05*tiLv('body'))*(1+.06*(tiLv('gang')+tiLv('zhan')+tiLv('jj')));
+const TI_EVO={jin:{r:4,n:'金光剑气',e:'✨',d:'剑气多穿一只妖，化作金光'},splash:{r:5,n:'剑罡',e:'💥',d:'剑气命中时，溅射周围的妖（30% 伤害）'},body:{r:6,n:'不坏金身',e:'🛡',d:'冲线受伤再降 15%'},
+  wan:{r:7,n:'万剑齐发',e:'⚔️',d:'每 10 秒向前扇形齐射 12 道剑气'},immortal:{r:8,n:'不灭金身',e:'🌟',d:'每个大境界一次：气血归零时保住 30%'}};
+const tiEvo=k=>!!S&&S.path==='ti'&&!!TI_EVO[k]&&S.maxR>=TI_EVO[k].r;
+const TI_PS={gang:{n:'剑罡护体',e:'🔰',d:L=>'冲到防线的妖先被剑罡重创（约 '+(.8+.5*L).toFixed(1)+' 秒火力）并震退，Boss 也会被弹开一段'},
+  zhan:{n:'战意',e:'🔥',d:L=>'气血越低剑气越狠：气血每少 10%，伤害 +'+(3*L)+'%（空血时 +'+(30*L)+'%）'},
+  jj:{n:'剑气纵横',e:'🗡',d:L=>'每 '+(8-L)+' 轮剑气多射出一把穿透巨剑（约 3 倍伤害，穿透全部）'}};
+const TI_UPD={heavy:'重剑：剑气伤害 +12%',lian:'连斩：剑速 +10%',body:'金身：气血上限 +10%',pojun:'破军：对噬元魔和 Boss 伤害 +20%'};
+function tiTick(dt){
+  if(S.path!=='ti')return;
+  if(tiEvo('body')&&!S.tiBody){S.tiBody=true;S.armor*=.85}
+  if(tiEvo('wan')){S.wanT=(S.wanT==null?10:S.wanT)-dt;if(S.wanT<=0){S.wanT=10;const y=squadY-sw()*.18-14,dmg=dps()*.25;for(let i=0;i<12;i++){const a=(i/11-.5)*1.2;S.bullets.push({x:S.x,y,vx:Math.sin(a)*900,vy:-Math.cos(a)*900,dmg,p:S.pierce+1,big:false})}
+    ftext(S.x,squadY-130,'万剑齐发','#ffe08a',18);sfx(700,.15,'sawtooth',.04,1.6)}}
+  if(S.fxGang){for(const f of S.fxGang)f.t-=dt;S.fxGang=S.fxGang.filter(f=>f.t>0)}
+}
+function tiEvoPop(){if(S.path!=='ti')return;for(const k in TI_EVO){const v=TI_EVO[k];if(v.r===S.maxR){effectPop('evo_ti_'+k,'体修进化 · '+v.n,v.d,{e:v.e});toast('体修进化：'+v.n,v.d)}}}
 function faEvoPop(){   // 刚到某个大境界：法术进化提示
   if(S.path!=='fa')return;for(const k in FA_EVO){const v=FA_EVO[k];if(v.r===S.maxR){effectPop('evo_'+k,'法术进化 · '+v.n,v.d,{e:v.e});toast('法术进化：'+v.n,v.d)}}
 }
@@ -2462,6 +2584,29 @@ function fabaoBar(){   // 法宝状态：左下角小图标 + 冷却圈，触发
     if(per){ctx.strokeStyle=ready?'#fff3a0':'rgba(255,214,119,.85)';ctx.lineWidth=ready?3.5:2.5;ctx.beginPath();ctx.arc(x,y,17,-Math.PI/2,-Math.PI/2+6.283*(1-clamp(left/per,0,1)));ctx.stroke()}
     outlined('Lv'+L,x,y+22,10,'#ffe6a0',CN);x+=42}
 }
+/* 流派形象：体修金身罡气 + 背后重剑；法修脚下法阵 + 环绕符箓（叠在每个境界的形象上） */
+function drawPathBack(g,x,y,r,t){if(!S||!S.path)return;const ht=heroTop(r)*1.35;
+  if(S.path==='ti'){const p=.5+.5*Math.sin(t*3),gr=g.createRadialGradient(x,y-ht*.45,4,x,y-ht*.45,ht*.75);gr.addColorStop(0,'rgba(255,214,119,'+(.30+.1*p)+')');gr.addColorStop(1,'rgba(255,170,40,0)');g.fillStyle=gr;g.beginPath();g.ellipse(x,y-ht*.45,ht*.55,ht*.75,0,0,6.283);g.fill();
+    g.save();g.translate(x-14,y-ht*.55);g.rotate(-.5);g.fillStyle='#e9eef5';g.fillRect(-3,-ht*.55,6,ht*.75);g.fillStyle='#ffd677';g.fillRect(-9,ht*.2,18,4);g.fillStyle='#8a5a2a';g.fillRect(-2.5,ht*.2+4,5,12);g.restore();
+    g.strokeStyle='rgba(255,214,119,'+(.35+.25*p)+')';g.lineWidth=2;g.beginPath();g.ellipse(x,y+2,ht*.42,ht*.12,0,0,6.283);g.stroke()}
+  else{const rot=t*.6;g.save();g.translate(x,y+2);g.scale(1,.32);g.strokeStyle='rgba(120,190,255,.75)';g.lineWidth=2.5;g.beginPath();g.arc(0,0,ht*.5,0,6.283);g.stroke();g.beginPath();g.arc(0,0,ht*.36,0,6.283);g.stroke();
+    g.rotate(rot);for(let i=0;i<6;i++){const a=i*6.283/6;g.beginPath();g.moveTo(Math.cos(a)*ht*.5,Math.sin(a)*ht*.5);g.lineTo(Math.cos(a+2.094)*ht*.5,Math.sin(a+2.094)*ht*.5);g.stroke()}g.restore()}}
+function drawPathFront(g,x,y,r,t){if(!S||S.path!=='fa')return;const ht=heroTop(r)*1.35;
+  for(let i=0;i<3;i++){const a=t*1.6+i*2.094,px=x+Math.cos(a)*ht*.42,py=y-ht*.55+Math.sin(a)*ht*.12;if(Math.sin(a)<0)continue;g.save();g.translate(px,py);g.rotate(Math.sin(t*2+i)*.2);
+    g.fillStyle='#ffe9a8';g.fillRect(-4,-8,8,16);g.strokeStyle='#d23a2a';g.lineWidth=1.4;g.beginPath();g.moveTo(-2,-5);g.lineTo(2,-1);g.lineTo(-2,3);g.lineTo(2,6);g.stroke();g.restore()}}
+function drawPathAnim(A){   // 选流派后的 2.7 秒动画（游戏几乎静止）
+  const u=A.t,hx=S.x,hy=squadY,a=Math.min(1,u/.3,(2.7-u)/.4);ctx.save();ctx.globalAlpha=Math.max(0,a);
+  ctx.fillStyle='rgba(6,8,16,.45)';ctx.fillRect(0,0,W,H);
+  if(A.k==='ti'){const w=40+60*Math.min(1,u/.6),gr=ctx.createLinearGradient(hx-w,0,hx+w,0);gr.addColorStop(0,'rgba(255,200,80,0)');gr.addColorStop(.5,'rgba(255,230,150,.75)');gr.addColorStop(1,'rgba(255,200,80,0)');ctx.fillStyle=gr;ctx.fillRect(hx-w,0,w*2,hy);
+    for(let i=0;i<3;i++){const rr=((u*1.2+i*.33)%1)*H*.7;ctx.strokeStyle='rgba(255,214,119,'+(1-rr/(H*.7))+')';ctx.lineWidth=5;ctx.beginPath();ctx.arc(hx,hy,rr,Math.PI,0);ctx.stroke()}
+    for(let i=0;i<14;i++){const an=i/14*6.283+u;ctx.strokeStyle='rgba(255,240,190,.5)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(hx+Math.cos(an)*40,hy-60+Math.sin(an)*40);ctx.lineTo(hx+Math.cos(an)*(90+40*Math.sin(u*4+i)),hy-60+Math.sin(an)*(90+40*Math.sin(u*4+i)));ctx.stroke()}
+    outlined('体修 · 金身初成',W/2,H*.32,32,'#ffd677',CN);outlined('剑气 ×1.5 · 更抗打 · 剑气会随境界进化',W/2,H*.32+38,15,'#fff3c4',CN)}
+  else{const R0=40+H*.25*Math.min(1,u/.8);ctx.save();ctx.translate(hx,hy);ctx.scale(1,.38);ctx.rotate(u*1.5);ctx.strokeStyle='rgba(140,200,255,.9)';ctx.lineWidth=4;for(const k of [1,.75,.5]){ctx.beginPath();ctx.arc(0,0,R0*k,0,6.283);ctx.stroke()}
+    for(let i=0;i<8;i++){const an=i*6.283/8;ctx.beginPath();ctx.moveTo(Math.cos(an)*R0,Math.sin(an)*R0);ctx.lineTo(Math.cos(an+2.356)*R0,Math.sin(an+2.356)*R0);ctx.stroke()}ctx.restore();
+    const bx=W-90,by=H-100;for(let i=0;i<7;i++){const v=clamp((u-.5-i*.12)/.9,0,1),an=i/7*6.283+u*2,sx=hx+Math.cos(an)*70,sy=hy-70+Math.sin(an)*30,px=sx+(bx-sx)*v*v,py=sy+(by-sy)*v*v-Math.sin(v*Math.PI)*80;
+      ctx.save();ctx.translate(px,py);ctx.rotate(an);ctx.fillStyle='#ffe9a8';ctx.fillRect(-6,-11,12,22);ctx.strokeStyle='#d23a2a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-3,-7);ctx.lineTo(3,-1);ctx.lineTo(-3,4);ctx.lineTo(3,8);ctx.stroke();ctx.restore()}
+    outlined('法修 · 法力通玄',W/2,H*.32,32,'#9fd0ff',CN);outlined('七法齐开 · 灵力施法 · 法术会随境界进化',W/2,H*.32+38,15,'#e6f4ff',CN)}
+  ctx.restore()}
 function drawSkillFx(){
   if(S.fxFires)for(const f of S.fxFires){const u=Math.min(1,f.t),x=f.x0+(f.x-f.x0)*u,y=f.y0+(f.y-f.y0)*u-Math.sin(u*Math.PI)*(f.crow?90:60),sc=f.crow?.7:1;
     ctx.fillStyle=f.crow?'rgba(255,110,40,.4)':'rgba(255,160,60,.35)';ctx.beginPath();ctx.arc(x,y,18*sc,0,6.283);ctx.fill();
@@ -2469,6 +2614,11 @@ function drawSkillFx(){
     ctx.strokeStyle='rgba(255,120,40,.5)';ctx.lineWidth=2;ctx.setLineDash([4,4]);ctx.beginPath();ctx.arc(f.x,f.y,f.R||85,0,6.283);ctx.stroke();ctx.setLineDash([])}
   if(S.fields)for(const f of S.fields){const a=Math.min(1,f.t/3);ctx.fillStyle='rgba(255,90,30,'+(.18+.08*Math.sin(S.t*9))*a+')';ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,6.283);ctx.fill();
     for(let i=0;i<3;i++){const ax=f.x+rand(-f.r*.7,f.r*.7),ay=f.y+rand(-f.r*.5,f.r*.5);ctx.fillStyle='rgba(255,200,90,'+a*.7+')';ctx.beginPath();ctx.arc(ax,ay,3,0,6.283);ctx.fill()}}
+  if(S.fxGang)for(const f of S.fxGang){const a=f.t/.35;ctx.strokeStyle='rgba(255,214,119,'+a+')';ctx.lineWidth=4;ctx.beginPath();ctx.arc(f.x,f.y,30*(1.3-a),Math.PI,0);ctx.stroke()}
+  if(S.petOrbs)for(const o of S.petOrbs){ctx.fillStyle='rgba(170,215,255,.35)';ctx.beginPath();ctx.arc(o.x,o.y,9,0,6.283);ctx.fill();ctx.fillStyle='#eaf6ff';ctx.beginPath();ctx.arc(o.x,o.y,4,0,6.283);ctx.fill()}
+  if(S.fxPet)for(const f of S.fxPet){const a=f.t/.45,col=f.k==='claw'?'255,235,200':f.k==='breath'?'255,140,60':f.k==='stomp'?'255,214,119':'190,225,255';
+    if(f.k==='claw'){ctx.strokeStyle='rgba('+col+','+a+')';ctx.lineWidth=3;for(const o of [-8,0,8]){ctx.beginPath();ctx.moveTo(f.x-14+o,f.y-16);ctx.lineTo(f.x+10+o,f.y+14);ctx.stroke()}}
+    else{ctx.fillStyle='rgba('+col+','+(.22*a)+')';ctx.beginPath();ctx.arc(f.x,f.y,f.R*(1.1-.3*a),0,6.283);ctx.fill();ctx.strokeStyle='rgba('+col+','+a+')';ctx.lineWidth=3;ctx.beginPath();ctx.arc(f.x,f.y,f.R*(1.1-.3*a),0,6.283);ctx.stroke()}}
   if(S.fxOrb)for(const f of S.fxOrb){const a=f.t/.2;ctx.strokeStyle='rgba(200,240,255,'+a+')';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(S.x,squadY-40);ctx.lineTo(f.x,f.y);ctx.stroke()}
   if(S.path==='fa'&&faLv('orb')){const L=faLv('orb');for(let i=0;i<L;i++){const an=S.t*2.4+i*6.283/L,ox=S.x+Math.cos(an)*(sw()*.55+16),oy=squadY-14+Math.sin(an)*14;ctx.save();ctx.translate(ox,oy);ctx.rotate(an+1.57);ctx.fillStyle='#dff4ff';ctx.fillRect(-1.5,-9,3,18);ctx.fillStyle='#ffd677';ctx.fillRect(-4,5,8,2.5);ctx.restore()}}
   if(S.fxClouds)for(const f of S.fxClouds){const a=f.t/.45,cx=(f.x0+f.x1)/2;ctx.fillStyle='rgba(150,170,255,'+(.25*a)+')';ctx.fillRect(f.x0,0,f.x1-f.x0,H);ctx.font='34px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.globalAlpha=a;ctx.fillText('⛈',cx,H*.12);ctx.globalAlpha=1;
@@ -2533,7 +2683,7 @@ addEventListener('keydown',e=>{if(e.key==='q')useBomb();if(e.key==='e')useBolt()
 addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='a')keys.l=false;if(e.key==='ArrowRight'||e.key==='d')keys.r=false});
 
 async function lockWake(){try{if(navigator.wakeLock)await navigator.wakeLock.request('screen')}catch(e){}}
-const RUN_SKIP=new Set(['objs','bullets','parts','texts','cfx','tipObj','comboGate','guards','fxGourd','fxBolt','stage','fxFires','fields','fxOrb','fxClouds']);
+const RUN_SKIP=new Set(['objs','bullets','parts','texts','cfx','tipObj','comboGate','guards','fxGourd','fxBolt','stage','deathOpen','fxGang','fxFires','fields','fxOrb','fxClouds','pet','petOrbs','fxPet']);
 function saveRun(){   // 存档：把这一局原样存进存档（每 30 秒、切后台、存档退出时都会存）
   if(!S||S.tut||!running&&!paused)return;const s=slot();if(!s)return;
   bankCoins();const snap={};for(const k in S)if(!RUN_SKIP.has(k))snap[k]=S[k];snap.rowDone=[...(S.rowDone||[])];
@@ -2556,8 +2706,10 @@ function startRun(){
   {const sl=slot();if(sl.run&&sl.run.S)resumeRun(sl.run.S);else newRun()}running=true;paused=false;show(null);coinTarget();lockWake();
   if(tipQ.length)openTip(tipQ.shift());
 }
-function togglePause(){if(!running||tip||pickOpts)return;paused=!paused;if(paused)renderPause();show(paused?'ovPause':null);$('coachSkip').hidden=paused||!coach}
+function togglePause(){if(!running||tip||pickOpts||(S&&S.deathOpen))return;paused=!paused;if(paused)renderPause();show(paused?'ovPause':null);$('coachSkip').hidden=paused||!coach}
+$('pauseBuild').addEventListener('click',e=>{const b=e.target.closest('button[data-pet]');if(!b)return;if(b.dataset.pet==='up'){const c=petCur();if(petBuy(c.i,'up'))renderPause()}else{petsBack='ovPause';renderPets();show('ovPets')}});
 function renderPause(){   // 暂停页：当前阶段 + 每项数值 / 本境界上限 / 最终上限 + 技能
+  bankCoins();
   const rr=realmOf(S.count),L=layersOf(S.count),toTop=TOPR-S.maxR,mx=x=>'×'+(x>=10?Math.round(x):x.toFixed(2).replace(/\.?0+$/,''));
   const nextR=S.maxR<TOPR?REALMS[S.maxR+1]:null,hpc=hpCap();
   $('pauseHead').innerHTML='<div class="big">'+rName(rr)+(S.path?' · '+(S.path==='ti'?'体修':'法修'):'')+'</div>'
@@ -2571,8 +2723,8 @@ function renderPause(){   // 暂停页：当前阶段 + 每项数值 / 本境界
   const gap=(lv,cap)=>lv>=cap?'本境界已满':'还能升 '+(cap-lv)+' 级';
   let h='';
   {const d=S.dsrc||{},tot=Object.values(d).reduce((a,b)=>a+b,0);if(tot>0){const fa=S.path==='fa',pc=v=>Math.round((v||0)/tot*100)+'%',sum=a=>a.reduce((x,k)=>x+(d[k]||0),0);
-    const nm={atk:'剑气（普攻）',pet:'灵宠',fire:fa?spName('fire'):'火符',sword:fa?spName('sword'):'万剑诀',bolt:fa?spName('bolt'):'掌心雷',bomb:'雷劫符',gourd:'紫金葫芦',crow:'火鸦',orb:'护法飞剑',cloud:'雷云',sys:'破境天雷 / 整顿'};
-    h+='<h4>输出构成（近 1 分钟）</h4><div class="r"><b>概览</b><span class="v">普攻 '+pc(d.atk)+' · 主动法术 '+pc(sum(['fire','sword','bolt','bomb']))+' · 自动（法宝/被动/灵宠） '+pc(sum(['pet','gourd','crow','orb','cloud']))+'</span></div>';
+    const nm={atk:'剑气（普攻）',pet:'灵宠',fire:fa?spName('fire'):'火符',sword:fa?spName('sword'):'万剑诀',bolt:fa?spName('bolt'):'掌心雷',bomb:'雷劫符',gourd:'紫金葫芦',jj:'剑气纵横',gang:'剑罡护体',crow:'火鸦',orb:'护法飞剑',cloud:'雷云',sys:'破境天雷 / 整顿'};
+    h+='<h4>输出构成（近 1 分钟）</h4><div class="r"><b>概览</b><span class="v">普攻 '+pc(d.atk)+' · 主动法术 '+pc(sum(['fire','sword','bolt','bomb']))+' · 自动（法宝/被动/灵宠） '+pc(sum(['pet','gourd','crow','orb','cloud','gang']))+'</span></div>';
     for(const [k,v] of Object.entries(d).sort((a,b)=>b[1]-a[1]))if(v/tot>=.005)h+='<div class="r"><b>'+(nm[k]||k)+'</b><span class="v">'+pc(v)+'</span><span class="bar"><i style="width:'+(v/tot*100).toFixed(1)+'%"></i></span></div>'}}
   h+='<h4>基础数值</h4>';
   h+=row('剑意',S.lv.dmg,upCap('dmg'),UPG.dmg.max+(0),'伤害 '+mx(S.dmg),gap(S.lv.dmg,upCap('dmg'))+(capNext('dmg')?' · '+capNext('dmg'):''));
@@ -2582,6 +2734,7 @@ function renderPause(){   // 暂停页：当前阶段 + 每项数值 / 本境界
   h+=row('护体',S.armorUp,3,3,'受伤 '+mx(S.armor),gap(S.armorUp,3));
   h+=row('技能精通',S.cdUp,3,3,'冷却 '+mx(Math.pow(.85,S.cdUp||0)),gap(S.cdUp,3));
   {const c=infCap(),t=(S.inf.dmg||0)+(S.inf.rate||0)+(S.inf.hp||0);h+=row('精进',null,0,0,'剑意 '+(S.inf.dmg||0)+'/'+c+' · 剑速 '+(S.inf.rate||0)+'/'+c+' · 淬体 '+(S.inf.hp||0)+'/'+c,'基础强化满级后才会出现；每种上限 = 2 + 2×大境界'+(t?'':'（还没有）'))}
+  {const c=petCur(),RD=PET_RD[PET_ROLE[c.i]],sl=slot(),cost=petLvCost(c.i,c.l);h+='<h4>灵宠</h4><div class="r"><b>'+petName(c.i+1)+'</b><span class="v">Lv'+c.l+' · '+RD.n+' · 战力 ×'+petPow(c.i,c.l).toFixed(1)+'（每秒约 '+(petRate()).toFixed(2)+' 秒火力）· 总灵石 '+fmt(sl?sl.coins:0)+'</span><span class="n"><button class="sb" data-pet="up"'+(sl&&sl.coins>=cost?'':' disabled')+'>培养 💰'+fmt(cost)+'</button> <button class="sb" data-pet="list">换灵宠 / 收服</button></span></div>'}
   h+='<h4>法宝</h4>';
   for(const k of ['gourd','mirror','bell']){const lv=S.fb[k],cap=fbCap();h+=row(FABAO[k].n,lv,cap,5,'',lv<5?'下一级：'+FBROAD[k][lv+1]+(lv>=cap?'（要等下一大境界）':''):FBROAD[k][5])}
   h+='<h4>技能</h4>';
@@ -2590,17 +2743,38 @@ function renderPause(){   // 暂停页：当前阶段 + 每项数值 / 本境界
   if(S.path==='fa'){SK.length=1;for(const k of ['fire','bolt','sword','ice','freeze','shield']){const sp=FA_SP[k],d={fire:'砸最近一团，威力 '+spPool('fire').toFixed(1)+' 秒火力'+(faLv('fire')>=3?'（两颗）':'')+(faEvo('fire')?'，留火海':''),bolt:'劈'+(faEvo('bolt')?'两列':'一列')+'，威力 '+spPool('bolt').toFixed(1)+' 秒火力',sword:'3 秒飞剑乱斩，共 '+(spPool('sword')*(faEvo('sword')?1.3:1)).toFixed(1)+' 秒火力',ice:'全场减速 '+(5*(1+.1*faLv('ice'))).toFixed(1)+' 秒'+(faEvo('ice')?'（先冻住 2 秒）':''),freeze:'全场定住 3.5 秒',shield:'6 秒内冲线不伤你'}[k];SK.push([k,spName(k),d+' · 耗灵力 '+sp.c+' · 间隔 '+sp.cd+' 秒'])}}
   if(false)SK.push(['fire','火符','火球砸最近一团（范围），威力 '+(1*skPow()).toFixed(1)+' 秒火力 · 冷却 '+FA_CD.fire+' 秒'],['ice','寒冰诀','全场妖魔减速一半 5 秒 · 冷却 '+Math.round(FA_CD.ice*Math.pow(.85,S.cdUp||0))+' 秒'],['sword','万剑诀','3 秒内飞剑乱斩，共 '+(3*skPow()).toFixed(1)+' 秒火力 · 冷却 '+Math.round(FA_CD.sword*Math.pow(.85,S.cdUp||0))+' 秒']);
   for(const [k,n,d] of SK){const on=['fire','ice','sword'].includes(k)||has(k);h+='<div class="r'+(on?'':' off')+'"><b>'+n+'</b><span class="v">'+(on?d:'未解锁 · 约 '+Math.max(1,Math.ceil(((FEAT[k]||0)-S.t)/60))+' 分钟后')+'</span></div>'}
+  if(S.path==='ti'){h+='<h4>体修 · 被动与升级</h4>';for(const k of ['heavy','lian','body','pojun'])h+=row(TI_UPD[k].split('：')[0],tiLv(k),fbCap(),5,TI_UPD[k].split('：')[1],gap(tiLv(k),fbCap()));
+    for(const k of ['gang','zhan','jj']){const L=tiLv(k);h+=row(TI_PS[k].n,L,fbCap(),5,L?TI_PS[k].d(L):'还没有（三选一里出现）',L<5?'下一级：'+TI_PS[k].d(L+1):'')}
+    h+='<div class="r"><b>剑气进化</b><span class="v">'+Object.values(TI_EVO).map(v=>(S.maxR>=v.r?'✓ ':'')+v.n+'（'+REALMS[v.r]+'）').join(' · ')+'</span></div>'}
   if(S.path==='fa'){h+='<h4>法修 · 灵力与被动法术</h4>';h+=row('灵力',faLv('mp'),fbCap(),5,'上限 '+mpMax()+' · 每秒回 '+mpReg().toFixed(1),gap(faLv('mp'),fbCap()));
     for(const k of ['fire','sword','ice','bolt'])h+=row(FA_SP[k].n+'升级',faLv(k),fbCap(),5,'威力 ×'+faUp(k).toFixed(1),gap(faLv(k),fbCap()));
     for(const k of ['crow','orb','cloud']){const L=faLv(k);h+=row(FA_PS[k].n,L,fbCap(),5,L?FA_PS[k].d(L):'还没有（三选一里出现）',L<5?'下一级：'+FA_PS[k].d(L+1):'')}
     h+='<div class="r"><b>法术进化</b><span class="v">'+Object.values(FA_EVO).map(v=>(S.maxR>=v.r?'✓ ':'')+v.n+'（'+REALMS[v.r]+'）').join(' · ')+'</span></div>'}
-  if(S.path)h+='<div class="r"><b>'+(S.path==='ti'?'体修':'法修')+'</b><span class="v">'+(S.path==='ti'?'剑气 ×1.5、受伤 −30%、气血 ×1.3；技能冷却 +40%、威力 −30%':'剑气 ×'+faAtk()+'（越往后越弱，'+REALMS[10]+'后 ×0.1）；法术耗灵力、间隔短，威力随境界涨；雷劫符最多 5 张')+'</span></div>';
+  if(S.path)h+='<div class="r"><b>'+(S.path==='ti'?'体修':'法修')+'</b><span class="v">'+(S.path==='ti'?'剑气 ×'+tiAtk().toFixed(2)+'（含重剑/连斩/战意）、受伤 −30%、气血 ×1.3；技能冷却 +40%、威力 −30%':'剑气 ×'+faAtk()+'（越往后越弱，'+REALMS[10]+'后 ×0.1）；法术耗灵力、间隔短，威力随境界涨；雷劫符最多 5 张')+'</span></div>';
   else h+='<div class="r off"><b>修炼路线</b><span class="v">踏入筑基时选择体修或法修</span></div>';
   $('pauseBuild').innerHTML=h;
 }
 function bankCoins(){
   if(!S||!slot())return;const add=Math.floor(S.coins)-S.banked;
   if(add>0){slot().coins+=add;S.banked+=add;commit(Save.cur)}
+}
+function deathOffer(){   // 死亡不清档：选回到之前的某一波，带着现在的数值重修；或结束本局
+  if(S.deathOpen)return;S.deathOpen=true;S.deaths=(S.deaths||0)+1;{const sl=slot();if(sl){sl.deaths=(sl.deaths||0)+1;commit(Save.cur)}}
+  paused=true;coach=null;$('coachSkip').hidden=true;
+  const cur=S.Dref*(S.M||1)*rwF(),cks=(S.cks||[]),box=$('deathOpts');box.innerHTML='';const used={};
+  for(const back of [3,8,15,30]){const i=cks.length-back;const c=cks[Math.max(0,i)];if(!c||used[c.w])continue;used[c.w]=1;
+    const f=clamp(c.f/Math.max(1e-9,cur),.05,1),b=document.createElement('button');b.className='go alt';
+    b.innerHTML='回到第 '+c.w+' 波重修<br><small>敌人约为现在的 '+Math.max(1,Math.round(f*100))+'% · 约 '+Math.max(1,Math.round((S.t-c.t)*.6/60))+' 分钟追回</small>';
+    b.onclick=()=>rewindTo(c,f);box.appendChild(b)}
+  if(!box.children.length){const b=document.createElement('button');b.className='go alt';b.innerHTML='从头重修这一境<br><small>敌人减半，约 3 分钟追回</small>';b.onclick=()=>rewindTo({w:S.maxWave||1,t:S.t-300},.5);box.appendChild(b)}
+  $('deathInfo').textContent='气血耗尽 · 本档第 '+((slot()&&slot().deaths)||S.deaths)+' 次倒下。数值、境界、灵石都保留；回到之前的波次，敌人按当时的强度，割草攒灵石和修为，再慢慢追回来。';
+  show('ovDeath');sfx(180,.5,'sawtooth',.06,.3);
+}
+function rewindTo(c,f){
+  S.deathOpen=false;S.rwF=Math.max(.02,f);const T=Math.max(60,(S.t-c.t)*.6);S.rwK=-Math.log(S.rwF)/T;
+  Object.assign(S,{objs:[],bullets:[],parts:[],texts:[],cfx:[],guards:[],stage:null,comboGate:null,tipObj:null,surgeOn:false,bossAlive:false,shieldT:0,freezeT:0,hexT:0,zouT:0,regroup:0,leakAcc:0,leakRate:0,lastHp:null,hpLossRate:0,dangerShow:0,pet:null,petOrbs:[],fxPet:[]});
+  S.hpF=1;S.hpTold=false;S.t=PRE+CYC*(Math.floor(Math.max(0,S.t-PRE)/CYC)+1)+.01;S.dirPh=undefined;S.x=lmid;S.immR=null;
+  paused=false;show(null);skillUI();toast('重修：回到第 '+c.w+' 波的强度','气血回满 · 敌人约 '+Math.round(S.rwF*100)+'% · 越往后越强，直到追回');saveRun();
 }
 function endRun(dead){
   if(!running)return;running=false;paused=false;coach=null;$('coachSkip').hidden=true;{const sl=slot();if(sl&&sl.run){delete sl.run;commit(Save.cur)}}
@@ -2622,9 +2796,12 @@ function endRun(dead){
   if(clear)$('rLoss').textContent='转世：敌人更强（每世 +15%），宿慧加成剑意 +10%/世，灵石 +25%/世';
   setTimeout(()=>show('ovOver'),dead?500:0);
 }
+$('bDeathEnd').onclick=()=>{S.deathOpen=false;paused=false;S.collapse=true;endRun(true)};
 $('bFight').onclick=startRun;$('bAgain').onclick=startRun;
 $('bReborn').onclick=()=>{const s=slot();if(!s)return;s.life=(s.life||1)+1;commit(Save.cur);startRun()};
 $('bShop').onclick=()=>{shopBack='ovHub';renderShop();show('ovShop')};
+$('bPets').onclick=()=>{petsBack='ovHub';renderPets();show('ovPets')};
+$('bPetsBack').onclick=()=>{if(petsBack==='ovHub'){renderHub();show('ovHub')}else{renderPause();show('ovPause')}};
 $('bOverShop').onclick=()=>{shopBack='ovOver';renderShop();show('ovShop')};
 $('bShopBack').onclick=()=>{if(shopBack==='ovHub')renderHub();show(shopBack)};
 $('bTut').onclick=()=>{const s=slot();if(!s)return;s.tutDone=false;s.noTips=false;s.seen={};commit(Save.cur);$('tutNote').hidden=false};

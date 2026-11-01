@@ -74,3 +74,6 @@ create trigger ng_score_guard before insert or update on public.scores for each 
 
 alter table public.saves drop constraint if exists saves_size;
 alter table public.saves add constraint saves_size check (length(data::text) < 300000);
+
+-- 11-01 23:40 排行榜加死亡次数
+alter table public.scores add column if not exists deaths int not null default 0;
