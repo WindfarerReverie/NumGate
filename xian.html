@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "xian", "sbjs": "supabase.js"};if(/(^|\.)youfeng\.app$|\.pages\.dev$/.test(location.hostname))window.NG_CFG.url=location.origin+'/sb';</script>
-<script>(function(){var B="20261102020607";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261102022103";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>御剑斩妖录</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -221,6 +221,7 @@ body.ink .chip b{color:#2b2622}body.ink .chip.coin b{color:#a8352c}
 body.ink .toast{color:#a8352c;text-shadow:0 2px 0 #fff6ea,0 0 14px rgba(255,250,240,.95)}body.ink .toast small{color:#2b2622}
 body.ink .rk.me{background:rgba(201,71,61,.12);outline-color:rgba(201,71,61,.45)}
 body.ink #hRealmWrap b{color:#a8352c}
+body.ink .cover.art h1.ttl{writing-mode:vertical-rl;left:auto;right:12px;top:12px;bottom:auto;text-align:start;font-size:clamp(34px,9.5vw,46px);line-height:1.05;letter-spacing:.06em}
 body.ink .cover h1.ttl{color:#2b2622;text-shadow:0 0 12px rgba(255,250,240,.95),0 2px 0 rgba(255,250,240,.9)}
 .skhint{width:max-content}
 body.ink #petList .item.on{border-color:rgba(201,71,61,.7);box-shadow:0 0 0 1px rgba(201,71,61,.3) inset}
@@ -1938,7 +1939,7 @@ function drawCovers(t){for(const c of document.querySelectorAll('.covCv')){if(!c
   const w=c.clientWidth,h=c.clientHeight,dpr=Math.min(2,window.devicePixelRatio||1);if(c.width!==Math.round(w*dpr)){c.width=Math.round(w*dpr);c.height=Math.round(h*dpr)}
   const g=c.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);drawCover(g,w,h,t)}}
 function drawCover(g,w,h,t){
-  {const im=artImg('bg_cover');if(im){artCover(g,im,w,h);const gr=g.createLinearGradient(0,h*.55,0,h);gr.addColorStop(0,'rgba(10,16,24,0)');gr.addColorStop(1,'rgba(10,16,24,.6)');g.fillStyle=gr;g.fillRect(0,h*.55,w,h*.45);return}}
+  {const im=artImg('bg_cover');if(im){const pe=g.canvas&&g.canvas.parentElement;if(pe&&!pe.classList.contains('art'))pe.classList.add('art');artCover(g,im,w,h);const gr=g.createLinearGradient(0,h*.55,0,h);gr.addColorStop(0,'rgba(10,16,24,0)');gr.addColorStop(1,'rgba(10,16,24,.6)');g.fillStyle=gr;g.fillRect(0,h*.55,w,h*.45);return}}
   let gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,'#f1ebde');gr.addColorStop(.55,'#e2dacb');gr.addColorStop(1,'#cfc6b4');g.fillStyle=gr;g.fillRect(0,0,w,h);
   // moon
   const mx=w*.76,my=h*.24;gr=g.createRadialGradient(mx,my,10,mx,my,90);gr.addColorStop(0,'rgba(201,71,61,.22)');gr.addColorStop(1,'rgba(201,71,61,0)');g.fillStyle=gr;g.fillRect(0,0,w,h);
