@@ -1,0 +1,30 @@
+# Keeps the free Supabase project from being paused (it pauses after ~7 days without database requests),
+# and keeps this scheduled workflow itself alive (GitHub disables schedules after 60 days without commits).
+name: keepalive
+on:
+  schedule:
+    - cron: '17 3 */3 * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ping database
+        run: |
+          URL=$(python3 -c "import json;print(json.load(open('config.json'))['url'])")
+          KEY=$(python3 -c "import json;print(json.load(open('config.json'))['key'])")
+          if [ -z "$URL" ]; then echo "no backend configured yet"; exit 0; fi
+          curl -sS -o /dev/null -w "%{http_code}\n" "$URL/rest/v1/scores?select=slot&limit=1" -H "apikey: $KEY" -H "Authorization: Bearer $KEY" || true
+      - name: Keep schedule alive
+        run: |
+          last=$(git log -1 --format=%ct)
+          now=$(date +%s)
+          if [ $((now-last)) -gt $((40*86400)) ]; then
+            date -u +%F > .keepalive
+            git config user.name "keepalive-bot"
+            git config user.email "keepalive-bot@users.noreply.github.com"
+            git add .keepalive && git commit -m "keepalive" && git push
+          fi
