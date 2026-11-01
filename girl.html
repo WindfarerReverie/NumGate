@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl", "sbjs": "supabase.js"};</script>
-<script>(function(){var B="20261101235048";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261102000219";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" media="print" onload="this.media='all'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -90,7 +90,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 #rankList .nd,.rank .nd{color:#7dffa8}
 #deathOpts .go small{font-size:12px;opacity:.85;font-weight:400}#deathOpts .go{line-height:1.3;padding-top:10px;padding-bottom:10px}
-#petList .item.on{border-color:rgba(255,214,119,.8);box-shadow:0 0 0 1px rgba(255,214,119,.4) inset}#petList .item .info{flex:1}#petList .item p{font-size:12px}
+#petList .item.on{border-color:rgba(255,214,119,.8);box-shadow:0 0 0 1px rgba(255,214,119,.4) inset}#petList .item .info{flex:1;min-width:0}.petstrip{display:flex;flex-wrap:wrap;align-items:center;gap:1px;margin-top:6px}.petstrip i{font-style:normal;opacity:.5;font-size:11px}#petList .item p{font-size:12px}
 .slot,.item{background:var(--panel);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:11px 12px;display:flex;align-items:center;gap:10px;text-align:left}
 .slot .info,.item .info{flex:1;min-width:0}
 .slot h3,.item h3{margin:0;font-size:15px;display:flex;gap:6px;align-items:baseline}
@@ -330,7 +330,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   <div class="ov" id="ovPets" hidden>
     <div class="card">
       <h2>萌宠</h2>
-      <p class="tip">花总星钻领养、喂养萌宠，上场只带一只，任何流派都能带。萌宠会自己找怪打；它的战力不会让敌人变强。</p>
+      <p class="tip">两条进化路线，花总星钻沿路线喂养，每 5 级进化成下一个形态。上场只带一条，任何流派都能带。萌宠会自己找怪打；它的战力不会让敌人变强。</p>
       <div class="wallet"><div class="chip coin">星钻<b id="petCoins">0</b></div></div>
       <div id="petList" style="display:flex;flex-direction:column;gap:8px"></div>
       <button class="go" id="bPetsBack">返 回</button>
@@ -483,7 +483,7 @@ function norm(d){
   for(const k of ['troops','dmg','rate','armor','gate','coin','start','bomb'])d.lv[k]=Math.max(0,Math.floor(+d.lv[k]||0));
   d.coins=Math.max(0,Math.floor(+d.coins||0));d.life=Math.max(1,Math.floor(+d.life||1));d.clears=Math.max(0,+d.clears||0);d.bestClear=+d.bestClear||0;d.best=+d.best||0;d.bestWave=+d.bestWave||0;d.bestRealm=+d.bestRealm||0;d.runs=+d.runs||0;
   if(d.deaths===undefined)d.deaths=+d.runs||0;   // 以前每局结束都是倒下或撤退
-  if(!d.pets){const r=rFromCode(+d.bestRealm||0).r,own={0:0};for(let i=1;i<Math.min(17,r);i++)own[i]=0;d.pets={own,sel:Math.max(0,Math.min(16,r-1))}}   // 旧存档：以前按称号跟随的萌宠全部送你
+  if(!d.pets){const r=rFromCode(+d.bestRealm||0).r,own={0:0};for(let i=1;i<Math.min(17,r);i++)own[i]=0;d.pets={own,sel:Math.max(0,Math.min(16,r-1))}}   // 旧存档：以前按称号跟随的萌宠，交给 petsOf 换算成路线等级
   if(d.tutDone===undefined){d.tutDone=true;d.seen=allSeen()}
   if(d.noTips===undefined)d.noTips=d.tutDone===true;
   d.tutDone=!!d.tutDone;d.seen=(d.seen&&typeof d.seen==='object')?d.seen:{};
@@ -618,34 +618,39 @@ async function doAuth(signup){
 /* ================= 衣橱图鉴 / collection ================= */
 function petName(l){return (XPETS[l-1]||XPETS[0]).n}
 function petCount(){return 17}
-/* ===== 萌宠（11-01 23:16）：花总星钻领养、喂养；上场只带一只；自己找怪打；战力不算进敌人强度 ===== */
-const PET_ROLE=['claw','orb','stomp','dive','claw','orb','stomp','dive','orb','breath','slam','dive','stomp','slam','breath','dive','breath'];
-const PET_RD={claw:{n:'扑扑',d:'冲上去扑扑一只怪，优先内耗怪和 Boss',p:1.2},orb:{n:'魔法泡泡',d:'守在身边，连发追踪魔法泡泡打离防线最近的怪',p:1.5},
-  dive:{n:'俯冲',d:'俯冲到怪最密的地方，小范围爆炸',p:2},stomp:{n:'守护',d:'守在防线前，震伤并震退冲上来的怪',p:2.5},
-  breath:{n:'吐息',d:'飞到烦恼群上方吐息，中范围灼烧',p:3},slam:{n:'大浪',d:'跃起砸向怪最密处，大范围冲击',p:4}};
-const petTier=i=>1+.2*i,petPow=(i,l)=>petTier(i)*(1+.1*l);
-const petUnlockCost=i=>i===0?0:Math.round(2000*Math.pow(2.05,i));
-const petLvCost=(i,l)=>Math.round(150*(1+.6*i)*Math.pow(1.2,l));
-const PET_BASE=.1;   // 灵猫 0 级 ≈ 每秒 0.1 秒基础星力
-function petsOf(s){s=s||slot();if(!s)return {own:{0:0},sel:0};if(!s.pets||typeof s.pets!=='object')s.pets={own:{0:0},sel:0};if(!s.pets.own||typeof s.pets.own!=='object')s.pets.own={0:0};if(s.pets.own[s.pets.sel]==null)s.pets.sel=0;return s.pets}
-function petCur(){const P=petsOf();return {i:+P.sel||0,l:+P.own[P.sel]||0}}
-const petRate=()=>{const c=petCur();return PET_BASE*petPow(c.i,c.l)};
-function petBuy(i,act){const s=slot();if(!s)return false;const P=petsOf(s);
-  if(act==='unlock'){if(P.own[i]!=null)return false;const c=petUnlockCost(i);if(s.coins<c)return false;s.coins-=c;P.own[i]=0;P.sel=i}
-  else if(act==='up'){if(P.own[i]==null)return false;const c=petLvCost(i,P.own[i]);if(s.coins<c)return false;s.coins-=c;P.own[i]++}
-  else if(act==='sel'){if(P.own[i]==null)return false;P.sel=i;if(S&&S.pet)S.pet.cd=Math.min(S.pet.cd,1)}
+/* ===== 萌宠（11-02 00:05 改为路线制）：两条进化路线，花总星钻沿路线喂养，每 5 级进化一次；上场带一条；任何流派都能带；战力不算进敌人强度 ===== */
+const PET_LINES={beast:{n:'毛绒线',role:'claw',forms:[0,4,2,6,8,12,9,14,16],d:'近身扑扑：冲上去咬离防线最近的怪，优先内耗怪和 Boss；20 级起扑击带冲击，伤到周围'},
+  spirit:{n:'飞羽线',role:'orb',forms:[1,5,3,7,11,10,13,15],d:'远程魔法泡泡：守在身边连发追踪魔法泡泡；每 12 级多一颗（最多 5 颗）'}};
+const PET_KEYS=['beast','spirit'],PET_EVO=5;
+const PET_RD={claw:{n:'扑扑',p:1.2},orb:{n:'魔法泡泡',p:1.5}};
+const petPow=l=>1+.12*l;
+const petLvCost=l=>Math.round(200*Math.pow(1.17,l));
+const PET_BASE=.1;   // 0 级 ≈ 每秒 0.1 秒基础星力；每级 +12%
+const petForm=(k,l)=>{const F=PET_LINES[k].forms;return F[Math.min(F.length-1,Math.floor(l/PET_EVO))]};
+const petNextForm=(k,l)=>{const F=PET_LINES[k].forms,n=Math.floor(l/PET_EVO)+1;return n<F.length?{i:F[n],at:n*PET_EVO}:null};
+function petsOf(s){s=s||slot();if(!s)return {lines:{beast:0,spirit:0},sel:'beast'};let P=s.pets;
+  if(!P||typeof P!=='object')P=s.pets={};
+  if(!P.lines){const L={beast:0,spirit:0};if(P.own)for(const k of PET_KEYS){const F=PET_LINES[k].forms;F.forEach((sp,fi)=>{if(P.own[sp]!=null)L[k]=Math.max(L[k],fi*PET_EVO+(+P.own[sp]||0))})}   // 旧数据：按已拥有的最高形态换算成路线等级
+    const old=P.own&&P.sel!=null?+P.sel:0;s.pets=P={lines:L,sel:PET_LINES.spirit.forms.includes(old)?'spirit':'beast'}}
+  if(!PET_LINES[P.sel])P.sel='beast';for(const k of PET_KEYS)P.lines[k]=Math.max(0,Math.floor(+P.lines[k]||0));return P}
+function petCur(){const P=petsOf(),k=P.sel,l=P.lines[k];return {line:k,l,i:petForm(k,l),role:PET_LINES[k].role}}
+const petRate=()=>PET_BASE*petPow(petCur().l);
+function petBuy(k,act){const s=slot();if(!s||!PET_LINES[k])return false;const P=petsOf(s);
+  if(act==='up'){const c=petLvCost(P.lines[k]);if(s.coins<c)return false;s.coins-=c;const before=petForm(k,P.lines[k]);P.lines[k]++;if(petForm(k,P.lines[k])!==before){toast('萌宠进化！','进化为「'+petName(petForm(k,P.lines[k])+1)+'」');sfx(784,.3,'sine',.06,1.5)}}
+  else if(act==='sel'){P.sel=k;if(S&&S.pet)S.pet.cd=Math.min(S.pet.cd,1)}
   commit(Save.cur);sfx(660,.08,'square',.05);setTimeout(()=>sfx(990,.12,'square',.05),70);return true}
 function renderPets(){
   const s=slot();if(!s)return;const P=petsOf(s);$('petCoins').textContent=fmt(s.coins);const L=$('petList');L.innerHTML='';
-  for(let i=0;i<petCount();i++){const own=P.own[i]!=null,l=own?P.own[i]:0,role=PET_RD[PET_ROLE[i]],row=document.createElement('div');row.className='item'+(P.sel===i&&own?' on':'');
-    const cv2=document.createElement('canvas');cv2.width=112;cv2.height=112;cv2.style.width='56px';cv2.style.height='56px';const g=cv2.getContext('2d');g.scale(2,2);drawFaxiang(g,28,42,.95,1.3,i+1);
-    if(!own){g.globalCompositeOperation='source-atop';g.fillStyle='rgba(30,26,46,.72)';g.fillRect(0,0,56,56)}
+  for(const k of PET_KEYS){const LN=PET_LINES[k],l=P.lines[k],cur=petForm(k,l),nx=petNextForm(k,l),row=document.createElement('div');row.className='item petline'+(P.sel===k?' on':'');
+    const cv2=document.createElement('canvas');cv2.width=136;cv2.height=136;cv2.style.width='68px';cv2.style.height='68px';const g=cv2.getContext('2d');g.scale(2,2);drawFaxiang(g,34,50,1.15,1.3,cur+1);
     const inf=document.createElement('div');inf.className='info';
-    inf.innerHTML='<h3>'+petName(i+1)+'<span>'+(own?'Lv'+l:'未领养')+'</span></h3><p>'+role.n+'：'+role.d+'<br>战力 <b>×'+petPow(i,l).toFixed(1)+'</b>'+(own?'（下一级 ×'+petPow(i,l+1).toFixed(1)+'）':'')+(P.sel===i&&own?' · <b>出战中</b>':'')+'</p>';
+    inf.innerHTML='<h3>'+LN.n+' · '+petName(cur+1)+'<span>Lv'+l+'</span></h3><p>'+LN.d+'<br>战力 <b>×'+petPow(l).toFixed(2)+'</b>（下一级 ×'+petPow(l+1).toFixed(2)+'）'+(nx?' · <b>Lv'+nx.at+'</b> 进化为「'+petName(nx.i+1)+'」':' · 已是最终形态')+(P.sel===k?' · <b>出战中</b>':'')+'</p>';
+    const strip=document.createElement('div');strip.className='petstrip';LN.forms.forEach((sp,fi)=>{const c=document.createElement('canvas');c.width=64;c.height=64;c.style.width='32px';c.style.height='32px';const gg=c.getContext('2d');gg.scale(2,2);drawFaxiang(gg,16,23,.55,1.3,sp+1);
+      if(fi*PET_EVO>l){gg.globalCompositeOperation='source-atop';gg.fillStyle='rgba(30,26,46,.8)';gg.fillRect(0,0,32,32)}c.title=petName(sp+1)+' · Lv'+fi*PET_EVO;strip.appendChild(c);if(fi<LN.forms.length-1){const a=document.createElement('i');a.textContent='›';strip.appendChild(a)}});
+    inf.appendChild(strip);
     const bx=document.createElement('div');bx.style.cssText='display:flex;flex-direction:column;gap:6px';
-    const mk=(t,c,fn,dis)=>{const b=document.createElement('button');b.className='sb';b.textContent=t;b.disabled=!!dis;b.onclick=()=>{if(fn())renderPets()};bx.appendChild(b)};
-    if(!own){const c=petUnlockCost(i);mk('领养 💰'+fmt(c),c,()=>petBuy(i,'unlock'),s.coins<c)}
-    else{const c=petLvCost(i,l);mk('喂养 💰'+fmt(c),c,()=>petBuy(i,'up'),s.coins<c);if(P.sel!==i)mk('出战',0,()=>petBuy(i,'sel'))}
+    const mk=(t,fn,dis)=>{const b=document.createElement('button');b.className='sb';b.textContent=t;b.disabled=!!dis;b.onclick=()=>{if(fn())renderPets()};bx.appendChild(b)};
+    const c=petLvCost(l);mk('喂养 💰'+fmt(c),()=>petBuy(k,'up'),s.coins<c);if(P.sel!==k)mk('出战',()=>petBuy(k,'sel'));
     row.append(cv2,inf,bx);L.appendChild(row)}
 }
 
@@ -656,7 +661,7 @@ function renderBook(){
     d.appendChild(cv2);const sp=document.createElement('span');sp.textContent=on?label:'？？？';d.appendChild(sp);box.appendChild(d)};
   const H=$('bookHero');H.innerHTML='';let nh=0;
   for(let r=0;r<REALMS.length;r++){const on=r<=maxR;if(on)nh++;const sc=1.3-r*.028;tile(H,g=>drawHero(g,36,74,r,1.3,sc),on,REALMS[r])}
-  const P=$('bookPet');P.innerHTML='';let np=0;const PO=petsOf(s).own;
+  const P=$('bookPet');P.innerHTML='';let np=0;const PP=petsOf(s),PO={};for(const k of PET_KEYS){const F=PET_LINES[k].forms;F.forEach((sp,fi)=>{if(fi*PET_EVO<=PP.lines[k])PO[sp]=1})}
   for(let l=1;l<=petCount();l++){const on=PO[l-1]!=null;if(on)np++;tile(P,g=>drawFaxiang(g,36,70,1.15,1.3,l),on,petName(l))}
   const B=$('bookBoss');B.innerHTML='';let nb=0;const seen=s.bossSeen||{};
   BOSSES.forEach((b,i)=>{const sp=document.createElement('span');const on=!!seen[i];if(on)nb++;sp.className=on?'':'lk';sp.textContent=on?b.n+(seen[i]>1?' ×'+seen[i]:''):'？？？';B.appendChild(sp)});
@@ -2012,7 +2017,7 @@ const TIPS={
   tibr:{t:'星弓系 · 被动与进化',d:'三选一会出现星弓系被动：星光护盾（冲到防线的怪先被重创并震退）、勇气（元气越低伤害越高）、星光纵横（定期射出穿透巨箭）；以及星弓系升级：重箭、连射、星光护甲（元气上限）、破防（打内耗怪和 Boss 更痛）。'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时星光各进化一次（金光星光、星爆溅射、钻石护甲、万星齐发、不灭星光：每个称号一次元气归零保住 30%）。'},
   death:{t:'倒下与重来',d:'元气耗尽不会清档。可以选回到之前的某一波（大约 3、8、15、30 波前）：数值、称号、星钻全保留，元气回满，敌人按当时的强度出现，再慢慢追回到你倒下时的强度——这段时间是最爽的割草期，多吃门、攒星钻和魔力。也可以直接结束本局结算。每次倒下都记在存档里，排行榜会显示。'},
   rank:{t:'排行榜',d:'先比最高称号，再比得分；每个存档单独上榜，冒险中的存档也会更新。名字后面显示「倒下 N 次」，一次都没倒过的显示「不死」。'},
-  mech:{t:'萌宠',d:'在主页「萌宠」里花总星钻领养、喂养萌宠，上场只带一只，任何流派都能带。萌宠会自己找怪打：扑扑、魔法泡泡、俯冲、守护、吐息、大浪，各有打法；等级越高越强，越珍稀的萌宠底子越好。萌宠的战力不会让敌人变强，星钻花下去就是实打实变强。暂停页也能直接喂养。'},
+  mech:{t:'萌宠',d:'主页「萌宠」里有两条进化路线：毛绒线（灵猫 → 白虎 → … → 祖龙，近身扑扑，20 级起带冲击）和飞羽线（白狐 → 九尾狐 → … → 金乌，远程追踪魔法泡泡，越养魔法泡泡越多）。花总星钻沿路线喂养，每级战力 +12%，每 5 级进化成下一个形态，等级不封顶。上场只带一条，任何流派都能带；萌宠的战力不会让敌人变强。暂停页也能直接喂养。'},
 };
 const TUT=[
   {gap:3.4,f:()=>tutRow(['add',5],['add',12])},
@@ -2522,13 +2527,13 @@ function petZs(){return S.objs.filter(z=>z.k==='z'&&!z.dead&&z.y>20)}
 function denseZ(R){const zs=petZs();let best=null,bn=-1;for(const z of zs){let n=z.y/H;for(const q of zs)if((q.x-z.x)**2+(q.y-z.y)**2<R*R)n++;if(n>bn){bn=n;best=z}}return best}
 function nearZ(pref){const zs=petZs();if(pref){const e=zs.filter(z=>z.type==='elite'||z.boss).sort((a,b)=>b.y-a.y)[0];if(e&&e.y>H*.2)return e}return zs.sort((a,b)=>b.y-a.y)[0]}
 function petHit(x,y,R,pool,cap,kb){const n=skillPool(pool,q=>(q.x-x)**2+(q.y-y)**2<(R+q.r)*(R+q.r),cap,'pet');if(kb)for(const z of S.objs)if(z.k==='z'&&!z.dead&&!z.boss&&(z.x-x)**2+(z.y-y)**2<(R+z.r)**2)z.y=Math.max(-30,z.y-kb);
-  (S.fxPet=S.fxPet||[]).push({x,y,R,t:.45,k:PET_ROLE[petCur().i]});S.pet.hits=(S.pet.hits||0)+1;return n}
+  (S.fxPet=S.fxPet||[]).push({x,y,R,t:.45,k:petCur().role});S.pet.hits=(S.pet.hits||0)+1;return n}
 function petTick(dt){   // 萌宠自主作战：找目标 → 飞过去出手 → 回到身边
-  if(S.tut)return;const hm=petHome();const P=S.pet||(S.pet={x:hm.x,y:hm.y,st:'home',cd:1.5,face:1});const c=petCur(),role=PET_ROLE[c.i],RD=PET_RD[role],rate=petRate()*(S.path?1:1);
+  if(S.tut)return;const hm=petHome();const P=S.pet||(S.pet={x:hm.x,y:hm.y,st:'home',cd:1.5,face:1});const c=petCur(),role=c.role,RD=PET_RD[role],rate=petRate();
   const base=dps()/pathAtk(),pool=base*rate*RD.p;P.cd-=dt;
   const mv=(tx,ty,sp)=>{const dx=tx-P.x,dy=ty-P.y,d=Math.hypot(dx,dy);if(d>1){const st=Math.min(d,sp*dt);P.x+=dx/d*st;P.y+=dy/d*st;if(Math.abs(dx)>2)P.face=dx>=0?1:-1}return d<10};
   if(P.st==='home'){mv(hm.x,hm.y,520);if(P.cd>0)return;
-    if(role==='orb'){const zs=petZs().sort((a,b)=>b.y-a.y).slice(0,3);if(!zs.length){P.cd=.4;return}for(const z of zs)(S.petOrbs=S.petOrbs||[]).push({x:P.x,y:P.y-14,tg:z,pool:pool/zs.length});P.cd=RD.p;sfx(900,.06,'sine',.03,1.5);return}
+    if(role==='orb'){const zs=petZs().sort((a,b)=>b.y-a.y).slice(0,Math.min(5,2+Math.floor(c.l/12)));if(!zs.length){P.cd=.4;return}for(const z of zs)(S.petOrbs=S.petOrbs||[]).push({x:P.x,y:P.y-14,tg:z,pool:pool/zs.length});P.cd=RD.p;sfx(900,.06,'sine',.03,1.5);return}
     let tx,ty,tg=null;
     if(role==='claw'){tg=nearZ(true);if(tg){tx=tg.x;ty=tg.y}}
     else if(role==='stomp'){const z=nearZ(false);if(z&&z.y>cLine()*.45){tx=clamp(z.x,mid+20,roadX+roadW-20);ty=cLine()-40}}
@@ -2536,7 +2541,7 @@ function petTick(dt){   // 萌宠自主作战：找目标 → 飞过去出手 �
     if(tx==null){P.cd=.4;return}P.st='go';P.tg=tg;P.tx=tx;P.ty=ty;P.gt=0;return}
   if(P.st==='go'){P.gt+=dt;if(P.tg){if(P.tg.dead){const n=nearZ(true);if(!n){P.st='back';return}P.tg=n}P.tx=P.tg.x;P.ty=P.tg.y}
     if(mv(P.tx,P.ty,role==='claw'?820:640)||P.gt>2.2){
-      if(role==='claw'){if(P.tg&&!P.tg.dead)petHit(P.tg.x,P.tg.y,6,pool,.04,0)}
+      if(role==='claw'){if(P.tg&&!P.tg.dead)petHit(P.tg.x,P.tg.y,c.l>=20?40:6,pool,.04,0)}
       else if(role==='dive')petHit(P.x,P.y,60,pool,.03,0);
       else if(role==='stomp')petHit(P.x,P.y-20,90,pool*.85,.03,26);
       else if(role==='breath')petHit(P.x,P.y-60,100,pool,.03,0);
@@ -2733,7 +2738,7 @@ function startRun(){
   if(tipQ.length)openTip(tipQ.shift());
 }
 function togglePause(){if(!running||tip||pickOpts||(S&&S.deathOpen))return;paused=!paused;if(paused)renderPause();show(paused?'ovPause':null);$('coachSkip').hidden=paused||!coach}
-$('pauseBuild').addEventListener('click',e=>{const b=e.target.closest('button[data-pet]');if(!b)return;if(b.dataset.pet==='up'){const c=petCur();if(petBuy(c.i,'up'))renderPause()}else{petsBack='ovPause';renderPets();show('ovPets')}});
+$('pauseBuild').addEventListener('click',e=>{const b=e.target.closest('button[data-pet]');if(!b)return;if(b.dataset.pet==='up'){const c=petCur();if(petBuy(c.line,'up'))renderPause()}else{petsBack='ovPause';renderPets();show('ovPets')}});
 function renderPause(){   // 暂停页：当前阶段 + 每项数值 / 本称号上限 / 最终上限 + 技能
   bankCoins();
   const rr=realmOf(S.count),L=layersOf(S.count),toTop=TOPR-S.maxR,mx=x=>'×'+(x>=10?Math.round(x):x.toFixed(2).replace(/\.?0+$/,''));
@@ -2760,7 +2765,7 @@ function renderPause(){   // 暂停页：当前阶段 + 每项数值 / 本称号
   h+=row('防护泡泡',S.armorUp,3,3,'受伤 '+mx(S.armor),gap(S.armorUp,3));
   h+=row('技能精通',S.cdUp,3,3,'冷却 '+mx(Math.pow(.85,S.cdUp||0)),gap(S.cdUp,3));
   {const c=infCap(),t=(S.inf.dmg||0)+(S.inf.rate||0)+(S.inf.hp||0);h+=row('精进',null,0,0,'星力 '+(S.inf.dmg||0)+'/'+c+' · 星速 '+(S.inf.rate||0)+'/'+c+' · 淬体 '+(S.inf.hp||0)+'/'+c,'基础强化满级后才会出现；每种上限 = 2 + 2×称号'+(t?'':'（还没有）'))}
-  {const c=petCur(),RD=PET_RD[PET_ROLE[c.i]],sl=slot(),cost=petLvCost(c.i,c.l);h+='<h4>萌宠</h4><div class="r"><b>'+petName(c.i+1)+'</b><span class="v">Lv'+c.l+' · '+RD.n+' · 战力 ×'+petPow(c.i,c.l).toFixed(1)+'（每秒约 '+(petRate()).toFixed(2)+' 秒星力）· 总星钻 '+fmt(sl?sl.coins:0)+'</span><span class="n"><button class="sb" data-pet="up"'+(sl&&sl.coins>=cost?'':' disabled')+'>喂养 💰'+fmt(cost)+'</button> <button class="sb" data-pet="list">换萌宠 / 领养</button></span></div>'}
+  {const c=petCur(),RD=PET_RD[c.role],sl=slot(),cost=petLvCost(c.l),nx=petNextForm(c.line,c.l);h+='<h4>萌宠</h4><div class="r"><b>'+petName(c.i+1)+'</b><span class="v">'+PET_LINES[c.line].n+' · Lv'+c.l+(nx?'（Lv'+nx.at+' 进化为「'+petName(nx.i+1)+'」）':'')+' · '+RD.n+' · 战力 ×'+petPow(c.l).toFixed(2)+'（每秒约 '+(petRate()).toFixed(2)+' 秒星力）· 总星钻 '+fmt(sl?sl.coins:0)+'</span><span class="n"><button class="sb" data-pet="up"'+(sl&&sl.coins>=cost?'':' disabled')+'>喂养 💰'+fmt(cost)+'</button> <button class="sb" data-pet="list">换路线 / 详情</button></span></div>'}
   h+='<h4>魔法道具</h4>';
   for(const k of ['gourd','mirror','bell']){const lv=S.fb[k],cap=fbCap();h+=row(FABAO[k].n,lv,cap,5,'',lv<5?'下一级：'+FBROAD[k][lv+1]+(lv>=cap?'（要等下一称号）':''):FBROAD[k][5])}
   h+='<h4>技能</h4>';
@@ -2826,7 +2831,7 @@ $('bDeathEnd').onclick=()=>{S.deathOpen=false;paused=false;S.collapse=true;endRu
 $('bFight').onclick=startRun;$('bAgain').onclick=startRun;
 $('bReborn').onclick=()=>{const s=slot();if(!s)return;s.life=(s.life||1)+1;commit(Save.cur);startRun()};
 $('bShop').onclick=()=>{shopBack='ovHub';renderShop();show('ovShop')};
-function petBadge(){const s=slot();if(!s)return;const P=petsOf(s);let can=false;for(let i=0;i<petCount();i++)if(P.own[i]==null&&s.coins>=petUnlockCost(i)){can=true;break}$('bPets').textContent=can?'萌 宠 · 可领养':'萌 宠'}
+function petBadge(){const s=slot();if(!s)return;const c=(()=>{const P=petsOf(s),k=P.sel;return {k,l:P.lines[k]}})(),evo=c.l%PET_EVO===PET_EVO-1&&petNextForm(c.k,c.l)&&s.coins>=petLvCost(c.l);$('bPets').textContent=evo?'萌 宠 · 可进化':'萌 宠'}
 $('bPets').onclick=()=>{petsBack='ovHub';renderPets();show('ovPets')};
 $('bPetsBack').onclick=()=>{if(petsBack==='ovHub'){renderHub();show('ovHub')}else{renderPause();show('ovPause')}};
 $('bOverShop').onclick=()=>{shopBack='ovOver';renderShop();show('ovShop')};
@@ -3314,6 +3319,8 @@ drawPathBack=function(g,x,y,r,t){if(!S||!S.path)return;const ht=heroTop(r)*1.35;
 drawPathFront=function(g,x,y,r,t){if(!S||S.path!=='fa')return;const ht=heroTop(r)*1.35;
   for(let i=0;i<3;i++){const a=t*1.6+i*2.094,px=x+Math.cos(a)*ht*.42,py=y-ht*.55+Math.sin(a)*ht*.12;if(Math.sin(a)<0)continue;g.fillStyle='#fff3a0';g.beginPath();
     for(let k=0;k<=10;k++){const b=k*Math.PI/5-Math.PI/2+t,rr=k%2?2.6:6.5;g.lineTo(px+Math.cos(b)*rr,py+Math.sin(b)*rr)}g.fill()}};
+/* 萌宠路线（女生版）：毛绒线 / 飞羽线 */
+PET_LINES.beast.forms=[0,2,3,4,7,11,12,13,16];PET_LINES.spirit.forms=[1,8,5,6,9,10,15,14];
 
 loadLocal();renderSlots();resize();
 if(document.fonts&&document.fonts.load)document.fonts.load('20px "Russo One"').catch(()=>{});
