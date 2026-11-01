@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl", "sbjs": "supabase.js"};</script>
-<script>(function(){var B="20261101211816";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261101212712";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" media="print" onload="this.media='all'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -111,7 +111,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .skills{position:absolute;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(10px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:row;gap:10px;z-index:2}
 .skills[hidden]{display:none}
 .skills{display:grid!important;grid-template-columns:repeat(2,52px);gap:8px}
-#skFire{position:absolute;right:0;bottom:calc(100% + 10px)}.skills[hidden]{display:none!important}
+.farow{position:absolute;right:0;bottom:calc(100% + 10px);display:flex;gap:8px}.farow[hidden]{display:none!important}.skills[hidden]{display:none!important}
 .sk[hidden]{display:none}
 .sk{--p:0;position:relative;width:52px;height:52px;border-radius:50%;border:2px solid rgba(255,194,58,.7);cursor:pointer;padding:0;color:var(--ink);
   background:conic-gradient(rgba(8,10,15,.78) calc(var(--p)*1turn),rgba(20,25,36,.92) 0);display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -233,7 +233,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   <div class="goal" id="goal"></div>
   <div class="ups" id="ups"></div>
   <div class="skills" id="skills" hidden>
-    <button class="sk" id="skFire" aria-label="星星魔弹" hidden><span class="ic">💫</span><b id="skFireT"></b><small>星星魔弹</small></button>
+    <div class="farow" id="faRow" hidden><button class="sk" id="skFire" aria-label="星星魔弹"><span class="ic">💫</span><b id="skFireT"></b><small>星星魔弹</small></button><button class="sk" id="skIce" aria-label="冰晶咒"><span class="ic">🧊</span><b id="skIceT"></b><small>冰晶咒</small></button><button class="sk" id="skSword" aria-label="流星乱舞"><span class="ic">🌠</span><b id="skSwordT"></b><small>流星乱舞</small></button></div>
     <button class="sk" id="skShield" aria-label="泡泡护盾" hidden><span class="ic">🫧</span><b id="skShieldT"></b><small>泡泡护盾</small></button>
     <button class="sk" id="skFreeze" aria-label="甜梦暂停" hidden><span class="ic">🌙</span><b id="skFreezeT"></b><small>甜梦暂停</small></button>
     <button class="sk" id="skBolt" aria-label="彩虹光束" hidden><span class="ic">🌈</span><b id="skBoltT"></b><small>彩虹光束</small></button>
@@ -715,7 +715,7 @@ function target(){
   const hb=S.bottle?.8:1;   // a heart-demon wave is a little easier, so breaking through stays reachable
   return (lo+(hi-lo)*Math.min(1,(ph-MOW)/3))*hb;
 }
-const refDps=()=>dps()/tempMul()/((1+.35*spr())/(1+.35*S.spread))*Math.sqrt(expBuild()/build())/Math.sqrt(S.permMul)/(S.hexT>0?.75:1)/(S.zouT>0?.7:1);   // shop bonuses keep half their edge (sqrt) instead of all of it; debuffs don't lower the reference
+const refDps=()=>dps()/pathAtk()/tempMul()/((1+.35*spr())/(1+.35*S.spread))*Math.sqrt(expBuild()/build())/Math.sqrt(S.permMul)/(S.hexT>0?.75:1)/(S.zouT>0?.7:1);   // shop bonuses keep half their edge (sqrt) instead of all of it; debuffs don't lower the reference
 const zBase=()=>(1+Math.min(2,Math.floor(S.t/90)))*(curTrait()==='swarm'?1.7:1);                                  // monsters per spawn (plus 0-1 random)
 const zIv=()=>1.05/(1+Math.min(S.t,300)/200)*(inSurge()?.65:1);                // seconds between spawns
 function zps(){return (zBase()+.5)/zIv()}
@@ -751,7 +751,8 @@ const maxX=()=>roadX+roadW-sw()/2-4;
 const tempOn=k=>!!(S&&S.temp&&S.temp.k===k&&S.surgeOn&&waveK()===S.temp.wave);
 const spr=()=>S.spread+(tempOn('swarm')?3:0);
 const tempMul=()=>tempOn('power')?1.8:1;
-const dps=()=>.12*power()*S.dmg*S.rate*(S&&S.zouT>0?.7:1)*(S&&S.hexT>0?.75:1)*(1+.35*spr())*tempMul();
+const FA_ATK=.5,TI_ATK=1.5,pathAtk=()=>S&&S.path==='fa'?FA_ATK:S&&S.path==='ti'?TI_ATK:1;   // 流派普攻倍率：敌人强度不跟着它走，所以玩家真能感觉到
+const dps=()=>pathAtk()*.12*power()*S.dmg*S.rate*(S&&S.zouT>0?.7:1)*(S&&S.hexT>0?.75:1)*(1+.35*spr())*tempMul();
 const mechX=()=>{const side=S.x<mid?1:-1;return clamp(S.x+side*(sw()/2+16+7*S.mech),roadX+18,roadX+roadW-18)};
 
 const UPG={
@@ -1176,8 +1177,8 @@ const POPT={
   inf_dmg:{ok:()=>(S.inf.dmg||0)<infCap(),line:()=>'伤害 +12%（已叠 '+(S.inf.dmg||0)+'/'+infCap()+'，称号越高上限越高）',ic:{g:'art',o:{up:'dmg'}},go:()=>{S.inf.dmg=(S.inf.dmg||0)+1;S.dmg*=1.12;S.upMul*=1.12}},
   inf_rate:{ok:()=>(S.inf.rate||0)<infCap(),line:()=>'星速 +10%（已叠 '+(S.inf.rate||0)+'/'+infCap()+'，称号越高上限越高）',ic:{g:'art',o:{up:'rate'}},go:()=>{S.inf.rate=(S.inf.rate||0)+1;S.rate*=1.1;S.upMul*=1.1}},
   inf_hp:{ok:()=>(S.inf.hp||0)<infCap(),line:()=>'元气立刻回 30%，冲线伤害 −5%（已叠 '+(S.inf.hp||0)+'/'+infCap()+'）',ic:{e:'❤️'},go:()=>{S.inf.hp=(S.inf.hp||0)+1;S.armor*=.95;heal(.3,'淬体')}}};
-POPT.path_ti={ok:()=>true,line:()=>'一箭破万难：靠星光硬推。星光伤害 ×1.5、受伤 −30%、元气上限 ×1.3、流星雨和贯穿上限各 +1；技能冷却 +40%、技能威力 −30%',ic:{g:'art',o:{up:'dmg'}},go:()=>{S.pathV2=true;S.path='ti';S.dmg*=1.5;S.armor*=.7;toast('成为星弓系','星光 ×1.5、更抗打、元气更厚')}};
-POPT.path_fa={ok:()=>true,line:()=>'咒语引星辰：靠法术操作。四种法术立刻全部学会，威力 ×2.5、冷却减半，星光爆发最多存 5 张，还多一个「星星魔弹」按钮（4 秒一发）；星光伤害 ×0.6',ic:{g:'fu',o:{fu:'bomb'}},go:()=>{S.pathV2=true;S.path='fa';S.dmg*=.6;S.fireCd=0;toast('成为咒语系','法术全开、威力 ×2.5、冷却减半，右下角多了「星星魔弹」');skillUI()}};
+POPT.path_ti={ok:()=>true,line:()=>'一箭破万难：靠星光硬推。星光伤害 ×1.5（敌人不跟着变强）、受伤 −30%、元气上限 ×1.3、流星雨和贯穿上限各 +1；技能冷却 +40%、技能威力 −30%',ic:{g:'art',o:{up:'dmg'}},go:()=>{S.pathV2=S.pathV3=true;S.path='ti';S.armor*=.7;toast('成为星弓系','星光 ×1.5、更抗打、元气更厚')}};
+POPT.path_fa={ok:()=>true,line:()=>'咒语引星辰：靠法术操作。四种法术立刻全部学会，威力 ×2.5、冷却减半，星光爆发最多存 5 张；另得三门咒语系专属法术：星星魔弹、冰晶咒、流星乱舞。星光只剩 ×0.5，不放法术会很吃力',ic:{g:'fu',o:{fu:'bomb'}},go:()=>{S.pathV2=S.pathV3=true;S.path='fa';S.fireCd=0;S.iceCd=0;S.swordCd=0;effectPop('fa_intro','咒语三式','右下角多了三个法术：星星魔弹（砸最近一团，3 秒一发）、冰晶咒（全场减速 5 秒）、流星乱舞（3 秒流星乱舞）。星光只剩一半，要靠法术推进。',{e:'🔥'});toast('成为咒语系','法术全开、威力 ×2.5、冷却减半，右下角多了「星星魔弹」');skillUI()}};
 POPT.coin={ok:()=>true,line:()=>'本称号能强化的都满了：星钻 +'+fmt(coinPack())+'（突破称号后上限会提高）',ic:{e:'💰'},go:()=>{S.coins+=coinPack()}};
 const coinPack=()=>Math.round(40*(1+S.maxR)*S.coinMul);
 const INFK=['inf_dmg','inf_rate','inf_hp'];
@@ -1274,7 +1275,7 @@ ftext(o.x,o.y,'净化负能量',C.gold,30);for(let i=0;i<6;i++)dropCoins(o.x+ran
 function update(dt){
   const v=speed();S.dist+=v*dt;
   S.boltCd=Math.max(0,S.boltCd-dt);S.shieldCd=Math.max(0,S.shieldCd-dt);S.freezeCd=Math.max(0,S.freezeCd-dt);S.shieldT=Math.max(0,S.shieldT-dt);S.freezeT=Math.max(0,S.freezeT-dt);
-  S.zouT=Math.max(0,S.zouT-dt);S.fxBell=Math.max(0,S.fxBell-dt);S.fxBreak=Math.max(0,(S.fxBreak||0)-dt);if(S.fxGourd){S.fxGourd.t-=dt;if(S.fxGourd.t<=0)S.fxGourd=null}
+  S.zouT=Math.max(0,S.zouT-dt);S.fxBell=Math.max(0,S.fxBell-dt);S.fxBreak=Math.max(0,(S.fxBreak||0)-dt);if(S.fxGourd){S.fxGourd.t-=dt;if(S.fxGourd.t<=0||!S.fxGourd.pts)S.fxGourd=null}
 if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S.fxBomb-dt);
   {const r=refDps();if(r>S.Dref)S.Dref+=(r-S.Dref)*Math.min(1,dt/(inSurge()?4:15));   // ratchet: enemies follow you up (fast in surges, slow while mowing), never down
    S.leakRate*=Math.exp(-dt);if(S.leakAcc>0){S.leakT-=dt;if(S.leakT<=0){{const p=S.leakAcc/Math.max(1,S.leakBase)*100;ftext(S.leakX,squadY-44,'魔力 −'+(p<1?p.toFixed(1):Math.round(p))+'%',C.minus,18)}S.leakAcc=0}}}
@@ -1303,10 +1304,10 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
   if(S.fb.gourd>0){S.gourdT-=dt;if(S.gourdT<=0){const L=S.fb.gourd;S.gourdT=6-.5*L;S.gourdN=(S.gourdN||0)+1;
     const zs=S.objs.filter(z=>z.k==='z'&&!z.dead&&!z.boss&&z.y>0&&(z.type!=='elite'||L>=3)).sort((a,b)=>b.y-a.y);
     const all=L>=5&&S.gourdN%4===0,n=all?zs.filter(z=>z.type!=='elite').length:Math.min(zs.length,L+Math.floor(zs.length*.05*L));
-    let k=0;for(const z of zs){if(k>=n)break;if(all&&z.type==='elite')continue;z.dead=true;killZ(z);k++;if(k===1)S.fxGourd={x:z.x,y:z.y,t:.45}}
-    if(k){sfx(700,.2,'sine',.05,.4);if(all){ftext(mid+roadW/4,H*.35,'招财猫 · 招财大爆发！',C.gold,24);S.fxBomb=.4}else if(k>=4)ftext(mid+roadW/4,H*.3,'收 '+k+' 只',C.gold,16)}}}
+    let k=0;const pts=[];for(const z of zs){if(k>=n)break;if(all&&z.type==='elite')continue;pts.push([z.x,z.y]);z.dead=true;killZ(z);k++}
+    if(k){S.fxGourd={pts,t:.9,k};sfx(700,.2,'sine',.05,.4);if(all){ftext(mid+roadW/4,H*.35,'招财猫 · 招财大爆发！',C.gold,24);S.fxBomb=.4}else ftext(S.x,squadY-150,'招财猫 · 收 '+k+' 只',C.gold,18)}}}
   if(S.fb.bell>0){S.bellT-=dt;S.bellGuard=Math.max(0,(S.bellGuard||0)-dt);if(S.bellT<=0){const L=S.fb.bell;S.bellT=12-L;const push=H*(.05+.025*L);
-    for(const z of S.objs)if(z.k==='z'&&!z.dead)z.y=Math.max(-40,z.y-push*(z.boss?.4:1));if(L>=3)S.freezeT=Math.max(S.freezeT,.6+.2*L);S.fxBell=.6;sfx(300,.5,'sine',.06,.8)}}
+    for(const z of S.objs)if(z.k==='z'&&!z.dead)z.y=Math.max(-40,z.y-push*(z.boss?.4:1));if(L>=3)S.freezeT=Math.max(S.freezeT,.6+.2*L);S.fxBell=.9;{let n=0;for(const z of S.objs)if(z.k==='z'&&!z.dead&&z.y>0)n++;ftext(S.x,squadY-150,'安眠音乐盒 · 震退 '+n+' 只'+(L>=3?' · 震晕':''),C.gold,18)}sfx(300,.5,'sine',.06,.8)}}
   if(S.mech>0){S.mechT-=dt;if(S.mechT<=0){S.mechT=1.3;const mx=mechX();
     const sh=S.mech>=8?[-16,0,16]:S.mech>=4?[-12,12]:[0];for(const ox of sh)S.bullets.push({x:mx+ox,y:squadY-34,vx:0,vy:-650,dmg:dps()*(.2+.03*S.mech)/sh.length,p:0,shell:true});burst(mx,squadY-36,'#ffb347',6,90,3);sfx(150,.12,'square',.04,.5)}}
   S.fireT-=dt;let guard=0;
@@ -1315,7 +1316,7 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
   for(const o of S.objs){
     if(o.k==='z'){
       if(S.freezeT<=0){
-        o.y+=(o.boss?v*.3*(o.dash>0?2:1):(v*.5+o.sp)*(o.fast||1)*(o.fast&&tempOn('fast')?.5:1)*(S.surgeOn?1.1:1)*(o.type==='elite'&&S.fb.mirror>=3?.7:1))*dt;
+        o.y+=(o.boss?v*.3*(o.dash>0?2:1):(v*.5+o.sp)*(o.fast||1)*(o.fast&&tempOn('fast')?.5:1)*(S.surgeOn?1.1:1)*(o.type==='elite'&&S.fb.mirror>=3?.7:1))*dt*(S.slowT>0?.5:1);
         if(!o.boss){o.x+=Math.sin(S.t*2+o.ph)*10*dt;o.x=clamp(o.x,mid+8+o.r,roadX+roadW-8-o.r)}
       }
       if(o.hit>0)o.hit-=dt;
@@ -1382,7 +1383,12 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
     if(S.hpF<.5&&!S.hpTold){S.hpTold=true;toast('元气过半','元气不会自己回：变身、净化 Boss 后休整、选「元气精进」才回')}}
    if(S.bottle&&!S.bottleShown){S.bottleShown=true;if(S.maxR>=TOPR)toast('创世女神 9星圆满','下一波净化「永夜」，即可点亮星空、通关');else toast('变身前夕：'+REALMS[S.maxR]+'九星圆满','净化本波 Boss（负能量）或吃变身星冠才能变身')}}
   S.bankT-=dt;if(S.bankT<=0){S.bankT=8;bankCoins()}
-  S.fireCd=Math.max(0,(S.fireCd||0)-dt);
+  for(const k of ['fire','ice','sword'])S[k+'Cd']=Math.max(0,(S[k+'Cd']||0)-dt);S.slowT=Math.max(0,(S.slowT||0)-dt);
+  if(S.fxFire){const f=S.fxFire;f.t+=dt/.3;if(f.t>=1){fireHit(f);S.fxFire=null}}
+  if(S.swordT>0){S.swordT-=dt;S.swordTick-=dt;if(S.swordTick<=0){S.swordTick=.2;const zs=S.objs.filter(z=>z.k==='z'&&!z.dead&&z.y>0);
+    if(zs.length){const z=zs[ri(0,zs.length-1)],before=S.kills;skillPool(3*skPow()/15,q=>q===z,.01);S.swordKill+=S.kills-before;(S.fxSwords=S.fxSwords||[]).push({x:z.x,y:z.y,t:.25})}}
+    if(S.swordT<=0&&S.swordKill)ftext(mid+roadW/4,H*.36,'流星乱舞 · 净化 '+S.swordKill+' 只','#d8f4ff',18)}
+  if(S.fxSwords){for(const f of S.fxSwords)f.t-=dt;S.fxSwords=S.fxSwords.filter(f=>f.t>0)}
   if(S.fxSpell){S.fxSpell.t-=dt;if(S.fxSpell.t<=0)S.fxSpell=null}
   S.saveT=(S.saveT==null?30:S.saveT)-dt;if(S.saveT<=0&&!S.tut){S.saveT=30;saveRun()}
   if(S.count<=0)endRun(true);
@@ -1551,7 +1557,7 @@ function drawBoss(o){
   bossEvoFront(o,glow);
   const w=r*3.2,p=clamp(o.hp/o.hp0,0,1);
   ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(x-w/2,y-r-16,w,7);ctx.fillStyle=C.minus;ctx.fillRect(x-w/2,y-r-16,w*p,7);
-  outlined(L.name+' · '+REALMS[o.realm||0],x,y-r-40,13,o.realm>S.rR?C.minus:'#ffd677',CN);{const sec=Math.max(0,o.hp)/Math.max(1e-9,dps()*dmgMul(o));outlined('需 '+(sec<10?sec.toFixed(1):Math.round(sec))+' 秒',x,y-r-26,13,'#fff',CN)}
+  outlined(L.name+' · '+REALMS[o.realm||0]+(S.fb.mirror?' · 许愿镜 +'+30*S.fb.mirror+'%':''),x,y-r-40,13,o.realm>S.rR?C.minus:'#ffd677',CN);{const sec=Math.max(0,o.hp)/Math.max(1e-9,dps()*dmgMul(o));outlined('需 '+(sec<10?sec.toFixed(1):Math.round(sec))+' 秒',x,y-r-26,13,'#fff',CN)}
   outlined('冲线扣 '+Math.round(bossHpF()*100)+'% 元气',x,y+r+18,12,C.minus,CN);
 }
 
@@ -2344,16 +2350,27 @@ function useFreeze(){
 }
 const BOMB_S=10,BOLT_S=4;
 function skillPool(sec,inArea,bossCap){   // damage pool = sec seconds of your full DPS; nearest-to-line first; bosses take at most bossCap of max HP
-  let pool=dps()*sec,n=0;const zs=S.objs.filter(z=>z.k==='z'&&!z.dead&&inArea(z)).sort((a,b)=>b.y-a.y);
+  let pool=dps()/pathAtk()*sec,n=0;const zs=S.objs.filter(z=>z.k==='z'&&!z.dead&&inArea(z)).sort((a,b)=>b.y-a.y);
   for(const z of zs){if(pool<=0)break;const m=Math.max(1e-6,dmgMul(z));
     if(z.boss){const d=Math.min(pool*m,z.hp0*bossCap);z.hp-=d;pool-=d/m;z.hit=.15;if(z.hp<=0){z.dead=true;killZ(z)}continue}
     const need=z.hp/m;if(need<=pool){pool-=need;z.hp=0;z.dead=true;killZ(z);n++}else{z.hp-=pool*m;z.hit=.15;pool=0}}
   return n;
 }
-function useFire(){   // 咒语系专属：星星魔弹，打离防线最近的一团
-  if(!running||paused||!S||S.path!=='fa'||S.fireCd>0)return;const z=S.objs.filter(z=>z.k==='z'&&!z.dead&&z.y>0).sort((a,b)=>b.y-a.y)[0];if(!z)return;
-  S.fireCd=4;S.fxSpell={x:z.x,y:z.y,t:.35};const n=skillPool(1.2*skPow(),q=>{const dx=q.x-z.x,dy=q.y-z.y;return dx*dx+dy*dy<80*80},.04);
-  burst(z.x,z.y,'#ff9a3a',22,240,4);sfx(520,.12,'sawtooth',.04,.5);if(n>1)ftext(z.x,z.y-30,'星星魔弹 · '+n,'#ffb070',16);skillUI();
+const FA_CD={fire:3,ice:14,sword:15};
+function faOk(k){return running&&!paused&&S&&S.path==='fa'&&!(S[k+'Cd']>0)}
+function useFire(){   // 咒语系 · 星星魔弹：一颗星星魔弹砸向离防线最近的一团，范围爆炸
+  if(!faOk('fire'))return;const z=S.objs.filter(z=>z.k==='z'&&!z.dead&&z.y>0).sort((a,b)=>b.y-a.y)[0];if(!z){ftext(mid+roadW/4,H*.35,'星星魔弹：右道还没有怪','#ffb070',18);return}
+  S.fireCd=FA_CD.fire;S.fxFire={x0:S.x,y0:squadY-30,x:z.x,y:z.y,t:0};skillUsed('fire');skillUI();sfx(380,.15,'sawtooth',.04,1.6);
+}
+function fireHit(f){const n=skillPool(1.0*skPow(),q=>{const dx=q.x-f.x,dy=q.y-f.y;return dx*dx+dy*dy<85*85},.04);
+  burst(f.x,f.y,'#ff9a3a',30,280,5);burst(f.x,f.y,'#ffe08a',14,160,4);S.shake=Math.min(12,S.shake+4);sfx(140,.3,'sawtooth',.06,.4);ftext(f.x,f.y-34,n?'星星魔弹 · 净化 '+n+' 只':'星星魔弹 · 重创','#ffb070',18)}
+function useIce(){   // 咒语系 · 冰晶咒：全场坏情绪减速一半，5 秒
+  if(!faOk('ice'))return;S.iceCd=FA_CD.ice*Math.pow(.85,S.cdUp||0);S.slowT=5;skillUsed('ice');skillUI();sfx(1400,.4,'sine',.05,.4);
+  ftext(mid+roadW/4,H*.3,'冰晶咒 · 全场减速 5 秒','#bfe8ff',22);
+}
+function useSword(){   // 咒语系 · 流星乱舞：3 秒内流星不停砸向右道的怪
+  if(!faOk('sword'))return;S.swordCd=FA_CD.sword*Math.pow(.85,S.cdUp||0);S.swordT=3;S.swordTick=0;S.swordKill=0;skillUsed('sword');skillUI();sfx(900,.2,'square',.04,1.4);
+  ftext(mid+roadW/4,H*.3,'流星乱舞！','#d8f4ff',24);
 }
 function useBomb(){
   if(!canSkill('bomb')||S.bombs<=0)return;S.bombs--;skillUsed('bomb');
@@ -2373,7 +2390,7 @@ function useBolt(){
 }
 function skillUI(){
   if(!S)return;
-  {const f=$('skFire');f.hidden=S.path!=='fa';$('skFireT').textContent=S.fireCd>0?Math.ceil(S.fireCd):'';f.style.setProperty('--p',((S.fireCd||0)/4).toFixed(3));f.classList.toggle('off',S.fireCd>0)}
+  $('faRow').hidden=S.path!=='fa';if(S.path==='fa')for(const [k,id] of [['fire','Fire'],['ice','Ice'],['sword','Sword']]){const f=$('sk'+id),cd=S[k+'Cd']||0;$('sk'+id+'T').textContent=cd>0?Math.ceil(cd):'';f.style.setProperty('--p',(cd/FA_CD[k]).toFixed(3));f.classList.toggle('off',cd>0)}
   const b=$('skBomb');b.hidden=!has('bomb');
   $('skBombN').textContent=S.bombs;b.classList.toggle('off',S.bombs<=0);
   for(const [id,cd,full] of [['Bolt',S.boltCd,20],['Shield',S.shieldCd,45],['Freeze',S.freezeCd,35]]){
@@ -2381,7 +2398,19 @@ function skillUI(){
     $('sk'+id+'T').textContent=cd>0?Math.ceil(cd):'';el.style.setProperty('--p',(cd/full).toFixed(3));el.classList.toggle('off',cd>0)}
   for(const k of ['bomb','bolt','shield','freeze']){const el=$('sk'+SKN[k]);el.classList.toggle('sealed',!!(S.seal&&S.seal[k]>0))}
 }
+function fabaoBar(){   // 魔法道具状态：左下角小图标 + 冷却圈，触发前 1 秒发光
+  const ks=['gourd','bell','mirror'].filter(k=>S.fb[k]>0);if(!ks.length)return;let x=roadX+20;const y=squadY+sw()*.3+64;
+  for(const k of ks){const L=S.fb[k],per=k==='gourd'?6-.5*L:k==='bell'?12-L:0,left=k==='gourd'?S.gourdT:k==='bell'?S.bellT:0,ready=per&&left<1;
+    ctx.fillStyle='rgba(10,12,20,.6)';ctx.beginPath();ctx.arc(x,y,17,0,6.283);ctx.fill();gateIcon('fb',{fbk:k},x,y,.8,S.t,false);
+    if(per){ctx.strokeStyle=ready?'#fff3a0':'rgba(255,214,119,.85)';ctx.lineWidth=ready?3.5:2.5;ctx.beginPath();ctx.arc(x,y,17,-Math.PI/2,-Math.PI/2+6.283*(1-clamp(left/per,0,1)));ctx.stroke()}
+    outlined('Lv'+L,x,y+22,10,'#ffe6a0',CN);x+=42}
+}
 function drawSkillFx(){
+  if(S.fxFire){const f=S.fxFire,u=Math.min(1,f.t),x=f.x0+(f.x-f.x0)*u,y=f.y0+(f.y-f.y0)*u-Math.sin(u*Math.PI)*60;
+    ctx.fillStyle='rgba(255,160,60,.35)';ctx.beginPath();ctx.arc(x,y,18,0,6.283);ctx.fill();ctx.fillStyle='#ffd27a';ctx.beginPath();ctx.arc(x,y,9,0,6.283);ctx.fill();
+    ctx.strokeStyle='rgba(255,120,40,.5)';ctx.lineWidth=2;ctx.setLineDash([4,4]);ctx.beginPath();ctx.arc(f.x,f.y,85,0,6.283);ctx.stroke();ctx.setLineDash([])}
+  if(S.fxSwords)for(const f of S.fxSwords){const a=f.t/.25;ctx.strokeStyle='rgba(220,245,255,'+a+')';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(f.x-14,f.y-60*a-10);ctx.lineTo(f.x,f.y);ctx.stroke()}
+  if(S.slowT>0){ctx.fillStyle='rgba(160,220,255,'+(.10+.05*Math.sin(S.t*6))+')';ctx.fillRect(mid,0,roadX+roadW-mid,H);outlined('冰晶 '+Math.ceil(S.slowT)+'s',mid+roadW/4,H*.16,14,'#cfefff',CN)}
   if(S.fxSpell){const f=S.fxSpell,a=f.t/.35;ctx.strokeStyle='rgba(255,170,80,'+a+')';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(S.x,squadY-20);ctx.lineTo(f.x,f.y);ctx.stroke();ctx.fillStyle='rgba(255,220,140,'+a+')';ctx.beginPath();ctx.arc(f.x,f.y,22*(1.2-a),0,6.283);ctx.fill()}
   if(S.regroup>0){const a=Math.min(1,S.regroup);ctx.globalAlpha=a;outlined('休整 · '+Math.ceil(S.regroup)+' 秒',W*.5,H*.24,22,'#7dffa8',CN);outlined('不刷怪 · 去左边吃门',W*.5,H*.24+24,13,'#d8ffe4',CN);ctx.globalAlpha=1}
   if(S.fxBolt){const f=S.fxBolt,a=f.t/.45,cx=(f.x0+f.x1)/2;
@@ -2392,14 +2421,19 @@ function drawSkillFx(){
     ctx.beginPath();ctx.arc(S.x,squadY,sw()*.8+18,Math.PI,0);ctx.fill();ctx.stroke()}
   if(S.freezeT>0){ctx.fillStyle='rgba(127,216,255,.18)';ctx.fillRect(mid,0,roadX+roadW-mid,H);
     ctx.strokeStyle='rgba(190,235,255,.85)';ctx.lineWidth=2;for(const z of S.objs)if(z.k==='z'&&!z.dead){ctx.beginPath();ctx.arc(z.x,z.y,z.r+4,0,6.28);ctx.stroke()}}
-  if(S.fxGourd){const f=S.fxGourd,a=f.t/.45;ctx.strokeStyle='rgba(200,140,255,'+a+')';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(S.x,squadY-30);ctx.lineTo(f.x,f.y);ctx.stroke()}
-  if(S.fxBell>0){const a=S.fxBell/.6;ctx.strokeStyle='rgba(255,214,119,'+a+')';ctx.lineWidth=6;ctx.beginPath();ctx.arc(S.x,squadY,(1-a)*H*.9,Math.PI,0);ctx.stroke()}
+  if(S.fxGourd){const f=S.fxGourd,a=Math.min(1,f.t/.9),gx=S.x,gy=squadY-110;   // the gourd appears above you and sucks the monsters in
+    for(const [px,py] of f.pts){ctx.strokeStyle='rgba(220,170,255,'+(a*.7)+')';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(gx,gy);ctx.quadraticCurveTo((gx+px)/2+30,(gy+py)/2,px,py);ctx.stroke();
+      const u=1-a,qx=px+(gx-px)*u,qy=py+(gy-py)*u;ctx.fillStyle='rgba(255,230,160,'+a+')';ctx.beginPath();ctx.arc(qx,qy,5,0,6.283);ctx.fill()}
+    ctx.globalAlpha=a;gateIcon('fb',{fbk:'gourd'},gx,gy,2.2,S.t,false);ctx.globalAlpha=1}
+  if(S.fxBell>0){const a=Math.min(1,S.fxBell/.9);for(const d of [0,.15]){ctx.strokeStyle='rgba(255,214,119,'+Math.max(0,a-d)+')';ctx.lineWidth=7;ctx.beginPath();ctx.arc(S.x,squadY,Math.max(1,(1-a+d)*H*.9),Math.PI,0);ctx.stroke()}
+    ctx.globalAlpha=a;gateIcon('fb',{fbk:'bell'},S.x,squadY-110,2.2,S.t,false);ctx.globalAlpha=1}
+  fabaoBar();
   if((S.fxBreak||0)>0){const a=S.fxBreak/1.2;ctx.fillStyle='rgba(255,214,119,'+(.4*a)+')';ctx.fillRect(0,0,W,H)}
   if(S.fxBomb>0){const a=Math.min(1,S.fxBomb/.7),r=(1-a)*Math.max(W,H)*1.1;
     ctx.fillStyle='rgba(255,245,210,'+(.55*a)+')';ctx.fillRect(0,0,W,H);
     ctx.strokeStyle='rgba(255,180,80,'+a+')';ctx.lineWidth=10;ctx.beginPath();ctx.arc(W*.7,H*.45,r,0,6.28);ctx.stroke()}
 }
-for(const [id,f] of [['skBomb',useBomb],['skBolt',useBolt],['skShield',useShield],['skFreeze',useFreeze],['skFire',useFire]]){const el=$(id);
+for(const [id,f] of [['skBomb',useBomb],['skBolt',useBolt],['skShield',useShield],['skFreeze',useFreeze],['skFire',useFire],['skIce',useIce],['skSword',useSword]]){const el=$(id);
   el.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();f()});el.addEventListener('click',e=>e.preventDefault())}   // fires on touch-down, works while the other hand is dragging
 
 /* ================= LOOP ================= */
@@ -2447,7 +2481,8 @@ function resumeRun(snap){
   newRun();Object.assign(S,JSON.parse(JSON.stringify(snap)));S.rowDone=new Set(snap.rowDone||[]);
   Object.assign(S,{objs:[],bullets:[],parts:[],texts:[],cfx:[],guards:[],stage:null,comboGate:null,tipObj:null,fxGourd:null,fxBolt:null,fxBomb:0,
     surgeOn:false,bossAlive:false,shieldT:0,freezeT:0,hexT:0,zouT:0,pickQ:0,brkPend:0,regroup:0,tut:false,x:lmid,shake:0,flash:0,leakAcc:0,leakRate:0,lastHp:null});
-  if(S.path&&!S.pathV2){if(S.path==='fa'){S.dmg*=.75;S.fireCd=0}else{S.dmg*=1.5/1.4;S.armor*=.7/.8}}S.pathV2=true;   // 11-01 21:10 路线数值加强，旧存档补齐
+  if(S.path&&!S.pathV2){if(S.path==='fa'){S.dmg*=.75;S.fireCd=0}else{S.dmg*=1.5/1.4;S.armor*=.7/.8}}S.pathV2=true;
+  if(S.path&&!S.pathV3){S.dmg/=S.path==='fa'?.6:1.5;S.pathV3=true}   // 流派倍率改成单独计算（敌人不再跟着变）   // 11-01 21:10 路线数值加强，旧存档补齐
   S.t=PRE+CYC*(Math.floor(Math.max(0,S.t-PRE)/CYC)+1)+.01;S.dirPh=undefined;S.Dref=refDps();renderUps();
   toast('继续冒险',rName(realmOf(S.count))+' · 元气 '+Math.round(S.hpF*100)+'%');
 }
@@ -2483,9 +2518,9 @@ function renderPause(){   // 暂停页：当前阶段 + 每项数值 / 本称号
   h+='<h4>技能</h4>';
   const cdm=Math.pow(.85,S.cdUp||0)*skCd(),SK=[['bomb','星光爆发','威力 '+(BOMB_S*skPow()).toFixed(0)+' 秒星力，Boss 最多 −20% · 存 '+S.bombs+' / '+bombCap()+' 张'],
     ['bolt','彩虹光束','威力 '+(BOLT_S*skPow()).toFixed(0)+' 秒星力打一列 · 冷却 '+Math.round(20*skCd())+' 秒'],['shield','泡泡护盾','6 秒内冲线不伤你 · 冷却 '+Math.round(45*cdm)+' 秒'],['freeze','甜梦暂停','全场定住 3.5 秒 · 冷却 '+Math.round(35*cdm)+' 秒']];
-  if(S.path==='fa')SK.push(['fire','星星魔弹','威力 '+(1.2*skPow()).toFixed(1)+' 秒星力，打最近一团 · 冷却 4 秒']);
-  for(const [k,n,d] of SK){const on=k==='fire'||has(k);h+='<div class="r'+(on?'':' off')+'"><b>'+n+'</b><span class="v">'+(on?d:'未解锁 · 约 '+Math.max(1,Math.ceil(((FEAT[k]||0)-S.t)/60))+' 分钟后')+'</span></div>'}
-  if(S.path)h+='<div class="r"><b>'+(S.path==='ti'?'星弓系':'咒语系')+'</b><span class="v">'+(S.path==='ti'?'星光 ×1.5、受伤 −30%、元气 ×1.3；技能冷却 +40%、威力 −30%':'法术全开、威力 ×2.5、冷却减半、星光爆发 5 张、星星魔弹；星光 ×0.6')+'</span></div>';
+  if(S.path==='fa')SK.push(['fire','星星魔弹','星星魔弹砸最近一团（范围），威力 '+(1*skPow()).toFixed(1)+' 秒星力 · 冷却 '+FA_CD.fire+' 秒'],['ice','冰晶咒','全场坏情绪减速一半 5 秒 · 冷却 '+Math.round(FA_CD.ice*Math.pow(.85,S.cdUp||0))+' 秒'],['sword','流星乱舞','3 秒内流星乱舞，共 '+(3*skPow()).toFixed(1)+' 秒星力 · 冷却 '+Math.round(FA_CD.sword*Math.pow(.85,S.cdUp||0))+' 秒']);
+  for(const [k,n,d] of SK){const on=['fire','ice','sword'].includes(k)||has(k);h+='<div class="r'+(on?'':' off')+'"><b>'+n+'</b><span class="v">'+(on?d:'未解锁 · 约 '+Math.max(1,Math.ceil(((FEAT[k]||0)-S.t)/60))+' 分钟后')+'</span></div>'}
+  if(S.path)h+='<div class="r"><b>'+(S.path==='ti'?'星弓系':'咒语系')+'</b><span class="v">'+(S.path==='ti'?'星光 ×1.5、受伤 −30%、元气 ×1.3；技能冷却 +40%、威力 −30%':'法术全开、威力 ×2.5、冷却减半、星光爆发 5 张、星星魔弹/冰晶咒/流星乱舞；星光 ×0.5')+'</span></div>';
   else h+='<div class="r off"><b>收集路线</b><span class="v">晋升筑基时选择星弓系或咒语系</span></div>';
   $('pauseBuild').innerHTML=h;
 }
@@ -2833,7 +2868,7 @@ drawBoss=function(o){
   for(let i=0;i<st;i++){const a=t*2+i*2.09;ctx.fillStyle='#ffd36e';ctx.beginPath();ctx.arc(x+Math.cos(a)*r*1.25,y+Math.sin(a)*r*.6,3,0,6.283);ctx.fill()}
   const w=r*3.2,p=clamp(o.hp/o.hp0,0,1);
   ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(x-w/2,y-r-16,w,7);ctx.fillStyle=C.minus;ctx.fillRect(x-w/2,y-r-16,w*p,7);
-  outlined(L.name+' · '+REALMS[o.realm||0],x,y-r-40,13,o.realm>S.rR?C.minus:'#ffd677',CN);{const sec=Math.max(0,o.hp)/Math.max(1e-9,dps()*dmgMul(o));outlined('需 '+(sec<10?sec.toFixed(1):Math.round(sec))+' 秒',x,y-r-26,13,'#fff',CN)}
+  outlined(L.name+' · '+REALMS[o.realm||0]+(S.fb.mirror?' · 许愿镜 +'+30*S.fb.mirror+'%':''),x,y-r-40,13,o.realm>S.rR?C.minus:'#ffd677',CN);{const sec=Math.max(0,o.hp)/Math.max(1e-9,dps()*dmgMul(o));outlined('需 '+(sec<10?sec.toFixed(1):Math.round(sec))+' 秒',x,y-r-26,13,'#fff',CN)}
   bossEvoFront(o,'#ffe9a8');
   outlined('冲线扣 '+Math.round(bossHpF()*100)+'% 元气',x,y+r+18,12,C.minus,CN);
 };
