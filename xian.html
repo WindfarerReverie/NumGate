@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "xian", "sbjs": "supabase.js"};</script>
-<script>(function(){var B="20261101204324";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261101210856";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>御剑斩妖录</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -109,7 +109,8 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .sync{font-size:11px;color:var(--muted);margin:0}
 .skills{position:absolute;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(10px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:row;gap:10px;z-index:2}
 .skills[hidden]{display:none}
-.skills{display:grid!important;grid-template-columns:repeat(2,52px);gap:8px}.skills[hidden]{display:none!important}
+.skills{display:grid!important;grid-template-columns:repeat(2,52px);gap:8px}
+#skFire{position:absolute;right:0;bottom:calc(100% + 10px)}.skills[hidden]{display:none!important}
 .sk[hidden]{display:none}
 .sk{--p:0;position:relative;width:52px;height:52px;border-radius:50%;border:2px solid rgba(255,194,58,.7);cursor:pointer;padding:0;color:var(--ink);
   background:conic-gradient(rgba(8,10,15,.78) calc(var(--p)*1turn),rgba(20,25,36,.92) 0);display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -205,6 +206,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   <div class="goal" id="goal"></div>
   <div class="ups" id="ups"></div>
   <div class="skills" id="skills" hidden>
+    <button class="sk" id="skFire" aria-label="火符" hidden><span class="ic">🔥</span><b id="skFireT"></b><small>火符</small></button>
     <button class="sk" id="skShield" aria-label="金钟罩" hidden><span class="ic">🔔</span><b id="skShieldT"></b><small>金钟罩</small></button>
     <button class="sk" id="skFreeze" aria-label="定身符" hidden><span class="ic">📜</span><b id="skFreezeT"></b><small>定身符</small></button>
     <button class="sk" id="skBolt" aria-label="掌心雷" hidden><span class="ic">⚡</span><b id="skBoltT"></b><small>掌心雷</small></button>
@@ -408,7 +410,7 @@ const power=()=>S.count<RBASE?S.count:RBASE*Math.pow(2,PL*effL());
 const bossHpF=()=>.2+.2*Math.min(1,Math.max(0,((S&&S.maxR)||0)-1)/8);   // a boss crossing costs 25% 气血 early, 40% from 合体 on
 const leakHp=o=>(o.boss?bossHpF():(o.type==='elite'?.06:o.type==='brute'?.025:.012)*(.2+.8*Math.min(1,Math.max(0,((S&&S.maxR)||0)-1)/7)))*S.armor*(o.st?0:1);   // early realms forgive more   // share of max 气血 one leaking monster costs (staged tutorial monsters cost nothing)
 function heal(f,lbl){if(!S||!(f>0))return;const b=S.hpF;S.hpF=Math.min(1,S.hpF+f);const v=Math.round((S.hpF-b)*hpCap());if(v>0)ftext(S.x,squadY-96,(lbl?lbl+' · ':'')+'气血 +'+v,'#7dffa8',22)}
-const hpCap=()=>Math.round(100+60*Math.max(0,(S&&S.maxR)||0));
+const hpCap=()=>Math.round((100+60*Math.max(0,(S&&S.maxR)||0))*(S&&S.path==='ti'?1.3:1));
 function loseHp(f,x,lbl){if(!(f>0)||S.won)return;S.hpF-=f;S.hpHit=(S.hpHit||0)+f;S.hpHitT=.35;S.hpHitX=x;S.hpHitL=lbl||'';S.hpFlash=.6}
 const below=()=>S.peakL-layersOf(S.count)>.05;
 function addLayers(d){const r=Math.max(1,realmOf(S.count).r);if(d>0&&below())d*=3;   // 重修旧境: regaining lost layers is 3× faster
@@ -676,7 +678,9 @@ const kEff=()=>{if(!S)return 0;const rr=realmOf(S.count);return Math.min(45,2.4*
 const waveK=()=>Math.floor(wt()/CYC);
 const wph=()=>S.t<PRE?0:wt()%CYC;
 const inSurge=()=>!S.tut&&S.t>=PRE&&wph()>=MOW;
-const surgeSoon=()=>!S.tut&&(inSurge()||(S.t>=PRE?MOW-wph():PRE-S.t+MOW)<7);   // no gates in the monster lane right before / during a surge (they would eat your fire)
+const surgeSoon=(lead=7)=>!S.tut&&(inSurge()||(S.t>=PRE?MOW-wph():PRE-S.t+MOW)<lead);
+const jieOn=()=>S.objs.some(o=>o.g==='jie'&&!o.dead);
+const LOCKG=['vein','art','fb','fu','brk'];   // no gates in the monster lane right before / during a surge (they would eat your fire)
 function target(){
   const k=kEff(),ph=wph(),LH=1+.15*(S.life-1),late=1-Math.exp(-Math.max(0,k-8)/10),lo=(.15+.2*(1-Math.exp(-k/12))+.05*late)*LH,hi=(.55+1.3*(1-Math.exp(-k/14))+.05*late)*LH;   // base curve is gentle; the director (S.M) raises it for strong players   // early curve unchanged; extra pressure only after wave 8   // ramps over ~40 min instead of 10
   if(ph<MOW)return lo;
@@ -731,7 +735,7 @@ const UPG={
 };
 const upCap=(k,r)=>{const pb=S&&S.path==='ti'&&(k==='spread'||k==='pierce')?1:0;return Math.min(UPG[k].max,Math.max(1,Math.ceil(UPG[k].max*((r==null?S.maxR:r)+3)/(REALMS.length+2))))+pb};
 // 体修 / 法修：筑基时二选一
-const skCd=()=>S.path==='ti'?1.3:S.path==='fa'?.6:1,skPow=()=>S.path==='ti'?.8:S.path==='fa'?2:1,bombCap=()=>S.path==='fa'?5:3;
+const skCd=()=>S.path==='ti'?1.4:S.path==='fa'?.5:1,skPow=()=>S.path==='ti'?.7:S.path==='fa'?2.5:1,bombCap=()=>S.path==='fa'?5:3;
 const fbCap=r=>Math.min(5,Math.max(1,Math.ceil(5*((r==null?S.maxR:r)+3)/(REALMS.length+2))));
 function pickUpg(){
   const pool=[];for(const k in UPG){if(k!=='mech'&&S.lv[k]>=upCap(k))continue;if(k==='mech')continue;else pool.push(k,k)}
@@ -774,7 +778,7 @@ function newRun(){toastQ=[];
 
 /* ================= PROGRESSIVE UNLOCKS ================= */
 const FEAT={qi:0,n:4,xin:12,art:25,surge:40,bomb:40,run:50,bolt:62,four:70,brute:85,fb:85,dodge:100,elite:110,zou:110,shield:130,vein:130,trap:130,freeze:175,fu:175,jie:175,hex:150,bskill:195,guard:240,summon:465};
-const has=k=>!!S&&S.t>=(FEAT[k]??0);
+const has=k=>!!S&&(S.t>=(FEAT[k]??0)||(S.path==='fa'&&(k==='bomb'||k==='bolt'||k==='shield'||k==='freeze')));   // 法修 gets every spell at once
 /* ================= GATES (cultivation) ================= */
 const GT={
   qi:{n:'聚气丹',col:'#2f9bff',fill:'47,155,255'},
@@ -818,11 +822,14 @@ function mkGate(type,x0,x1,trap){
 function spawnRow(){
   let pool=ROWS.filter(r=>has(r[1])&&has(r[2])&&(r[4]!=='b'||(has('four')&&!surgeSoon())));
   if(S.goodRow){S.goodRow=false;const gp=pool.filter(r=>r[4]==='g');if(gp.length)pool=gp}
+  // a locked gate only when it can actually be opened: not right before / during a surge, and never two at once
+  const lockBusy=surgeSoon(12)||S.objs.some(o=>o.k==='gate'&&!o.dead&&o.lock>0&&o.y<squadY);
   if(S.firstRow){pool=[[1,'qi','qi',0,'g']];S.firstRow=false}
   let tot=0;for(const r of pool)tot+=rowW(r);
   let q=Math.random()*tot,row=pool[0];for(const r of pool){q-=rowW(r);if(q<=0){row=r;break}}
   let ops=Math.random()<.5?[row[1],row[2]]:[row[2],row[1]];
   if(S.bottle&&S.maxR<TOPR&&row[4]==='g'&&Math.random()<.25)ops[ri(0,1)]='brk';   // stuck at a bottleneck: a breakthrough pill sometimes shows up
+  {let kept=false;for(let i=0;i<2;i++)if(LOCKG.includes(ops[i])&&!(ops[i]==='brk'&&S.bottle&&!lockBusy)){if(lockBusy||kept)ops[i]='qi';else kept=true}}
   const rid=++S.rowId,a=mkGate(ops[0],roadX+7,lmid-4),b=mkGate(ops[1],lmid+4,mid-8);a.rid=b.rid=rid;
   S.objs.push(a,b);
   if(row[4]==='b'){   // a bad row covers all four columns: pick the mildest one
@@ -1141,8 +1148,8 @@ const POPT={
   inf_dmg:{ok:()=>(S.inf.dmg||0)<infCap(),line:()=>'伤害 +12%（已叠 '+(S.inf.dmg||0)+'/'+infCap()+'，境界越高上限越高）',ic:{g:'art',o:{up:'dmg'}},go:()=>{S.inf.dmg=(S.inf.dmg||0)+1;S.dmg*=1.12;S.upMul*=1.12}},
   inf_rate:{ok:()=>(S.inf.rate||0)<infCap(),line:()=>'剑速 +10%（已叠 '+(S.inf.rate||0)+'/'+infCap()+'，境界越高上限越高）',ic:{g:'art',o:{up:'rate'}},go:()=>{S.inf.rate=(S.inf.rate||0)+1;S.rate*=1.1;S.upMul*=1.1}},
   inf_hp:{ok:()=>(S.inf.hp||0)<infCap(),line:()=>'气血立刻回 30%，冲线伤害 −5%（已叠 '+(S.inf.hp||0)+'/'+infCap()+'）',ic:{e:'❤️'},go:()=>{S.inf.hp=(S.inf.hp||0)+1;S.armor*=.95;heal(.3,'淬体')}}};
-POPT.path_ti={ok:()=>true,line:()=>'以剑破万法：剑气伤害 ×1.4、受伤 −20%、剑雨和破甲上限各 +1；技能冷却 +30%、技能威力 −20%',ic:{g:'art',o:{up:'dmg'}},go:()=>{S.path='ti';S.dmg*=1.4;S.armor*=.8;toast('走上体修之路','剑气更强、更抗打')}};
-POPT.path_fa={ok:()=>true,line:()=>'以法御万剑：技能威力 ×2、冷却 −40%、雷劫符最多存 5 张，每 5 秒自动打出一道火符；剑气伤害 ×0.8',ic:{g:'fu',o:{fu:'bomb'}},go:()=>{S.path='fa';S.dmg*=.8;S.spellT=3;toast('走上法修之路','技能更强、冷却更快，火符自动出手')}};
+POPT.path_ti={ok:()=>true,line:()=>'以剑破万法：靠剑气硬推。剑气伤害 ×1.5、受伤 −30%、气血上限 ×1.3、剑雨和破甲上限各 +1；技能冷却 +40%、技能威力 −30%',ic:{g:'art',o:{up:'dmg'}},go:()=>{S.pathV2=true;S.path='ti';S.dmg*=1.5;S.armor*=.7;toast('走上体修之路','剑气 ×1.5、更抗打、气血更厚')}};
+POPT.path_fa={ok:()=>true,line:()=>'以法御万剑：靠法术操作。四种法术立刻全部学会，威力 ×2.5、冷却减半，雷劫符最多存 5 张，还多一个「火符」按钮（4 秒一发）；剑气伤害 ×0.6',ic:{g:'fu',o:{fu:'bomb'}},go:()=>{S.pathV2=true;S.path='fa';S.dmg*=.6;S.fireCd=0;toast('走上法修之路','法术全开、威力 ×2.5、冷却减半，右下角多了「火符」');skillUI()}};
 POPT.coin={ok:()=>true,line:()=>'本境界能强化的都满了：灵石 +'+fmt(coinPack())+'（突破大境界后上限会提高）',ic:{e:'💰'},go:()=>{S.coins+=coinPack()}};
 const coinPack=()=>Math.round(40*(1+S.maxR)*S.coinMul);
 const INFK=['inf_dmg','inf_rate','inf_hp'];
@@ -1247,9 +1254,10 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
   if(S.tut)tutStep(dt);
   else {
     S.t+=dt;
-    S.spawnL-=dt;if(S.spawnL<=0){spawnRow();S.spawnL=rand(2.9,3.5)}
+    S.spawnL-=dt;if(S.spawnL<=0){if(!S.jieHold&&!jieOn())spawnRow();S.spawnL=rand(2.9,3.5)}
     if(S.jieRealm!==S.maxR){S.jieRealm=S.maxR;S.jieCD=Math.min(S.jieCD||60,60)}S.jieCD=(S.jieCD==null?60:S.jieCD)-dt;
-    if(has('jie')&&S.rR>=2&&S.rR===S.maxR&&!S.bottle&&S.jieCD<=0&&S.t>=PRE&&wph()>6&&!surgeSoon()&&!S.objs.some(o=>o.k==='gate'&&o.y<H*.25)){S.jieCD=JIE_EVERY;spawnJie()}
+    S.jieHold=has('jie')&&S.rR>=2&&S.rR===S.maxR&&!S.bottle&&S.jieCD<=0&&S.t>=PRE&&!surgeSoon(16);   // 天劫 due: stop new left gates so the lane is clear
+    if(S.jieHold&&!S.objs.some(o=>o.k==='gate'&&!o.dead&&o.x1<=mid+2&&o.y<squadY)){S.jieCD=JIE_EVERY;S.jieHold=false;spawnJie()}
     S.spawnTrap-=v*dt;if(S.spawnTrap<=0){if(has('trap')&&!surgeSoon())spawnTrap();S.spawnTrap=H*rand(1.8,2.6)}
     S.regroup=Math.max(0,(S.regroup||0)-dt);
     S.spawnR-=dt;if(S.spawnR<=0&&!(S.regroup>0)){spawnZombies();S.spawnR=(S.bossAlive?1.4:1)*rand(.85,1.15)*zIv()}
@@ -1346,8 +1354,7 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
     if(S.hpF<.5&&!S.hpTold){S.hpTold=true;toast('气血过半','气血不会自己回：破境、斩 Boss 后整顿、选「淬体精进」才回')}}
    if(S.bottle&&!S.bottleShown){S.bottleShown=true;if(S.maxR>=TOPR)toast('圣人九层圆满','下一波斩「天道」，即可证道通关');else toast('瓶颈：'+REALMS[S.maxR]+'九层圆满','斩本波 Boss（心魔）或吃破境丹才能破境')}}
   S.bankT-=dt;if(S.bankT<=0){S.bankT=8;bankCoins()}
-  if(S.path==='fa'&&!S.tut){S.spellT=(S.spellT==null?5:S.spellT)-dt;if(S.spellT<=0){const z=S.objs.filter(z=>z.k==='z'&&!z.dead&&z.y>0).sort((a,b)=>b.y-a.y)[0];
-    if(z){S.spellT=5;S.fxSpell={x:z.x,y:z.y,t:.35};skillPool(1.6*skPow()/2,q=>{const dx=q.x-z.x,dy=q.y-z.y;return dx*dx+dy*dy<70*70},.02);burst(z.x,z.y,'#ff9a3a',18,220,4);sfx(520,.12,'sawtooth',.04,.5)}else S.spellT=.5}}
+  S.fireCd=Math.max(0,(S.fireCd||0)-dt);
   if(S.fxSpell){S.fxSpell.t-=dt;if(S.fxSpell.t<=0)S.fxSpell=null}
   S.saveT=(S.saveT==null?30:S.saveT)-dt;if(S.saveT<=0&&!S.tut){S.saveT=30;saveRun()}
   if(S.count<=0)endRun(true);
@@ -1883,7 +1890,7 @@ const TIPS={
   hex:{t:'咒怨妖',d:'头上会读条，读满后你的剑速 −25%，持续 4 秒。看到就先打掉它。'},
   guard:{t:'护法妖',d:'身边一圈里的妖受到的伤害减少 40%。先打护法妖，再清其他。'},
   cast:{t:'Boss 技能',d:'第三波起 Boss 会放技能：召唤小妖、冲锋、咒术（剑速 −25%）、封印（某个技能 6 秒不能用）。读条时打掉它 8% 的血就能打断。'},
-  path:{t:'体修 / 法修',d:'踏入筑基时二选一，选了就不能改。体修：剑气伤害 ×1.4、受伤 −20%、剑雨和破甲上限各 +1，但技能冷却更长、威力 −20%。法修：技能威力 ×2、冷却 −40%、雷劫符最多存 5 张，还会每 5 秒自动打出一道火符，但剑气伤害 ×0.8。两条路的数值都跟着境界涨。'},
+  path:{t:'体修 / 法修',d:'踏入筑基时二选一，选了就不能改。体修靠剑气硬推：剑气伤害 ×1.5、受伤 −30%、气血上限 ×1.3、剑雨和破甲上限各 +1，但技能冷却 +40%、威力 −30%。法修靠法术操作：四种法术立刻全部学会，威力 ×2.5、冷却减半、雷劫符最多存 5 张，还多一个「火符」按钮（4 秒一发，打离防线最近的一团），但剑气伤害 ×0.6。两条路的数值都跟着境界涨。'},
   save:{t:'存档与长线修炼',d:'这是一场长线修炼：前几个大境界十几分钟，越往后越久，修到圣人要几十个小时。随时点暂停 →「存档退出」，下次从原地接着打；平时每 30 秒也会自动存。只有气血耗尽，这一局才结束。'},
   hp:{t:'气血',d:'左上角的红条。小妖冲线扣 1.2%，石甲妖 2.5%，噬元魔 6%，Boss 20%～40%（境界越高越多），同时少掉一点修为。气血不会自己回，只有破境（+30%）、斩 Boss 后整顿（+15%）、选「淬体精进」（+30%）才回。气血归零，这局就结束。'},
   mech:{t:'灵宠',d:'踏入炼体就有灵宠跟着你，每个大境界换一只更神异的（灵猫 → 白狐 → … → 祖龙）。到了筑基，灵宠开始定时轰击妖魔，境界越高轰得越狠。'}
@@ -2315,6 +2322,11 @@ function skillPool(sec,inArea,bossCap){   // damage pool = sec seconds of your f
     const need=z.hp/m;if(need<=pool){pool-=need;z.hp=0;z.dead=true;killZ(z);n++}else{z.hp-=pool*m;z.hit=.15;pool=0}}
   return n;
 }
+function useFire(){   // 法修专属：火符，打离防线最近的一团
+  if(!running||paused||!S||S.path!=='fa'||S.fireCd>0)return;const z=S.objs.filter(z=>z.k==='z'&&!z.dead&&z.y>0).sort((a,b)=>b.y-a.y)[0];if(!z)return;
+  S.fireCd=4;S.fxSpell={x:z.x,y:z.y,t:.35};const n=skillPool(1.2*skPow(),q=>{const dx=q.x-z.x,dy=q.y-z.y;return dx*dx+dy*dy<80*80},.04);
+  burst(z.x,z.y,'#ff9a3a',22,240,4);sfx(520,.12,'sawtooth',.04,.5);if(n>1)ftext(z.x,z.y-30,'火符 · '+n,'#ffb070',16);skillUI();
+}
 function useBomb(){
   if(!canSkill('bomb')||S.bombs<=0)return;S.bombs--;skillUsed('bomb');
   // not a screen wipe: a pool worth BOMB_S seconds of your full fire, spent on the monsters nearest the line first
@@ -2333,6 +2345,7 @@ function useBolt(){
 }
 function skillUI(){
   if(!S)return;
+  {const f=$('skFire');f.hidden=S.path!=='fa';$('skFireT').textContent=S.fireCd>0?Math.ceil(S.fireCd):'';f.style.setProperty('--p',((S.fireCd||0)/4).toFixed(3));f.classList.toggle('off',S.fireCd>0)}
   const b=$('skBomb');b.hidden=!has('bomb');
   $('skBombN').textContent=S.bombs;b.classList.toggle('off',S.bombs<=0);
   for(const [id,cd,full] of [['Bolt',S.boltCd,20],['Shield',S.shieldCd,45],['Freeze',S.freezeCd,35]]){
@@ -2358,7 +2371,7 @@ function drawSkillFx(){
     ctx.fillStyle='rgba(255,245,210,'+(.55*a)+')';ctx.fillRect(0,0,W,H);
     ctx.strokeStyle='rgba(255,180,80,'+a+')';ctx.lineWidth=10;ctx.beginPath();ctx.arc(W*.7,H*.45,r,0,6.28);ctx.stroke()}
 }
-for(const [id,f] of [['skBomb',useBomb],['skBolt',useBolt],['skShield',useShield],['skFreeze',useFreeze]]){const el=$(id);
+for(const [id,f] of [['skBomb',useBomb],['skBolt',useBolt],['skShield',useShield],['skFreeze',useFreeze],['skFire',useFire]]){const el=$(id);
   el.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();f()});el.addEventListener('click',e=>e.preventDefault())}   // fires on touch-down, works while the other hand is dragging
 
 /* ================= LOOP ================= */
@@ -2369,7 +2382,7 @@ function frameBody(ts){
   if(running&&!paused){
     const ts=tScale();update(dt*ts);scroll+=speed()*dt*ts;coachScan(dt);brkScan();pickScan();
     hudT-=dt;if(hudT<=0&&S){hudT=.2;
-      skillUI();hintScan();$('goal').innerHTML=goalText();$('hDist').textContent=fmt(S.dist/40);{const rr=realmOf(S.count);$('hRealm').textContent=rName(rr)+(S.bottle?' · 瓶颈':'');$('hRealmBar').style.width=((S.bottle?1:rr.frac)*100)+'%';$('hRealmWrap').classList.toggle('bottle',S.bottle)}$('hCoin').textContent=fmt(S.coins);
+      skillUI();hintScan();$('goal').innerHTML=goalText();$('hDist').textContent=fmt(S.dist/40);{const rr=realmOf(S.count);$('hRealm').textContent=rName(rr)+(S.bottle?' · 瓶颈':'')+(S.path?' · '+(S.path==='ti'?'体修':'法修'):'');$('hRealmBar').style.width=((S.bottle?1:rr.frac)*100)+'%';$('hRealmWrap').classList.toggle('bottle',S.bottle)}$('hCoin').textContent=fmt(S.coins);
       {const p=dangerTick(.2),pw=$('hPressWrap');$('hPress').textContent=Math.round(p*100)+'%';
         pw.className='chip '+(p<.3?'ok':p<.6?'mid':'bad');
         {const c=hpCap();$('hHp').textContent=Math.ceil(S.hpF*c);$('hHpBar').style.width=(S.hpF*100)+'%';$('hHpWrap').classList.toggle('low',S.hpF<.3)}
@@ -2406,6 +2419,7 @@ function resumeRun(snap){
   newRun();Object.assign(S,JSON.parse(JSON.stringify(snap)));S.rowDone=new Set(snap.rowDone||[]);
   Object.assign(S,{objs:[],bullets:[],parts:[],texts:[],cfx:[],guards:[],stage:null,comboGate:null,tipObj:null,fxGourd:null,fxBolt:null,fxBomb:0,
     surgeOn:false,bossAlive:false,shieldT:0,freezeT:0,hexT:0,zouT:0,pickQ:0,brkPend:0,regroup:0,tut:false,x:lmid,shake:0,flash:0,leakAcc:0,leakRate:0,lastHp:null});
+  if(S.path&&!S.pathV2){if(S.path==='fa'){S.dmg*=.75;S.fireCd=0}else{S.dmg*=1.5/1.4;S.armor*=.7/.8}}S.pathV2=true;   // 11-01 21:10 路线数值加强，旧存档补齐
   S.t=PRE+CYC*(Math.floor(Math.max(0,S.t-PRE)/CYC)+1)+.01;S.dirPh=undefined;S.Dref=refDps();renderUps();
   toast('继续修炼',rName(realmOf(S.count))+' · 气血 '+Math.round(S.hpF*100)+'%');
 }
