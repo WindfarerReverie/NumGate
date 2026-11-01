@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl", "sbjs": "supabase.js"};if(/(^|\.)youfeng\.app$|\.pages\.dev$/.test(location.hostname))window.NG_CFG.url=location.origin+'/sb';</script>
-<script>(function(){var B="20261102032512";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261102033806";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" media="print" onload="this.media='all'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1540,7 +1540,7 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
 /* ================= DRAWING ================= */
 let scroll=0;
 /* ===== 手绘素材（11-02 ChatGPT 出图）：有图用图，没图继续用代码画；女生版关掉 ===== */
-/*ARTMAN*/const ART_MAN={"hero_ti_0":1,"hero_ti_1":1,"hero_ti_2":1,"hero_fa_0":1,"hero_fa_1":1,"hero_fa_2":1,"pet_0":1,"pet_4":1,"pet_6":1,"pet_1":1,"pet_5":1,"pet_11":1,"mon_n":1,"mon_run":1,"mon_brute":1,"mon_elite":1,"mon_hex":1,"mon_guard":1,"boss_3":1,"boss_4":1,"bg_cover":1,"bg_r0":1,"bg_r4":1,"hero_ti_3":1,"hero_ti_4":1,"hero_fa_3":1,"hero_fa_4":1,"boss_0":1,"boss_1":1,"boss_2":1,"boss_5":1,"boss_6":1,"boss_7":1,"boss_8":1,"boss_9":1,"boss_10":1,"boss_11":1,"bg_r3":1,"bg_r5":1,"bg_r6":1,"bg_r7":1,"bg_r8":1,"bg_r9":1,"bg_r10":1,"pet_2":1,"pet_3":1,"pet_7":1,"pet_8":1,"pet_9":1,"pet_10":1},ART_V='2142946d';/*ARTMAN_END*/
+/*ARTMAN*/const ART_MAN={"hero_ti_0":1,"hero_ti_1":1,"hero_ti_2":1,"hero_fa_0":1,"hero_fa_1":1,"hero_fa_2":1,"pet_0":1,"pet_4":1,"pet_6":1,"pet_1":1,"pet_5":1,"pet_11":1,"mon_n":1,"mon_run":1,"mon_brute":1,"mon_elite":1,"mon_hex":1,"mon_guard":1,"boss_3":1,"boss_4":1,"bg_cover":1,"bg_r0":1,"bg_r4":1,"hero_ti_3":1,"hero_ti_4":1,"hero_fa_3":1,"hero_fa_4":1,"boss_0":1,"boss_1":1,"boss_2":1,"boss_5":1,"boss_6":1,"boss_7":1,"boss_8":1,"boss_9":1,"boss_10":1,"boss_11":1,"boss_12":1,"bg_r3":1,"bg_r5":1,"bg_r6":1,"bg_r7":1,"bg_r8":1,"bg_r9":1,"bg_r10":1,"bg_r11":1,"bg_r12":1,"pet_2":1,"pet_3":1,"pet_7":1,"pet_8":1,"pet_9":1,"pet_10":1,"pet_12":1,"pet_13":1},ART_V='c4fcbb62';/*ARTMAN_END*/
 let ART_ON=true;const ART_IMG={};
 function artImg(k){if(!ART_ON||!ART_MAN[k])return null;let e=ART_IMG[k];if(!e){e=ART_IMG[k]=new Image();e.decoding='async';e.src='art/'+k+'.webp?v='+ART_V}return e.complete&&e.naturalWidth?e:null}
 function artPreload(){if(!ART_ON)return;for(const k in ART_MAN)artImg(k)}
