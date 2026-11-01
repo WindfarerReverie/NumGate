@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl"};</script>
-<script>(function(){var B="20261101192047";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261101193442";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1182,7 +1182,7 @@ function pickScan(){
   S.pickQ--;const pathNow=S.maxR>=3&&!S.path;const o=pathNow?['path_ti','path_fa']:rollPick();if(!o){S.coins+=50;return}
   pickOpts=o;paused=true;
   const tr=nextTrait(),box=$('pickList');box.innerHTML='';
-  $('pickWhy').textContent=pathNow?'晋升筑基 · 选择魔法路线':S.pickWhy||'选一个强化';
+  $('pickWhy').textContent=pathNow?'晋升'+REALMS[S.maxR]+' · 选择魔法路线':S.pickWhy||'选一个强化';
   $('pickNext').innerHTML=pathNow?'两条路的数值都跟着称号涨。选了就不能改。':tr?'下一波：<b>'+TRAITS[tr].n+'</b> · '+TRAITS[tr].d:'下一波：普通噩梦潮';
   for(const k of o){const tk=k.startsWith('t_')?k.slice(2):null,P=tk?{ic:{g:'fu',o:{fu:'bomb'}},line:()=>TEMPS[tk].d}:POPT[k],b=document.createElement('button');b.className='pk';
     const cnt=!tk&&tr&&TRAITS[tr].c.includes(k),kind=tk?['短期 · 只管下一波','ts']:LONGK.includes(k)?['长期 · 越养越强','tl']:INFK.includes(k)?['已满级 · 精进（上限随称号）','ti']:k.startsWith('path_')?['路线 · 二选一，不可更改','tl']:['常驻','tp'];
@@ -1221,7 +1221,7 @@ function regroup(){   // 净化 Boss 后休整：冲击波重创烦恼球、6 �
 function breakthrough(){
   S.maxR=Math.min(REALMS.length-1,S.maxR+1);S.bottle=false;S.bottleShown=false;
   S.count=Math.max(S.count,RBASE*Math.pow(2,RSTART[S.maxR])*1.0001);
-  S.dmg*=1.15;heal(.3,'变身');{const n=skillPool(BOMB_S,()=>true,.2);S.fxBomb=.9;S.shake=14;ftext(S.x,squadY-130,'升级流星雨'+(n?' · 净化 '+n+' 只':''),'#fff3c4',24)}S.brkPend=S.maxR;queuePick('变身奖励');
+  S.dmg*=1.15;heal(.3,'变身');{const n=skillPool(BOMB_S,()=>true,.2);S.fxBomb=.7;S.shake=14;ftext(S.x,squadY-130,'升级流星雨'+(n?' · 净化 '+n+' 只':''),'#fff3c4',24)}S.brkPend=S.maxR;queuePick('变身奖励');
   toast('华丽变身！晋升'+REALMS[S.maxR],'元气 +30%、上限提升，星力 +15%，流星守护');S.flash=0;S.fxBreak=1.2;S.shake=10;
   sfx(523,.15);setTimeout(()=>sfx(659,.15),120);setTimeout(()=>sfx(784,.15),240);setTimeout(()=>sfx(1046,.35),360);renderUps();
 }
@@ -2362,7 +2362,7 @@ function drawSkillFx(){
   if(S.fxGourd){const f=S.fxGourd,a=f.t/.45;ctx.strokeStyle='rgba(200,140,255,'+a+')';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(S.x,squadY-30);ctx.lineTo(f.x,f.y);ctx.stroke()}
   if(S.fxBell>0){const a=S.fxBell/.6;ctx.strokeStyle='rgba(255,214,119,'+a+')';ctx.lineWidth=6;ctx.beginPath();ctx.arc(S.x,squadY,(1-a)*H*.9,Math.PI,0);ctx.stroke()}
   if((S.fxBreak||0)>0){const a=S.fxBreak/1.2;ctx.fillStyle='rgba(255,214,119,'+(.4*a)+')';ctx.fillRect(0,0,W,H)}
-  if(S.fxBomb>0){const a=S.fxBomb/.7,r=(1-a)*Math.max(W,H)*1.1;
+  if(S.fxBomb>0){const a=Math.min(1,S.fxBomb/.7),r=(1-a)*Math.max(W,H)*1.1;
     ctx.fillStyle='rgba(255,245,210,'+(.55*a)+')';ctx.fillRect(0,0,W,H);
     ctx.strokeStyle='rgba(255,180,80,'+a+')';ctx.lineWidth=10;ctx.beginPath();ctx.arc(W*.7,H*.45,r,0,6.28);ctx.stroke()}
 }
@@ -2371,7 +2371,8 @@ for(const [id,f] of [['skBomb',useBomb],['skBolt',useBolt],['skShield',useShield
 
 /* ================= LOOP ================= */
 let hudT=0;
-function frame(ts){
+function frame(ts){requestAnimationFrame(frame);try{frameBody(ts)}catch(e){console.error(e)}}   // never let one bad frame freeze the game
+function frameBody(ts){
   const dt=Math.min(.033,(ts-last)/1000||0);last=ts;
   if(running&&!paused){
     const ts=tScale();update(dt*ts);scroll+=speed()*dt*ts;coachScan(dt);brkScan();pickScan();
@@ -2387,7 +2388,7 @@ function frame(ts){
   } else if(!running)scroll+=30*dt;
   if(tip){demoT+=dt;drawDemo(tip,demoT)}
   if(toastT>0&&!tip){toastT-=dt;if(toastT<=0){$('toast').classList.remove('on');if(toastQ.length)setTimeout(()=>{if(toastT<=0)nextToast()},180)}}
-  draw();if(running&&!paused)drawCoach(dt);if(running)drawBrk(dt);else drawCovers(ts/1000);requestAnimationFrame(frame);
+  try{draw();if(running&&!paused)drawCoach(dt);if(running)drawBrk(dt);else drawCovers(ts/1000)}catch(e){console.error(e)}
 }
 
 /* ================= INPUT & FLOW ================= */
