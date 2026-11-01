@@ -1,4 +1,4 @@
--- 数字门大作战 / 星愿魔法少女 · 后台数据库（在 Supabase 的 SQL Editor 里整段粘贴，点 Run）
+-- 御剑斩妖录 / 星愿魔法少女 · 后台数据库（在 Supabase 的 SQL Editor 里整段粘贴，点 Run）
 -- ver = 'xian'（修仙版）或 'girl'（女生版），两个版本的存档和排行榜分开
 
 create table if not exists public.saves (
@@ -31,3 +31,7 @@ alter table public.scores enable row level security;
 create policy "scores read all" on public.scores for select to anon, authenticated using (true);
 create policy "own score insert" on public.scores for insert to authenticated with check (id = auth.uid());
 create policy "own score update" on public.scores for update to authenticated using (id = auth.uid()) with check (id = auth.uid());
+
+grant select, insert, update on public.saves to authenticated;
+grant select on public.scores to anon, authenticated;
+grant insert, update on public.scores to authenticated;
