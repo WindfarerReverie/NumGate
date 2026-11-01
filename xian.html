@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "xian", "sbjs": "supabase.js"};</script>
-<script>(function(){var B="20261101210856";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261101211816";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>御剑斩妖录</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -136,6 +136,15 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .rank{display:flex;flex-direction:column;gap:4px;text-align:left;max-height:46vh;overflow:auto}
 .rk{display:grid;grid-template-columns:28px 1fr auto;gap:6px;align-items:center;padding:7px 10px;border-radius:9px;background:rgba(255,255,255,.05);font-size:13px}
 .rk b{color:var(--gold);font-size:14px}.rk .who{font-weight:700}.rk .what{color:var(--muted);font-size:12px}
+.phead{text-align:left;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.6}
+.phead b{color:var(--gold)}.phead .big{font-size:17px;font-family:var(--display)}
+.pstat{display:flex;flex-direction:column;gap:6px;text-align:left}
+.pstat h4{margin:8px 0 0;font-size:13px;color:var(--gold);letter-spacing:.05em}
+.pstat .r{display:grid;grid-template-columns:72px 1fr;gap:2px 8px;align-items:center;background:rgba(255,255,255,.05);border-radius:9px;padding:6px 9px;font-size:12.5px}
+.pstat .r b{font-size:13.5px}.pstat .r .v{color:var(--ink)}.pstat .r .n{grid-column:2;color:var(--muted);font-size:11.5px;line-height:1.4}
+.pstat .bar{grid-column:2;height:5px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden;position:relative}
+.pstat .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--gold)}.pstat .bar u{position:absolute;top:0;bottom:0;background:rgba(255,214,119,.28)}
+.pstat .off{opacity:.5}
 .quota{margin:0;font-size:13px;color:var(--muted)}.quota b{color:var(--gold)}
 .runinfo{margin:0;padding:8px 10px;border-radius:10px;background:rgba(125,255,168,.1);border:1px solid rgba(125,255,168,.35);font-size:13px;line-height:1.5}.runinfo b{color:#7dffa8}
 .rk .sc{font-family:var(--display);font-size:17px;color:var(--gold);white-space:nowrap}.rk .sc small{font-size:11px;margin-left:2px;color:var(--muted)}
@@ -328,10 +337,11 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   <div class="ov" id="ovPause" hidden>
     <div class="card">
       <h2>暂停</h2>
-      <div class="pbuild" id="pauseBuild"></div>
+      <div class="phead" id="pauseHead"></div>
       <button class="go" id="bResume">继 续</button>
       <button class="go alt" id="bQuit">存档退出</button>
       <p class="tip">存档退出：这一局原样保存，下次从这里接着修炼。只有气血耗尽，这一局才结束。</p>
+      <div class="pstat" id="pauseBuild"></div>
     </div>
   </div>
 
@@ -2429,7 +2439,38 @@ function startRun(){
   {const sl=slot();if(sl.run&&sl.run.S)resumeRun(sl.run.S);else newRun()}running=true;paused=false;show(null);coinTarget();lockWake();
   if(tipQ.length)openTip(tipQ.shift());
 }
-function togglePause(){if(!running||tip||pickOpts)return;paused=!paused;if(paused){renderUps();$('pauseBuild').innerHTML=$('ups').innerHTML||'<span class="sync">还没有强化</span>'}show(paused?'ovPause':null)}
+function togglePause(){if(!running||tip||pickOpts)return;paused=!paused;if(paused)renderPause();show(paused?'ovPause':null);$('coachSkip').hidden=paused||!coach}
+function renderPause(){   // 暂停页：当前阶段 + 每项数值 / 本境界上限 / 最终上限 + 技能
+  const rr=realmOf(S.count),L=layersOf(S.count),toTop=TOPR-S.maxR,mx=x=>'×'+(x>=10?Math.round(x):x.toFixed(2).replace(/\.?0+$/,''));
+  const nextR=S.maxR<TOPR?REALMS[S.maxR+1]:null,hpc=hpCap();
+  $('pauseHead').innerHTML='<div class="big">'+rName(rr)+(S.path?' · '+(S.path==='ti'?'体修':'法修'):'')+'</div>'
+    +(S.bottle?'九层圆满，<b>斩下一个 Boss（心魔）</b>或吃破境丹 → '+nextR:nextR?'离「'+nextR+'」还差 <b>'+Math.max(0,9*S.maxR-L).toFixed(1)+'</b> 层':'已到最高境界')
+    +(toTop>0?' · 离「'+REALMS[TOPR]+'」还差 '+toTop+' 个大境界':'')
+    +'<br>气血 <b>'+Math.ceil(S.hpF*hpc)+'</b> / '+hpc+' · 受伤 '+mx(S.armor)+' · 第 '+(S.maxWave||0)+' 波 · 已修 '+hhmm(S.t)
+    +'<br>天劫：已渡 <b>'+(S.jieWin||0)+'</b> 劫'+(S.jieFail?'、失败 '+S.jieFail+' 次':'')+(S.jieCD>0&&S.rR>=2&&!S.bottle?' · 约 '+Math.ceil(S.jieCD/60)+' 分钟后再降':'');
+  const row=(name,lv,cap,max,val,note)=>{const capN=cap,mxN=max||cap;return '<div class="r"><b>'+name+'</b><span class="v">'+(lv!=null?'Lv'+lv+' / 本境界上限 '+capN+(mxN>capN?'（最终 '+mxN+'）':''):'')+(val?(lv!=null?' · ':'')+val:'')+'</span>'
+    +(lv!=null?'<span class="bar"><u style="width:'+Math.min(100,capN/mxN*100)+'%"></u><i style="width:'+Math.min(100,lv/mxN*100)+'%"></i></span>':'')+(note?'<span class="n">'+note+'</span>':'')+'</div>'};
+  const capNext=k=>S.maxR<TOPR&&upCap(k,S.maxR+1)>upCap(k)?'下一大境界上限升到 Lv'+upCap(k,S.maxR+1):'';
+  const gap=(lv,cap)=>lv>=cap?'本境界已满':'还能升 '+(cap-lv)+' 级';
+  let h='<h4>基础数值</h4>';
+  h+=row('剑意',S.lv.dmg,upCap('dmg'),UPG.dmg.max+(0),'伤害 '+mx(S.dmg),gap(S.lv.dmg,upCap('dmg'))+(capNext('dmg')?' · '+capNext('dmg'):''));
+  h+=row('剑速',S.lv.rate,upCap('rate'),UPG.rate.max,'剑速 '+mx(S.rate),gap(S.lv.rate,upCap('rate'))+(capNext('rate')?' · '+capNext('rate'):''));
+  h+=row('剑雨',S.lv.spread,upCap('spread'),UPG.spread.max+(S.path==='ti'?1:0),'+'+S.spread*2+' 道剑气',gap(S.lv.spread,upCap('spread')));
+  h+=row('破甲',S.lv.pierce,upCap('pierce'),UPG.pierce.max+(S.path==='ti'?1:0),'穿 '+S.pierce+' 只',gap(S.lv.pierce,upCap('pierce')));
+  h+=row('护体',S.armorUp,3,3,'受伤 '+mx(S.armor),gap(S.armorUp,3));
+  h+=row('技能精通',S.cdUp,3,3,'冷却 '+mx(Math.pow(.85,S.cdUp||0)),gap(S.cdUp,3));
+  {const c=infCap(),t=(S.inf.dmg||0)+(S.inf.rate||0)+(S.inf.hp||0);h+=row('精进',null,0,0,'剑意 '+(S.inf.dmg||0)+'/'+c+' · 剑速 '+(S.inf.rate||0)+'/'+c+' · 淬体 '+(S.inf.hp||0)+'/'+c,'基础强化满级后才会出现；每种上限 = 2 + 2×大境界'+(t?'':'（还没有）'))}
+  h+='<h4>法宝</h4>';
+  for(const k of ['gourd','mirror','bell']){const lv=S.fb[k],cap=fbCap();h+=row(FABAO[k].n,lv,cap,5,'',lv<5?'下一级：'+FBROAD[k][lv+1]+(lv>=cap?'（要等下一大境界）':''):FBROAD[k][5])}
+  h+='<h4>技能</h4>';
+  const cdm=Math.pow(.85,S.cdUp||0)*skCd(),SK=[['bomb','雷劫符','威力 '+(BOMB_S*skPow()).toFixed(0)+' 秒火力，Boss 最多 −20% · 存 '+S.bombs+' / '+bombCap()+' 张'],
+    ['bolt','掌心雷','威力 '+(BOLT_S*skPow()).toFixed(0)+' 秒火力打一列 · 冷却 '+Math.round(20*skCd())+' 秒'],['shield','金钟罩','6 秒内冲线不伤你 · 冷却 '+Math.round(45*cdm)+' 秒'],['freeze','定身符','全场定住 3.5 秒 · 冷却 '+Math.round(35*cdm)+' 秒']];
+  if(S.path==='fa')SK.push(['fire','火符','威力 '+(1.2*skPow()).toFixed(1)+' 秒火力，打最近一团 · 冷却 4 秒']);
+  for(const [k,n,d] of SK){const on=k==='fire'||has(k);h+='<div class="r'+(on?'':' off')+'"><b>'+n+'</b><span class="v">'+(on?d:'未解锁 · 约 '+Math.max(1,Math.ceil(((FEAT[k]||0)-S.t)/60))+' 分钟后')+'</span></div>'}
+  if(S.path)h+='<div class="r"><b>'+(S.path==='ti'?'体修':'法修')+'</b><span class="v">'+(S.path==='ti'?'剑气 ×1.5、受伤 −30%、气血 ×1.3；技能冷却 +40%、威力 −30%':'法术全开、威力 ×2.5、冷却减半、雷劫符 5 张、火符；剑气 ×0.6')+'</span></div>';
+  else h+='<div class="r off"><b>修炼路线</b><span class="v">踏入筑基时选择体修或法修</span></div>';
+  $('pauseBuild').innerHTML=h;
+}
 function bankCoins(){
   if(!S||!slot())return;const add=Math.floor(S.coins)-S.banked;
   if(add>0){slot().coins+=add;S.banked+=add;commit(Save.cur)}
