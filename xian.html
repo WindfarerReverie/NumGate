@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "xian", "sbjs": "supabase.js"};</script>
-<script>(function(){var B="20261101212712";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261101214042";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>御剑斩妖录</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -110,7 +110,8 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .skills{position:absolute;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(10px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:row;gap:10px;z-index:2}
 .skills[hidden]{display:none}
 .skills{display:grid!important;grid-template-columns:repeat(2,52px);gap:8px}
-.farow{position:absolute;right:0;bottom:calc(100% + 10px);display:flex;gap:8px}.farow[hidden]{display:none!important}.skills[hidden]{display:none!important}
+.farow{position:absolute;right:0;bottom:calc(100% + 10px);display:flex;gap:8px}
+.skills.fa{grid-template-columns:repeat(4,50px)!important;gap:7px!important}.skills.fa .farow{display:contents!important}.skills.fa #skFire{grid-column-start:2}.skills.fa .farow[hidden]{display:none!important}.skills.fa .sk{width:50px!important;height:50px!important}.skills.fa .sk .ic{font-size:22px!important}.farow[hidden]{display:none!important}.skills[hidden]{display:none!important}
 .sk[hidden]{display:none}
 .sk{--p:0;position:relative;width:52px;height:52px;border-radius:50%;border:2px solid rgba(255,194,58,.7);cursor:pointer;padding:0;color:var(--ink);
   background:conic-gradient(rgba(8,10,15,.78) calc(var(--p)*1turn),rgba(20,25,36,.92) 0);display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -2372,7 +2373,7 @@ function useBolt(){
 }
 function skillUI(){
   if(!S)return;
-  $('faRow').hidden=S.path!=='fa';if(S.path==='fa')for(const [k,id] of [['fire','Fire'],['ice','Ice'],['sword','Sword']]){const f=$('sk'+id),cd=S[k+'Cd']||0;$('sk'+id+'T').textContent=cd>0?Math.ceil(cd):'';f.style.setProperty('--p',(cd/FA_CD[k]).toFixed(3));f.classList.toggle('off',cd>0)}
+  $('faRow').hidden=S.path!=='fa';$('skills').classList.toggle('fa',S.path==='fa');if(S.path==='fa')for(const [k,id] of [['fire','Fire'],['ice','Ice'],['sword','Sword']]){const f=$('sk'+id),cd=S[k+'Cd']||0;$('sk'+id+'T').textContent=cd>0?Math.ceil(cd):'';f.style.setProperty('--p',(cd/FA_CD[k]).toFixed(3));f.classList.toggle('off',cd>0)}
   const b=$('skBomb');b.hidden=!has('bomb');
   $('skBombN').textContent=S.bombs;b.classList.toggle('off',S.bombs<=0);
   for(const [id,cd,full] of [['Bolt',S.boltCd,20],['Shield',S.shieldCd,45],['Freeze',S.freezeCd,35]]){
