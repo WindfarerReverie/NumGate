@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl"};</script>
-<script>(function(){var B="20261101183418";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261101192047";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -134,8 +134,10 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .inp{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:var(--ink);font-size:16px;font-family:var(--body)}
 .inp:focus{outline:2px solid var(--gold);border-color:transparent}
 .rank{display:flex;flex-direction:column;gap:4px;text-align:left;max-height:46vh;overflow:auto}
-.rk{display:grid;grid-template-columns:28px 1fr;gap:6px;align-items:center;padding:7px 10px;border-radius:9px;background:rgba(255,255,255,.05);font-size:13px}
+.rk{display:grid;grid-template-columns:28px 1fr auto;gap:6px;align-items:center;padding:7px 10px;border-radius:9px;background:rgba(255,255,255,.05);font-size:13px}
 .rk b{color:var(--gold);font-size:14px}.rk .who{font-weight:700}.rk .what{color:var(--muted);font-size:12px}
+.runinfo{margin:0;padding:8px 10px;border-radius:10px;background:rgba(125,255,168,.1);border:1px solid rgba(125,255,168,.35);font-size:13px;line-height:1.5}.runinfo b{color:#7dffa8}
+.rk .sc{font-family:var(--display);font-size:17px;color:var(--gold);white-space:nowrap}.rk .sc small{font-size:11px;margin-left:2px;color:var(--muted)}
 .rk.me{background:rgba(255,214,119,.16);outline:1px solid rgba(255,214,119,.5)}
 .acct{display:flex;justify-content:center;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
 .book h3{margin:6px 0 2px;font-size:14px;text-align:left;color:var(--gold)}
@@ -143,7 +145,8 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .bt{background:rgba(255,255,255,.05);border-radius:10px;padding:4px 2px 6px;display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--ink)}
 .bt canvas{width:72px;height:84px}.bt.lk{color:var(--muted)}
 .bchip{display:flex;flex-wrap:wrap;gap:6px}.bchip span{background:rgba(255,255,255,.06);border-radius:8px;padding:5px 8px;font-size:12px}.bchip span.lk{color:var(--muted)}
-.coachskip{position:absolute;top:calc(64px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:9;border:1px solid rgba(255,255,255,.3);background:rgba(10,12,20,.7);color:#fff;border-radius:16px;padding:5px 14px;font-size:12px;cursor:pointer}
+.coachskip{position:absolute;top:calc(64px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:9;display:flex;gap:8px}
+.coachskip button{border:1px solid rgba(255,255,255,.3);background:rgba(10,12,20,.75);color:#fff;border-radius:16px;padding:5px 12px;font-size:12px;cursor:pointer;white-space:nowrap}
 .coachskip[hidden]{display:none}
 .skhint{position:absolute;z-index:3;max-width:210px;background:#fff7e0;color:#3a2400;font-size:12px;font-weight:700;line-height:1.35;padding:7px 10px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.4);pointer-events:none;animation:hintbob 1s ease-in-out infinite;white-space:normal}
 .skhint::after{content:"";position:absolute;right:18px;bottom:-7px;border:7px solid transparent;border-bottom:0;border-top-color:#fff7e0}
@@ -241,7 +244,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   <div class="ov" id="ovRank" hidden>
     <div class="card">
       <h2>排行榜</h2>
-      <p class="sync">按存档排名：先比最高称号，通关的比最快用时，再比波数</p>
+      <p class="sync">先比最高称号，再比得分（冒险中的存档也会实时上榜）</p>
       <div class="rank" id="rankList"></div>
       <button class="go alt" id="bRankBack">返 回</button>
     </div>
@@ -290,7 +293,9 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
         <div class="chip">已打<b id="hubRuns">0</b>局</div>
         <div class="chip" id="hubLifeWrap"><b id="hubLife">第一季</b></div>
       </div>
+      <p class="runinfo" id="hubRun" hidden></p>
       <button class="go" id="bFight">出 战</button>
+      <button class="sb ghost" id="bGiveUp" hidden>放弃这局，重新开始</button>
       <div class="row2">
         <button class="go alt" id="bShop">商 店</button>
         <button class="go alt" id="bSlots">换存档</button>
@@ -320,7 +325,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   <div class="pickbox" id="pickBox" hidden><div class="pickcard">
     <span class="tipstep" id="pickWhy">BOSS 净化</span><h3>选一个强化</h3><p class="pnext" id="pickNext"></p>
     <div class="plist" id="pickList"></div></div></div>
-  <button class="coachskip" id="coachSkip" hidden>跳过引导 ›</button>
+  <div class="coachskip" id="coachSkip" hidden><button id="cSkipOne">跳过这项 ›</button><button id="cSkipAll">跳过全部引导</button></div>
   <div class="tipbox" id="tipBox" hidden>
     <div class="tipcard">
       <canvas id="demo" aria-label="演示动画"></canvas>
@@ -339,8 +344,8 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
       <h2>暂停</h2>
       <div class="pbuild" id="pauseBuild"></div>
       <button class="go" id="bResume">继 续</button>
-      <button class="go alt" id="bQuit">撤退结算</button>
-      <p class="tip">撤退会结束本局，已拿到的星钻照样入账。</p>
+      <button class="go alt" id="bQuit">存档退出</button>
+      <p class="tip">存档退出：这一局原样保存，下次从这里接着收集。只有元气耗尽，这一局才结束。</p>
     </div>
   </div>
 
@@ -406,14 +411,19 @@ const rName=x=>x.r===0?'平凡少女':REALMS[x.r]+' '+x.layer+'星';
 const rCode=x=>x.r===0?0:(x.r-1)*9+x.layer;
 const rFromCode=c=>c<=0?{r:0,layer:0}:{r:Math.floor((c-1)/9)+1,layer:(c-1)%9+1};
 const capOf=r=>RBASE*Math.pow(2,RSTART[Math.min(r+1,REALMS.length)])*.9999;
-const gm=()=>1/(3+.65*Math.max(1,realmOf(S.count).r));   // 炼体 ≈1/3.7 … 圣人 ≈1/14: about 1.5 min per realm early, 3 min late   // higher realms fill slower (炼体 ×1 … 圣人 ×1/18.6): a full clear takes ~35 min
+// 长线冒险：每个称号的目标时长（分钟）。前期十几分钟，后期每个称号几个小时，修到圣人约 25～30 小时
+const REALM_MIN=[0,6,10,15,25,35,45,60,75,90,105,120,140,160,180,200,220,240];
+const slowF=r=>{if(r<1)return window.__fast||1;r=clamp(r|0,1,17);return Math.min(1,1.25/REALM_MIN[r])*(window.__fast||1)};   // 凡人 stage stays quick   // 1.25 min = what a realm took before (gain part only)
+const gm=()=>{const r0=realmOf(S.count).r,r=Math.max(1,r0);return slowF(r0)/(3+.65*r)};   // 炼体 ≈1/3.7 … 圣人 ≈1/14: about 1.5 min per realm early, 3 min late   // higher realms fill slower (炼体 ×1 … 圣人 ×1/18.6): a full clear takes ~35 min
 const fmtL=v=>{const a=Math.abs(v);return (a>=.995?a.toFixed(1):a.toFixed(2))+'星'};   // 1星 = 10成
 const PL=.38;   // combat power: every layer is worth the same ×1.3, so losing a layer at 大罗 hurts as much as at 炼体 (魔力 itself still needs bigger gaps)
 function layersOf(n){if(!(n>=RBASE))return Math.log2(Math.max(1e-9,n)/RBASE);const r=realmOf(n).r;return 9*(r-1)+(Math.log2(n/RBASE)-RSTART[r])/lf(r)}
 const DAOJI=.6;   // 道基: after falling, 60% of the lost layers still count toward combat power
 const effL=()=>{const L=layersOf(S.count);return S.peakL>L?L+DAOJI*(S.peakL-L):L};
 const power=()=>S.count<RBASE?S.count:RBASE*Math.pow(2,PL*effL());
-const bossHpF=()=>.25+.15*Math.min(1,((S&&S.maxR)||0)/8);   // a boss crossing costs 25% 元气 early, 40% from 合体 on
+const bossHpF=()=>.2+.2*Math.min(1,Math.max(0,((S&&S.maxR)||0)-1)/8);   // a boss crossing costs 25% 元气 early, 40% from 合体 on
+const leakHp=o=>(o.boss?bossHpF():(o.type==='elite'?.06:o.type==='brute'?.025:.012)*(.2+.8*Math.min(1,Math.max(0,((S&&S.maxR)||0)-1)/7)))*S.armor*(o.st?0:1);   // early realms forgive more   // share of max 元气 one leaking monster costs (staged tutorial monsters cost nothing)
+function heal(f,lbl){if(!S||!(f>0))return;const b=S.hpF;S.hpF=Math.min(1,S.hpF+f);const v=Math.round((S.hpF-b)*hpCap());if(v>0)ftext(S.x,squadY-96,(lbl?lbl+' · ':'')+'元气 +'+v,'#7dffa8',22)}
 const hpCap=()=>Math.round(100+60*Math.max(0,(S&&S.maxR)||0));
 function loseHp(f,x,lbl){if(!(f>0)||S.won)return;S.hpF-=f;S.hpHit=(S.hpHit||0)+f;S.hpHitT=.35;S.hpHitX=x;S.hpHitL=lbl||'';S.hpFlash=.6}
 const below=()=>S.peakL-layersOf(S.count)>.05;
@@ -517,7 +527,7 @@ async function netPush(){
   Net.busy=false;if(Net.again){Net.again=false;netPush()}
 }
 async function fetchRank(n=50){
-  const {data,error}=await timeout(Net.sb.from('scores').select('*').eq('ver',NGV()).order('best_realm',{ascending:false}).order('best_clear',{ascending:true,nullsFirst:false}).order('score',{ascending:false}).limit(n),12000);
+  const {data,error}=await timeout(Net.sb.from('scores').select('*').eq('ver',NGV()).order('best_realm',{ascending:false}).order('score',{ascending:false}).limit(n),12000);
   if(error)throw error;return data||[];
 }
 function rankRows(el,rows,max){
@@ -526,7 +536,7 @@ function rankRows(el,rows,max){
   const show=[];rows.forEach((r,i)=>{if(i<max||i===mine)show.push(i)});
   for(const i of show){const r=rows[i],d=document.createElement('div');d.className='rk'+(i===mine?' me':'');
     const what=r.clears?'点亮星空 · 通关 '+r.clears+' 次 · 最快 '+mmss(r.best_clear):rName(rFromCode(r.best_realm))+' · 第 '+r.best_wave+' 波';
-    d.innerHTML='<b>'+(i+1)+'</b><div><div class="who"></div><div class="what">'+what+(r.life>1?' · 第'+CNN(r.life)+'季':'')+'</div></div>';
+    d.innerHTML='<b>'+(i+1)+'</b><div><div class="who"></div><div class="what">'+what+(r.life>1?' · 第'+CNN(r.life)+'季':'')+'</div></div><span class="sc">'+fmt(r.score||0)+'<small>分</small></span>';
     d.querySelector('.who').textContent=r.name+' · 存档'+r.slot;el.appendChild(d)}
   if(!rows.length)el.innerHTML='<p class="sync">还没有人上榜</p>';
 }
@@ -608,6 +618,7 @@ function renderShop(){
 const OVS=['ovLogin','ovRank','ovBook','ovHelp','ovTitle','ovHub','ovShop','ovPause','ovOver'];
 let shopBack='ovHub';
 function show(id){for(const o of OVS)$(o).hidden=(o!==id);$('skills').hidden=!(running&&!id);$('goal').hidden=!(running&&!id)}
+function hhmm(t){const h=Math.floor(t/3600),m=Math.floor(t%3600/60);return h?h+' 小时 '+m+' 分':m+' 分钟'}
 function ago(ts){const m=Math.round((Date.now()-ts)/60000);if(m<1)return '刚刚';if(m<60)return m+' 分钟前';const h=Math.round(m/60);if(h<24)return h+' 小时前';return Math.round(h/24)+' 天前'}
 const armed={};
 function renderSlots(){
@@ -635,7 +646,8 @@ function renderSlots(){
 }
 const mmss=t=>{t=Math.round(t||0);return Math.floor(t/60)+'分'+String(t%60).padStart(2,'0')+'秒'};
 function renderHub(){
-  const s=slot();if(!s)return;$('tutNote').hidden=!!s.noTips||Object.keys(s.seen||{}).length>0;
+  const s=slot();if(!s)return;{const r=s.run&&s.run.S;$('hubRun').hidden=!r;$('bGiveUp').hidden=!r;$('bFight').textContent=r?'继续冒险':'出 战';
+    if(r)$('hubRun').innerHTML='冒险中：<b>'+rName(rFromCode(r.rcode||0))+'</b> · 元气 <b>'+Math.round((r.hpF||0)*100)+'%</b> · 已玩 <b>'+hhmm(r.t||0)+'</b>'+(r.path?' · '+(r.path==='ti'?'星弓系':'咒语系'):'')+'<br>'+ago(s.run.saved)+'存档，点「继续冒险」从这里接着打'}$('tutNote').hidden=!!s.noTips||Object.keys(s.seen||{}).length>0;
   $('hubTitle').textContent='存档 '+Save.cur;$('hubCoins').textContent=fmt(s.coins);
   $('hubBest').textContent=fmt(s.bestScore||0);$('hubWave').textContent=s.bestWave||0;$('hubRealm').textContent=rName(rFromCode(s.bestRealm||0));$('hubRuns').textContent=s.runs;$('hubLife').textContent='第'+CNN(s.life||1)+'季'+(s.clears?' · 通关 '+s.clears+' 次 · 最快 '+mmss(s.bestClear):'');
 }
@@ -670,12 +682,13 @@ let lastKillSnd=0;
 const CYC=45,MOW=25;
 const PRE=15;   // first mowing stretch is 15s longer (40s) to build up before wave 1
 const wt=()=>Math.max(0,S.t-PRE);
+const kEff=()=>{if(!S)return 0;const rr=realmOf(S.count);return Math.min(45,2.4*(Math.max(1,S.maxR)-1)+2.4*Math.min(1,Math.max(0,rr.r>=S.maxR?rr.frac:0)))};   // difficulty index: follows your realm, so playing for hours inside one realm doesn't keep inflating enemies
 const waveK=()=>Math.floor(wt()/CYC);
 const wph=()=>S.t<PRE?0:wt()%CYC;
 const inSurge=()=>!S.tut&&S.t>=PRE&&wph()>=MOW;
 const surgeSoon=()=>!S.tut&&(inSurge()||(S.t>=PRE?MOW-wph():PRE-S.t+MOW)<7);   // no gates in the monster lane right before / during a surge (they would eat your fire)
 function target(){
-  const k=waveK(),ph=wph(),LH=1+.15*(S.life-1),late=1-Math.exp(-Math.max(0,k-8)/10),lo=(.15+.2*(1-Math.exp(-k/12))+.05*late)*LH,hi=(.55+1.3*(1-Math.exp(-k/14))+.05*late)*LH;   // base curve is gentle; the director (S.M) raises it for strong players   // early curve unchanged; extra pressure only after wave 8   // ramps over ~40 min instead of 10
+  const k=kEff(),ph=wph(),LH=1+.15*(S.life-1),late=1-Math.exp(-Math.max(0,k-8)/10),lo=(.15+.2*(1-Math.exp(-k/12))+.05*late)*LH,hi=(.55+1.3*(1-Math.exp(-k/14))+.05*late)*LH;   // base curve is gentle; the director (S.M) raises it for strong players   // early curve unchanged; extra pressure only after wave 8   // ramps over ~40 min instead of 10
   if(ph<MOW)return lo;
   const hb=S.bottle?.8:1;   // a heart-demon wave is a little easier, so breaking through stays reachable
   return (lo+(hi-lo)*Math.min(1,(ph-MOW)/3))*hb;
@@ -700,7 +713,7 @@ function traitOf(k){
 }
 const curTrait=()=>inSurge()?traitOf(waveK()):null;
 const nextTrait=()=>traitOf(inSurge()?waveK()+1:waveK());
-const PNAME={inf_dmg:'星力精进',inf_rate:'星速精进',inf_hp:'元气精进',rate:'星速',dmg:'星力',spread:'流星雨',pierce:'贯穿',gourd:'招财猫',mirror:'许愿镜',bell:'安眠音乐盒',armor:'防护泡泡',cd:'技能精通'};
+const PNAME={coin:'星钻',path_ti:'星弓系',path_fa:'咒语系',inf_dmg:'星力精进',inf_rate:'星速精进',inf_hp:'元气精进',rate:'星速',dmg:'星力',spread:'流星雨',pierce:'贯穿',gourd:'招财猫',mirror:'许愿镜',bell:'安眠音乐盒',armor:'防护泡泡',cd:'技能精通'};
 const ZHP={n:1,run:.6,brute:7,elite:6,hex:2,guard:2.5};
 function zProbs(){const sg=inSurge(),P=[];   // [type, chance]; the rest are plain monsters
   const tr=sg?traitOf(waveK()):null,f=x=>tr==='elite'&&x==='elite'?2:tr==='hex'&&x==='hex'?3:tr==='guard'&&x==='guard'?3:tr==='fast'&&x==='run'?2.5:tr==='armor'&&x==='brute'?2.5:1;
@@ -726,7 +739,9 @@ const UPG={
   pierce:{name:'贯穿',desc:'星光多穿一只怪',max:3},
   mech:{name:'萌宠',desc:'随称号进化',max:99}
 };
-const upCap=(k,r)=>Math.min(UPG[k].max,Math.max(1,Math.ceil(UPG[k].max*((r==null?S.maxR:r)+3)/(REALMS.length+2))));
+const upCap=(k,r)=>{const pb=S&&S.path==='ti'&&(k==='spread'||k==='pierce')?1:0;return Math.min(UPG[k].max,Math.max(1,Math.ceil(UPG[k].max*((r==null?S.maxR:r)+3)/(REALMS.length+2))))+pb};
+// 星弓系 / 咒语系：筑基时二选一
+const skCd=()=>S.path==='ti'?1.3:S.path==='fa'?.6:1,skPow=()=>S.path==='ti'?.8:S.path==='fa'?2:1,bombCap=()=>S.path==='fa'?5:3;
 const fbCap=r=>Math.min(5,Math.max(1,Math.ceil(5*((r==null?S.maxR:r)+3)/(REALMS.length+2))));
 function pickUpg(){
   const pool=[];for(const k in UPG){if(k!=='mech'&&S.lv[k]>=upCap(k))continue;if(k==='mech')continue;else pool.push(k,k)}
@@ -790,8 +805,8 @@ const FBROAD={   // what each level does — shown on the pick card so players c
 const FUS={bomb:'星光爆发 +1',bolt:'彩虹光束刷新',shield:'泡泡护盾刷新',freeze:'甜梦暂停刷新'};
 const ROWS=[ // weight, gate A, gate B, (unused), g=good b=bad m=mixed
   [16,'qi','qi',0,'g'],[10,'qi','vein',0,'g'],[8,'fu','qi',0,'g'],[5,'vein','fu',0,'g'],
-  [12,'xin','qi',0,'m'],[8,'zou','qi',0,'m'],[6,'jie','qi',0,'m'],[5,'xin','vein',0,'m'],
-  [12,'xin','xin',0,'b'],[10,'xin','zou',0,'b'],[6,'xin','jie',0,'b']];
+  [12,'xin','qi',0,'m'],[8,'zou','qi',0,'m'],[5,'xin','vein',0,'m'],
+  [12,'xin','xin',0,'b'],[10,'xin','zou',0,'b']];
 const rowW=r=>r[0]*(inSurge()?(r[4]==='g'?.85:1):(r[4]==='g'?1.3:r[4]==='b'?.7:1));
 const PUMP=.35;   // pumping a gate to its max takes ~45% of its screen time at enemy-level fire, early or late
 const lockUnit=()=>S.Dref*(S.M||1)*squadY*.8/speed();      // damage you deal while a gate crosses the screen
@@ -812,6 +827,7 @@ function mkGate(type,x0,x1,trap){
 }
 function spawnRow(){
   let pool=ROWS.filter(r=>has(r[1])&&has(r[2])&&(r[4]!=='b'||(has('four')&&!surgeSoon())));
+  if(S.goodRow){S.goodRow=false;const gp=pool.filter(r=>r[4]==='g');if(gp.length)pool=gp}
   if(S.firstRow){pool=[[1,'qi','qi',0,'g']];S.firstRow=false}
   let tot=0;for(const r of pool)tot+=rowW(r);
   let q=Math.random()*tot,row=pool[0];for(const r of pool){q-=rowW(r);if(q<=0){row=r;break}}
@@ -820,7 +836,7 @@ function spawnRow(){
   const rid=++S.rowId,a=mkGate(ops[0],roadX+7,lmid-4),b=mkGate(ops[1],lmid+4,mid-8);a.rid=b.rid=rid;
   S.objs.push(a,b);
   if(row[4]==='b'){   // a bad row covers all four columns: pick the mildest one
-    const rm=mid+roadW/4,bads=['xin','zou','jie'].filter(has);
+    const rm=mid+roadW/4,bads=['xin','zou'].filter(has);
     for(const [x0,x1] of [[mid+8,rm-4],[rm+4,roadX+roadW-7]]){
       const g=mkGate(bads[ri(0,bads.length-1)],x0,x1);g.rid=rid;g.trap=true;S.objs.push(g)}
     if(has('dodge')&&Math.random()<.5){   // staggered: one side arrives later, so a quick lane switch dodges everything
@@ -828,6 +844,11 @@ function spawnRow(){
       for(const g of S.objs)if(g.rid===rid){g.stag=true;if((g.x0>=mid)===rightLater)g.y-=off}
     }
   }
+}
+const JIE_DMG=1.08,JIE_S=4.5,JIE_L=1.2,JIE_EVERY=420;   // 流星考验 every ~7 min inside a realm: +1.2 星 (a big chunk of a long realm) and a small permanent edge
+function spawnJie(){   // 流星考验: once per big realm, left lane only, slow and thick — pour fire into it (while the right lane waits) for a big permanent reward
+  const o=mkGate('jie',roadX+7,mid-8);o.wide=true;o.spd=.45;o.h=98;o.lock=o.lock0=Math.max(1,dps()*JIE_S);S.objs.push(o);
+  toast('流星考验来了','左道：约 '+JIE_S+' 秒星力能打开，冲过去魔力 +'+JIE_L+' 星、星力永久 ×'+JIE_DMG+'；打不开就躲到右道');
 }
 function spawnTrap(){
   const half=(roadX+roadW-7-(mid+8))/2,left=Math.random()<.5;   // half-lane wide: dodgeable inside the right lane
@@ -849,7 +870,7 @@ function gateEffect(o){   // short description shown on the gate
   if(g==='fu')return FUS[o.fu];
   if(g==='xin')return '−'+fmtL(o.val);
   if(g==='zou')return '星速−30% '+Math.round(o.lock>0?7+8*o.lock/o.lock0:7)+'秒';
-  if(g==='jie')return o.lock>0?'没通过 −'+fmtL(2*o.val):'通过考验 +'+fmtL(o.val);
+  if(g==='jie')return o.lock>0?'打开→魔力+'+JIE_L+'星 · 没开撞上−'+Math.round(15*S.armor)+'%元气':'打开了 · 冲过去！';
   return '';
 }
 
@@ -918,7 +939,7 @@ function bossEvoFront(o,glowCol){
   if(ri>=12){const n=Math.min(6,ri-10);for(let i=0;i<n;i++){const a=t*1.6+i*6.283/n;const ox=x+Math.cos(a)*r*1.45,oy=y+Math.sin(a)*r*.55;ctx.fillStyle=glowCol;ctx.globalAlpha=.9;ctx.beginPath();ctx.arc(ox,oy,4+ri*.15,0,6.283);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(ox,oy,2,0,6.283);ctx.fill()}ctx.globalAlpha=1}
 }
 function spawnBoss(){
-  const k=waveK(),heart=S.bottle,fin=heart&&S.maxR>=TOPR,hp=S.Dref*(S.M||1)*(fin?7:heart?2.5:4.5)*(1+.03*k)*(1+.15*(S.life-1)),look=fin?Object.assign({},BOSSES[17],{hue:45,stage:3,horns:10,aura:true,n:'永夜',bi:17,ri:17,name:'永夜'}):bossLook(k,S.peakR);
+  const k=waveK(),heart=S.bottle,fin=heart&&S.maxR>=TOPR,hp=S.Dref*(S.M||1)*(fin?7:heart?2.5:4.5)*(1+.03*kEff())*(1+.15*(S.life-1)),look=fin?Object.assign({},BOSSES[17],{hue:45,stage:3,horns:10,aura:true,n:'永夜',bi:17,ri:17,name:'永夜'}):bossLook(k,S.peakR);
   if(heart)look.name=(fin?'最终噩梦 · ':'负能量 · ')+look.name;
   S.objs.push({k:'z',boss:true,type:'boss',look,heart,fin,realm:S.peakR,x:(mid+roadX+roadW)/2,y:-60,r:Math.min(64,34+Math.max(k*.8,S.peakR*1.7)),hp,hp0:hp,atk:0,pct:0,sp:0,ph:0,hit:0,coin:25*(1+.5*k)});
   S.bossAlive=true;if(fin)toast('永夜降临','净化它就点亮星空，通关！冲线扣 '+Math.round(bossHpF()*100)+'% 元气');else toast((heart?'负能量 · ':'')+look.n+(look.stage?' '+CNN(look.stage+1)+'阶':''),heart?'净化它就能变身！冲线扣 '+Math.round(bossHpF()*100)+'% 元气':REALMS[S.peakR]+'的大噩梦 · 冲线扣 '+Math.round(bossHpF()*100)+'% 元气');
@@ -949,12 +970,13 @@ function pressure(){
   if(!S||S.tut)return 0;
   return target()*S.Dref/Math.max(1e-9,dps());
 }
-function hurt(n,x,src){
-  if(src==='z'){S.leakRate+=1;n*=Math.min(1,6/Math.max(1,S.leakRate))}
+function hurt(n,x,src,hf){
+  let damp=1;if(src==='z'){S.leakRate+=1;damp=Math.min(1,6/Math.max(1,S.leakRate));n*=damp}
+  if(hf)loseHp(hf*damp,x);
   if(src==='boss')n=Math.max(1,Math.round(n*S.armor));
   else{S.leakFrac=(S.leakFrac||0)+n*S.armor;n=Math.floor(S.leakFrac);S.leakFrac-=n;if(n<=0)return}   // true proportional loss, fractions carried over
-  n=Math.min(S.count,n);{const L0=layersOf(S.count),L1=layersOf(Math.max(1e-9,S.count-n));loseHp((L0-L1)/18,x)}
-  n*=.35;S.count-=n;S.loss[src]=(S.loss[src]||0)+n;
+  n=Math.min(S.count,n);
+  n*=.35*slowF(S.rR);S.count-=n;S.loss[src]=(S.loss[src]||0)+n;
   if(src==='boss')ftext(x,squadY-60,'-'+fmt(n),C.minus,30);
   else{if(S.leakAcc===0){S.leakT=.35;S.leakX=x;S.leakBase=S.count+n}S.leakAcc+=n}
   S.shake=Math.min(14,S.shake+(src==='boss'?8:2));S.flash=.25;
@@ -1003,11 +1025,9 @@ function dangerRaw(){
   for(const [z,t] of zs){const h=Math.max(0,z.hp)/Math.max(1e-6,dmgMul(z));need+=h;
     if(need>D*t){need-=h;
       if(S.shieldT>t)continue;
-      if(z.boss)pred+=skReady('shield')?3:9;
-      else if(z.type==='elite')pred+=clamp(gm()*3,.35,.8);
-      else pred+=Math.log2(1/Math.max(.01,1-(z.pct||.02)*S.armor))/lf(r)}}
+      pred+=leakHp(z)*(z.boss&&skReady('shield')?.35:1)}}
   // HP model: leak damage in "layers" /18 = fraction of max 元气
-  const trend=Math.max(0,S.hpLossRate||0)*10,predF=pred/18+trend;S.thr=clamp(predF,0,1);
+  const trend=Math.max(0,S.hpLossRate||0)*10,predF=pred+trend;S.thr=clamp(predF,0,1);
   const base=clamp(1-S.hpF+predF,0,1);
   // how close monsters get before they die (recent average): picks that leave you weak show up here even before any leak
   const kd=S.kdEma==null?.2:S.kdEma,depth=clamp((kd-.18)/.6,0,1)*.6;
@@ -1019,7 +1039,7 @@ function dangerRaw(){
 function surgeEscalate(dt){
   if(!S.surgeOn){S.sb=1;return}
   S.escT=(S.escT||0)+dt;if(S.escT<.5)return;S.escT=0;
-  dangerRaw();const k=waveK(),T=.26+.30*(1-Math.exp(-k/8));
+  dangerRaw();const k=kEff(),T=.05+.13*(1-Math.exp(-k/10));
   if((S.thr||0)<T)S.sb=Math.min(4,(S.sb||1)*1.06);
 }
 function dangerTick(dt){
@@ -1037,7 +1057,7 @@ function dangerTick(dt){
    On top of that the director (S.M) only steps in when monsters keep dying far up the screen (clear overpower). */
 function build(){return S.upMul*(1+.35*S.spread)*(1+.15*S.pierce)*(1+.04*S.fb.gourd)*(1+.03*S.fb.bell)*(1+.06*S.fb.mirror)*(1+.04*S.armorUp)}
 const EXPG=1.22;   // average build growth per wave (one pick per boss + gates)
-function expBuild(){return Math.min(2500,Math.pow(EXPG,S.expK||0))}   // S.expK: waves of growth; grows at 30% speed while you sit at a bottleneck, so a stuck player still gets a fair shot at the 负能量
+function expBuild(){return Math.min(2500,Math.pow(EXPG,kEff()))}   // S.expK: waves of growth; grows at 30% speed while you sit at a bottleneck, so a stuck player still gets a fair shot at the 负能量
 function kdNote(d){d=Math.min(1,d);S.kdSum=(S.kdSum||0)+d;S.kdN=(S.kdN||0)+1;S.kdEma=S.kdEma==null?d:S.kdEma+(d-S.kdEma)*.04}
 function director(dt){   // evaluated once per phase (end of each mow / surge): small, bounded steps
   if(!S.M)S.M=1;const sg=!!S.surgeOn;
@@ -1059,13 +1079,13 @@ function dmgMul(o){
 function leakHit(o){if(!o.boss)kdNote(1.15);
   if(S.shieldT>0){ftext(o.x,squadY-50,'泡泡护盾挡下',C.gold,18);return}
   if(o.boss){
-    const before=S.count,bf=bossHpF();loseHp(bf*S.armor,o.x,'Boss');addLayers(-3);
+    const before=S.count,bf=bossHpF();loseHp(bf*S.armor,o.x,'Boss');addLayers(-3*slowF(S.rR));
     S.loss.boss=(S.loss.boss||0)+(before-S.count);
-    toast('元气 −'+Math.round(bf*S.armor*100)+'%',(o.heart?'负能量':'大噩梦')+'冲破了防线，魔力跌落 3 星');S.shake=16;S.flash=.5;sfx(70,.8,'sawtooth',.09,.4);
+    toast('元气 −'+Math.round(bf*S.armor*100)+'%',(o.heart?'负能量':'大噩梦')+'冲破了防线，魔力也跌了一些');S.shake=16;S.flash=.5;sfx(70,.8,'sawtooth',.09,.4);
   } else if(o.type==='elite'){
-    const before=S.count,el=clamp(gm()*3,.35,.8);loseHp(el/18*S.armor,o.x);addLayers(-el*.35);S.loss.elite=(S.loss.elite||0)+(before-S.count);
-    ftext(S.x,squadY-70,'内耗怪：元气 −'+Math.round(el/18*S.armor*hpCap()),C.minus,20);S.shake=Math.min(14,S.shake+6);S.flash=.3;sfx(110,.3,'sawtooth',.07,.5);
-  } else hurt(S.count*o.pct,o.x,'z');
+    const before=S.count,el=gm()*3;loseHp(leakHp(o),o.x);addLayers(-el*.35);S.loss.elite=(S.loss.elite||0)+(before-S.count);
+    ftext(S.x,squadY-70,'内耗怪：元气 −'+Math.round(leakHp(o)*hpCap()),C.minus,20);S.shake=Math.min(14,S.shake+6);S.flash=.3;sfx(110,.3,'sawtooth',.07,.5);
+  } else hurt(S.count*o.pct,o.x,'z',leakHp(o));
 }
 const colOf=x=>x<lmid?0:x<mid?1:x<mid+roadW/4?2:3;
 function gateResult(o){   // what your 魔力 would become (used to compare gates)
@@ -1083,10 +1103,11 @@ function applyGate(o){
   else if(g==='brk'){if(S.bottle&&S.maxR<TOPR){breakthrough();return}addLayers(o.val);txt='+'+fmtL(o.val)}
   else if(g==='art'){applyUpg(o.up);txt=UPG[o.up].name+' UP';effectPop('art_'+o.up,GT.art.n+' · '+UPG[o.up].name,UPG[o.up].desc+'，整局有效',{g:'art',o})}
   else if(g==='fb'){S.fb[o.fbk]=Math.min(5,S.fb[o.fbk]+1);txt=FABAO[o.fbk].n+' Lv'+S.fb[o.fbk];toast(txt,FABAO[o.fbk].d);renderUps();effectPop('fb_'+o.fbk,FABAO[o.fbk].n,FABAO[o.fbk].d+'（最高 5 级）',{g:'fb',o})}
-  else if(g==='fu'){if(o.fu==='bomb')S.bombs=Math.min(3,S.bombs+1);else if(o.fu==='bolt')S.boltCd=0;else if(o.fu==='shield')S.shieldCd=0;else S.freezeCd=0;txt=FUS[o.fu];effectPop('fu_'+o.fu,GT.fu.n,FUS[o.fu],{g:'fu',o})}
+  else if(g==='fu'){if(o.fu==='bomb')S.bombs=Math.min(bombCap(),S.bombs+1);else if(o.fu==='bolt')S.boltCd=0;else if(o.fu==='shield')S.shieldCd=0;else S.freezeCd=0;txt=FUS[o.fu];effectPop('fu_'+o.fu,GT.fu.n,FUS[o.fu],{g:'fu',o})}
   else if(g==='xin'){addLayers(o.val);txt='负能量 −'+fmtL(o.val);good=false;effectPop('xin',GT.xin.n,'魔力 −'+fmtL(o.val)+'，下次躲开它',{g:'xin',o},true)}
   else if(g==='zou'){S.zouT=Math.max(S.zouT,o.lock>0?7+8*o.lock/o.lock0:7);txt='熬夜 '+Math.round(S.zouT)+'秒';good=false;effectPop('zou',GT.zou.n,'星速 −30%，持续 '+Math.round(S.zouT)+' 秒',{g:'zou',o},true)}
-  else if(g==='jie'){if(o.lock>0){addLayers(-2*o.val);txt='流星考验 −'+fmtL(2*o.val);good=false}else{addLayers(o.val);txt='通过考验 +'+fmtL(o.val)}}
+  else if(g==='jie'){if(o.lock>0){loseHp(.15*S.armor,S.x);addLayers(-.4);txt='考验失败：元气 −'+Math.round(15*S.armor)+'%';good=false;S.jieFail=(S.jieFail||0)+1}
+    else{S.dmg*=JIE_DMG;S.upMul*=1.04;S.jieWin=(S.jieWin||0)+1;addLayers(JIE_L);heal(.1);txt='考验通过：魔力 +'+JIE_L+' 星';S.fxBreak=Math.max(S.fxBreak||0,.8);S.flash=.4;toast('考验通过！','魔力 +'+JIE_L+' 星、星力永久 ×'+JIE_DMG+'（已过 '+S.jieWin+' 劫）');effectPop('jie_win','考验通过','魔力 +'+JIE_L+' 星、星力永久 ×'+JIE_DMG+'。在一个称号里，大约每 7 分钟来一次流星考验——想升得快，就得去闯',{g:'jie',o})}}
   const d=S.count-b;if(d<0){const k=o.trap?'trap':'gate';S.loss[k]=(S.loss[k]||0)-d}
   if(good){ftext(S.x,squadY-50,txt,GT[g].col,24);burst(S.x,squadY,GT[g].col,18,220);sfx(420,.15,'square',.05,2)}
   else {ftext(S.x,squadY-50,txt,C.minus,24);burst(S.x,squadY,C.minus,14,200);S.shake+=4;sfx(300,.2,'square',.05,.4)}
@@ -1126,11 +1147,16 @@ const POPT={
   mirror:{ok:()=>S.fb.mirror<fbCap(),line:()=>fbLine('mirror'),ic:{g:'fb',o:{fbk:'mirror'}},go:()=>{S.fb.mirror++}},
   bell:{ok:()=>S.fb.bell<fbCap(),line:()=>fbLine('bell'),ic:{g:'fb',o:{fbk:'bell'}},go:()=>{S.fb.bell++}},
   armor:{ok:()=>S.armorUp<3,line:()=>'冲线伤害 −12%（元气、魔力都少掉）',ic:{e:'🛡'},go:()=>{S.armorUp++;S.armor*=.88}},
-  cd:{ok:()=>S.cdUp<3,line:()=>'技能冷却 −15%，星光爆发 +1',ic:{g:'fu',o:{fu:'bomb'}},go:()=>{S.cdUp++;S.bombs=Math.min(3,S.bombs+1)}},
-  inf_dmg:{ok:()=>true,line:()=>'伤害 +12%（不封顶，已叠 '+(S.inf.dmg||0)+' 次）',ic:{g:'art',o:{up:'dmg'}},go:()=>{S.inf.dmg=(S.inf.dmg||0)+1;S.dmg*=1.12;S.upMul*=1.12}},
-  inf_rate:{ok:()=>true,line:()=>'星速 +10%（不封顶，已叠 '+(S.inf.rate||0)+' 次）',ic:{g:'art',o:{up:'rate'}},go:()=>{S.inf.rate=(S.inf.rate||0)+1;S.rate*=1.1;S.upMul*=1.1}},
-  inf_hp:{ok:()=>true,line:()=>'元气立刻回 30%，冲线伤害 −5%（不封顶，已叠 '+(S.inf.hp||0)+' 次）',ic:{e:'❤️'},go:()=>{S.inf.hp=(S.inf.hp||0)+1;S.armor*=.95;S.hpF=Math.min(1,S.hpF+.3)}}};
+  cd:{ok:()=>S.cdUp<3,line:()=>'技能冷却 −15%，星光爆发 +1',ic:{g:'fu',o:{fu:'bomb'}},go:()=>{S.cdUp++;S.bombs=Math.min(bombCap(),S.bombs+1)}},
+  inf_dmg:{ok:()=>(S.inf.dmg||0)<infCap(),line:()=>'伤害 +12%（已叠 '+(S.inf.dmg||0)+'/'+infCap()+'，称号越高上限越高）',ic:{g:'art',o:{up:'dmg'}},go:()=>{S.inf.dmg=(S.inf.dmg||0)+1;S.dmg*=1.12;S.upMul*=1.12}},
+  inf_rate:{ok:()=>(S.inf.rate||0)<infCap(),line:()=>'星速 +10%（已叠 '+(S.inf.rate||0)+'/'+infCap()+'，称号越高上限越高）',ic:{g:'art',o:{up:'rate'}},go:()=>{S.inf.rate=(S.inf.rate||0)+1;S.rate*=1.1;S.upMul*=1.1}},
+  inf_hp:{ok:()=>(S.inf.hp||0)<infCap(),line:()=>'元气立刻回 30%，冲线伤害 −5%（已叠 '+(S.inf.hp||0)+'/'+infCap()+'）',ic:{e:'❤️'},go:()=>{S.inf.hp=(S.inf.hp||0)+1;S.armor*=.95;heal(.3,'淬体')}}};
+POPT.path_ti={ok:()=>true,line:()=>'一箭破万难：星光伤害 ×1.4、受伤 −20%、流星雨和贯穿上限各 +1；技能冷却 +30%、技能威力 −20%',ic:{g:'art',o:{up:'dmg'}},go:()=>{S.path='ti';S.dmg*=1.4;S.armor*=.8;toast('成为星弓系','星光更强、更抗打')}};
+POPT.path_fa={ok:()=>true,line:()=>'咒语引星辰：技能威力 ×2、冷却 −40%、星光爆发最多存 5 张，每 5 秒自动打出一道星星魔弹；星光伤害 ×0.8',ic:{g:'fu',o:{fu:'bomb'}},go:()=>{S.path='fa';S.dmg*=.8;S.spellT=3;toast('成为咒语系','技能更强、冷却更快，星星魔弹自动出手')}};
+POPT.coin={ok:()=>true,line:()=>'本称号能强化的都满了：星钻 +'+fmt(coinPack())+'（突破称号后上限会提高）',ic:{e:'💰'},go:()=>{S.coins+=coinPack()}};
+const coinPack=()=>Math.round(40*(1+S.maxR)*S.coinMul);
 const INFK=['inf_dmg','inf_rate','inf_hp'];
+const infCap=()=>2+2*Math.max(1,S.maxR);   // how many 精进 of each kind the current 称号 allows
 
 const TEMPS={   // 限时符 for the next surge, one per trait (+ a generic one)
   armor:{n:'贯穿符',d:'下一波：对拖延懒懒伤害 ×2.5，无视护甲'},guard:{n:'破法符',d:'下一波：无视黏人减伤'},
@@ -1148,18 +1174,18 @@ function rollPick(){   // always: one 短期 (this next wave), one 长期 (grows
   if(pp.length)out.push(pp[ri(0,pp.length-1)]);
   while(out.length<3){const rest=pm.filter(k=>!out.includes(k));if(!rest.length)break;out.push(rest[ri(0,rest.length-1)])}
   // everything maxed for now: the free slots become uncapped basics (late game you just keep stacking)
-  while(out.length<3){const rest=INFK.filter(k=>!out.includes(k));out.push(rest[ri(0,rest.length-1)])}
+  while(out.length<3){const rest=INFK.filter(k=>!out.includes(k)&&POPT[k].ok());if(!rest.length){if(!out.includes('coin'))out.push('coin');break}out.push(rest[ri(0,rest.length-1)])}
   return out;
 }
 function pickScan(){
   if(!S||pickOpts||!(S.pickQ>0)||coach||pop||S.brkPend)return;
-  S.pickQ--;const o=rollPick();if(!o){S.coins+=50;return}
+  S.pickQ--;const pathNow=S.maxR>=3&&!S.path;const o=pathNow?['path_ti','path_fa']:rollPick();if(!o){S.coins+=50;return}
   pickOpts=o;paused=true;
   const tr=nextTrait(),box=$('pickList');box.innerHTML='';
-  $('pickWhy').textContent=S.pickWhy||'选一个强化';
-  $('pickNext').innerHTML=tr?'下一波：<b>'+TRAITS[tr].n+'</b> · '+TRAITS[tr].d:'下一波：普通噩梦潮';
+  $('pickWhy').textContent=pathNow?'晋升筑基 · 选择魔法路线':S.pickWhy||'选一个强化';
+  $('pickNext').innerHTML=pathNow?'两条路的数值都跟着称号涨。选了就不能改。':tr?'下一波：<b>'+TRAITS[tr].n+'</b> · '+TRAITS[tr].d:'下一波：普通噩梦潮';
   for(const k of o){const tk=k.startsWith('t_')?k.slice(2):null,P=tk?{ic:{g:'fu',o:{fu:'bomb'}},line:()=>TEMPS[tk].d}:POPT[k],b=document.createElement('button');b.className='pk';
-    const cnt=!tk&&tr&&TRAITS[tr].c.includes(k),kind=tk?['短期 · 只管下一波','ts']:LONGK.includes(k)?['长期 · 越养越强','tl']:INFK.includes(k)?['已满级 · 无限叠加','ti']:['常驻','tp'];
+    const cnt=!tk&&tr&&TRAITS[tr].c.includes(k),kind=tk?['短期 · 只管下一波','ts']:LONGK.includes(k)?['长期 · 越养越强','tl']:INFK.includes(k)?['已满级 · 精进（上限随称号）','ti']:k.startsWith('path_')?['路线 · 二选一，不可更改','tl']:['常驻','tp'];
     const cv2=document.createElement('canvas');cv2.width=88;cv2.height=88;const g=cv2.getContext('2d');g.scale(2,2);
     if(P.ic.g)gateIcon(P.ic.g,P.ic.o,22,22,1.1,1,false,g);else{g.font='26px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(P.ic.e,22,23)}
     const tx=document.createElement('div');tx.innerHTML='<span class="ptag '+kind[1]+'">'+kind[0]+'</span><h4></h4><p></p>'+(cnt?'<em>也克制下一波</em>':'');tx.querySelector('h4').textContent=tk?TEMPS[tk].n:PNAME[k];tx.querySelector('p').textContent=P.line();
@@ -1188,11 +1214,15 @@ function goalText(){
   const left=Math.max(0,9-((rr.layer-1)+rr.frac));
   return '下一称号 <b>'+(REALMS[cur+1]||'')+'</b>：还差 '+left.toFixed(1)+' 星到九星圆满 · 解锁 '+unlockList(cur+1).slice(0,3).join('、');
 }
+function regroup(){   // 净化 Boss 后休整：冲击波重创烦恼球、6 秒不刷怪、回 15% 元气、左道马上来一排好门
+  S.regroup=6;const n=skillPool(8,z=>!z.boss,0);heal(.15,'休整');S.goodRow=true;S.spawnL=Math.min(S.spawnL,.4);
+  S.fxBomb=Math.max(S.fxBomb||0,.5);toast('打败大噩梦 · 休整 6 秒','星光冲击波净化了 '+n+' 只怪，元气 +15%，左边来了好门');
+}
 function breakthrough(){
   S.maxR=Math.min(REALMS.length-1,S.maxR+1);S.bottle=false;S.bottleShown=false;
   S.count=Math.max(S.count,RBASE*Math.pow(2,RSTART[S.maxR])*1.0001);
-  S.dmg*=1.15;S.bombs=Math.min(3,S.bombs+1);S.hpF=1;S.brkPend=S.maxR;queuePick('变身奖励');
-  toast('华丽变身！晋升'+REALMS[S.maxR],'元气回满并提升，星力 +15%，星光爆发 +1');S.flash=0;S.fxBreak=1.2;S.shake=10;
+  S.dmg*=1.15;heal(.3,'变身');{const n=skillPool(BOMB_S,()=>true,.2);S.fxBomb=.9;S.shake=14;ftext(S.x,squadY-130,'升级流星雨'+(n?' · 净化 '+n+' 只':''),'#fff3c4',24)}S.brkPend=S.maxR;queuePick('变身奖励');
+  toast('华丽变身！晋升'+REALMS[S.maxR],'元气 +30%、上限提升，星力 +15%，流星守护');S.flash=0;S.fxBreak=1.2;S.shake=10;
   sfx(523,.15);setTimeout(()=>sfx(659,.15),120);setTimeout(()=>sfx(784,.15),240);setTimeout(()=>sfx(1046,.35),360);renderUps();
 }
 function dropCoins(x,y,base){
@@ -1205,7 +1235,7 @@ function killZ(o){
   burst(o.x,o.y,o.boss?C.boss:C.zomb,o.boss?60:(o.type==='brute'?16:8),o.boss?320:170);
   const now=performance.now();if(now-lastKillSnd>45){sfx(rand(180,260),.05,'triangle',.035);lastKillSnd=now}
   if(o.boss){
-    S.bossAlive=false;
+    S.bossAlive=false;if(!o.fin)regroup();
     {const sl=slot();if(sl&&o.look){sl.bossSeen=sl.bossSeen||{};sl.bossSeen[o.look.bi]=(sl.bossSeen[o.look.bi]||0)+1}}
     if(o.fin){ftext(o.x,o.y,'点亮星空',C.gold,34);S.fxBreak=1.2;S.won=true;setTimeout(()=>endRun('clear'),900);return}
     if(S.maxR<TOPR&&(o.heart||S.count>=capOf(S.maxR)*.98)){ftext(o.x,o.y,'净化负能量',C.gold,30);for(let i=0;i<6;i++)dropCoins(o.x+rand(-30,30),o.y+rand(-30,30),o.coin/6);breakthrough();return}
@@ -1226,12 +1256,15 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
   else {
     S.t+=dt;
     S.spawnL-=dt;if(S.spawnL<=0){spawnRow();S.spawnL=rand(2.9,3.5)}
+    if(S.jieRealm!==S.maxR){S.jieRealm=S.maxR;S.jieCD=Math.min(S.jieCD||60,60)}S.jieCD=(S.jieCD==null?60:S.jieCD)-dt;
+    if(has('jie')&&S.rR>=2&&S.rR===S.maxR&&!S.bottle&&S.jieCD<=0&&S.t>=PRE&&wph()>6&&!surgeSoon()&&!S.objs.some(o=>o.k==='gate'&&o.y<H*.25)){S.jieCD=JIE_EVERY;spawnJie()}
     S.spawnTrap-=v*dt;if(S.spawnTrap<=0){if(has('trap')&&!surgeSoon())spawnTrap();S.spawnTrap=H*rand(1.8,2.6)}
-    S.spawnR-=dt;if(S.spawnR<=0){spawnZombies();S.spawnR=(S.bossAlive?1.4:1)*rand(.85,1.15)*zIv()}
+    S.regroup=Math.max(0,(S.regroup||0)-dt);
+    S.spawnR-=dt;if(S.spawnR<=0&&!(S.regroup>0)){spawnZombies();S.spawnR=(S.bossAlive?1.4:1)*rand(.85,1.15)*zIv()}
     const sg=inSurge();
     if(sg&&!S.surgeOn){S.surgeOn=true;S.Dref=Math.max(S.Dref,refDps());S.maxWave=Math.max(S.maxWave,waveK()+1);{const tr=traitOf(waveK());toast('第 '+(waveK()+1)+' 波噩梦潮'+(tr?' · '+TRAITS[tr].n:''),tr?TRAITS[tr].d+'（克制：'+TRAITS[tr].c.map(x=>PNAME[x]).join('、')+'）':'撑住 20 秒，多去右道清怪')}sfx(140,.5,'sawtooth',.06,.6)}
     for(const k of ['surge','bomb','bolt','shield','freeze'])if(has(k)&&!S.unl[k]){S.unl[k]=1;if(k!=='surge')toast('解锁新技能：'+TIPS[k].t,'在右下角，点一下就能用')}
-    if(!sg&&S.surgeOn){S.surgeOn=false;queuePick('撑过第 '+(waveK()+1)+' 波');const add=S.bombs<3;if(add)S.bombs++;toast('噩梦潮退去',add?'星光爆发 +1，抓紧收集':'抓紧收集');sfx(520,.12);setTimeout(()=>sfx(780,.18),90)}
+    if(!sg&&S.surgeOn){S.surgeOn=false;queuePick('撑过第 '+(waveK()+1)+' 波');const add=S.bombs<bombCap();if(add)S.bombs++;toast('噩梦潮退去',add?'星光爆发 +1，抓紧收集':'抓紧收集');sfx(520,.12);setTimeout(()=>sfx(780,.18),90)}
     if(sg&&S.bossK<waveK()&&wph()>=MOW+8){S.bossK=waveK();spawnBoss()}
   }
 
@@ -1258,7 +1291,7 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
         if(!o.boss){o.x+=Math.sin(S.t*2+o.ph)*10*dt;o.x=clamp(o.x,mid+8+o.r,roadX+roadW-8-o.r)}
       }
       if(o.hit>0)o.hit-=dt;
-    } else {o.y+=v*dt;if(o.fl>0)o.fl-=dt}
+    } else {o.y+=v*(o.spd||1)*dt;if(o.fl>0)o.fl-=dt}
   }
   const bl=S.bullets;
   for(let i=bl.length-1;i>=0;i--){
@@ -1298,7 +1331,7 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
     } else if(o.y>=line){
       o.dead=true;
       if(o.rid){if(colOf(S.x)===colOf((o.x0+o.x1)/2))applyGate(o)}   // row gates: only the one in your column
-      else if(o.trap){if(S.x>=o.x0-4&&S.x<=o.x1+4)applyGate(o)}
+      else if(o.trap||o.wide){if(S.x>=o.x0-4&&S.x<=o.x1+4)applyGate(o)}
     }
   }
   S.objs=S.objs.filter(o=>!o.dead&&o.y<H+80);
@@ -1308,8 +1341,6 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
   for(let i=S.parts.length-1;i>=0;i--){const p=S.parts[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.92;p.vy*=.92;p.life-=dt;if(p.life<=0){S.parts[i]=S.parts[S.parts.length-1];S.parts.pop()}}
   for(let i=S.texts.length-1;i>=0;i--){const t=S.texts[i];t.y-=28*dt;t.life-=dt*.55;if(t.life<=0)S.texts.splice(i,1)}
   S.shake*=Math.pow(.02,dt);S.flash=Math.max(0,S.flash-dt);
-  if(S.t>PRE&&!S.tut)S.expK=(S.expK||0)+dt/CYC*(S.bottle?.3:1);
-  if(S.hpF>0&&S.hpF<1&&!S.tut)S.hpF=Math.min(1,S.hpF+(S.surgeOn?0:.005)*dt);
   if(S.hpHitT>0){S.hpHitT-=dt;if(S.hpHitT<=0&&S.hpHit>0){const v=Math.max(1,Math.round(S.hpHit*hpCap()));ftext(S.hpHitX||S.x,squadY-60,'元气 −'+v,C.minus,S.hpHit>.1?30:20);S.hpHit=0}}
   S.hpFlash=Math.max(0,(S.hpFlash||0)-dt);
   S.peak=Math.max(S.peak,S.count);
@@ -1320,9 +1351,13 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
    S.rcode=code;S.rR=rr.r;S.peakCode=Math.max(S.peakCode,code);S.peakR=Math.max(S.peakR,rr.r);
    {const L=layersOf(S.count);if(!(S.peakL>=L))S.peakL=L;
     if(S.hpF<=0&&!S.won){S.hpF=0;S.collapse=true;endRun(true);return}
-    if(S.hpF<.5&&!S.hpTold){S.hpTold=true;toast('元气过半','收集期会慢慢回元气；突破称号直接回满')}}
+    if(S.hpF<.5&&!S.hpTold){S.hpTold=true;toast('元气过半','元气不会自己回：变身、净化 Boss 后休整、选「元气精进」才回')}}
    if(S.bottle&&!S.bottleShown){S.bottleShown=true;if(S.maxR>=TOPR)toast('创世女神 9星圆满','下一波净化「永夜」，即可点亮星空、通关');else toast('变身前夕：'+REALMS[S.maxR]+'九星圆满','净化本波 Boss（负能量）或吃变身星冠才能变身')}}
   S.bankT-=dt;if(S.bankT<=0){S.bankT=8;bankCoins()}
+  if(S.path==='fa'&&!S.tut){S.spellT=(S.spellT==null?5:S.spellT)-dt;if(S.spellT<=0){const z=S.objs.filter(z=>z.k==='z'&&!z.dead&&z.y>0).sort((a,b)=>b.y-a.y)[0];
+    if(z){S.spellT=5;S.fxSpell={x:z.x,y:z.y,t:.35};skillPool(1.6*skPow()/2,q=>{const dx=q.x-z.x,dy=q.y-z.y;return dx*dx+dy*dy<70*70},.02);burst(z.x,z.y,'#ff9a3a',18,220,4);sfx(520,.12,'sawtooth',.04,.5)}else S.spellT=.5}}
+  if(S.fxSpell){S.fxSpell.t-=dt;if(S.fxSpell.t<=0)S.fxSpell=null}
+  S.saveT=(S.saveT==null?30:S.saveT)-dt;if(S.saveT<=0&&!S.tut){S.saveT=30;saveRun()}
   if(S.count<=0)endRun(true);
 }
 
@@ -1836,7 +1871,7 @@ const TIPS={
   art:{t:'三选一强化',d:'净化掉 Boss 或变身时会暂停，给你 3 个强化选 1 个。选之前会告诉你下一波是什么，标着“克制下一波”的那个最划算。强化上限随称号提高。'},
   surge:{t:'噩梦潮',d:'每隔一阵会来一波噩梦潮，二十秒内坏情绪又多又强。撑过去，就有一段轻松的时间攒魔力。'},
   bomb:{t:'星光爆发',d:'右下角的星光爆发：星光炸开，威力等于你全力输出 10 秒，从离红线最近的小怪净化起，Boss 最多掉 20% 的血。怪越多净化得越少，清不了场——在怪刚压上来时用最值。每撑过一波噩梦潮多一张，最多 3 张。'},
-  boss:{t:'Boss',d:'噩梦潮中途会来一个大噩梦。每个称号的大噩梦都不一样，称号越高越凶。血很厚、走得慢，提前去右道打它。让它冲线，扣 25%～40% 元气（称号越高扣得越多）、跌 3 星魔力。'},
+  boss:{t:'Boss',d:'噩梦潮中途会来一个大噩梦。每个称号的大噩梦都不一样，称号越高越凶。血很厚、走得慢，提前去右道打它。让它冲线，扣 20%～40% 元气（称号越高扣得越多）、跌 3 星魔力。'},
   run:{t:'急躁鬼',d:'跑得特别快，留意右道上方，看到就去打。'},
   bottle:{t:'变身前夕',d:'魔力到了九星就卡住了，再吃糖也不涨。净化掉这一波的 Boss（负能量）才能变身，进入下一个称号。'},
   brk:{t:'变身星冠',d:'卡在变身前夕时才会出现。打开锁撞上去，直接变身，不用打负能量。'},
@@ -1852,11 +1887,13 @@ const TIPS={
   trap:{t:'右道陷阱',d:'右道上的负能量，只占半条道。在右道打怪时侧身让开就行。'},
   freeze:{t:'甜梦暂停',d:'右下角新技能：全场的怪定住三秒半，趁机清怪。用完要等三十五秒。'},
   fu:{t:'魔法卡（带锁）',d:'撞上去：多一张星光爆发，或者让某个技能马上能再用。'},
-  jie:{t:'流星考验',d:'锁很厚。打开了就是通过考验，涨一星；没打开就撞上去，掉两星。打不开就避开。'},
+  jie:{t:'流星考验',d:'从炼气起，在一个称号里大约每 7 分钟，左道会来一次流星考验：走得很慢、锁很厚（要你全力打约 4.5 秒，右边的怪这时会压上来）。打开后冲过去＝考验通过：魔力直接 +1.2 星（后期相当于刷很久）、星力永久 ×1.08、回 10% 元气；没打开撞上去扣 15% 元气、掉魔力。不想冒险就躲到右道——但不去考验，升境会慢很多。'},
   hex:{t:'瞌睡精',d:'头上会读条，读满后你的星速 −25%，持续 4 秒。看到就先打掉它。'},
   guard:{t:'黏人怪',d:'身边一圈里的怪受到的伤害减少 40%。先打黏人怪，再清其他。'},
   cast:{t:'Boss 技能',d:'第三波起 Boss 会放技能：召唤烦恼球、冲锋、瞌睡咒（星速 −25%）、封印（某个技能 6 秒不能用）。读条时打掉它 8% 的血就能打断。'},
-  hp:{t:'元气',d:'左上角的红条。怪冲过红线会扣元气（同时少掉一点魔力），Boss 冲线扣 25%～40%。元气归零，这局就结束。收集期会慢慢回元气，突破称号直接回满；称号越高，元气上限越高。'},
+  path:{t:'星弓系 / 咒语系',d:'晋升筑基时二选一，选了就不能改。星弓系：星光伤害 ×1.4、受伤 −20%、流星雨和贯穿上限各 +1，但技能冷却更长、威力 −20%。咒语系：技能威力 ×2、冷却 −40%、星光爆发最多存 5 张，还会每 5 秒自动打出一道星星魔弹，但星光伤害 ×0.8。两条路的数值都跟着称号涨。'},
+  save:{t:'存档与长线冒险',d:'这是一场长线冒险：前几个称号十几分钟，越往后越久，修到圣人要几十个小时。随时点暂停 →「存档退出」，下次从原地接着打；平时每 30 秒也会自动存。只有元气耗尽，这一局才结束。'},
+  hp:{t:'元气',d:'左上角的红条。烦恼球冲线扣 1.2%，拖延懒懒 2.5%，内耗怪 6%，Boss 20%～40%（称号越高越多），同时少掉一点魔力。元气不会自己回，只有变身（+30%）、净化 Boss 后休整（+15%）、选「元气精进」（+30%）才回。元气归零，这局就结束。'},
   mech:{t:'萌宠',d:'晋升炼体就有萌宠跟着你，每个称号换一只更神异的（灵猫 → 白狐 → … → 祖龙）。到了筑基，萌宠开始定时轰击坏情绪，称号越高轰得越狠。'}
 };
 const TUT=[
@@ -1924,7 +1961,8 @@ function closeTip(){
   paused=false;
 }
 $('tipOk').onclick=closeTip;
-$('coachSkip').onclick=()=>{const s=slot();if(s){s.seen=Object.assign(s.seen||{},allSeen());s.tutDone=true;s.noTips=true;commit(Save.cur)}endCoach(false);$('coachSkip').hidden=true;toast('已跳过引导','之后不再提示')};
+$('cSkipAll').onclick=()=>{const s=slot();if(s){s.seen=Object.assign(s.seen||{},allSeen());s.tutDone=true;s.noTips=true;commit(Save.cur)}endCoach(false);$('coachSkip').hidden=true;toast('已跳过全部引导','可以在存档主页重新打开')};
+$('cSkipOne').onclick=()=>{const s=slot();if(s&&coach){s.seen['cx_'+coach.key];s.seen['cx_'+coach.key]=true;commit(Save.cur);toast('这项不再提示','其他引导照常')}endCoach(false);$('coachSkip').hidden=true};
 $('tipSkip').onclick=()=>{
   const s=slot();if(s){s.seen=allSeen();s.tutDone=true;s.noTips=true;commit(Save.cur)}
   tipQ=[];tip=null;$('tipBox').hidden=true;paused=false;
@@ -1943,30 +1981,34 @@ const COACH={
   run:{t:'跑得快，先打它',slow:.5,max:2.2},brute:{t:'皮厚，漏了损失大',slow:.5,max:2.2},elite:{t:'内耗怪：漏了跌一星',slow:.5,max:2.4},
   four:{t:'全是坏门：挑最轻的',bad:1,slow:.45,max:2.6},dodge:{t:'错开了：等一下再横移',s:'可以一扇都不撞',slow:.45,max:2.8},
   trap:{t:'右道坏门：侧身躲开',bad:1,slow:.5,max:2.2},zou:{t:'熬夜：撞了会变慢',bad:1,slow:.5,max:2.2},
-  jie:{t:'流星考验：开了锁才划算',slow:.5,max:2.4},vein:{t:'愿望水晶：锁厚，但涨得多',slow:.5,max:2.4},art:{t:'魔法书：开锁，学一招',slow:.5,max:2.4},
+  jie:{t:'流星考验：集火打开它！',s:'打开冲过去＝魔力 +1.2 星；打不开就躲到右道',slow:.4,max:4},vein:{t:'愿望水晶：锁厚，但涨得多',slow:.5,max:2.4},art:{t:'魔法书：开锁，学一招',slow:.5,max:2.4},
   fb:{t:'魔法道具：开锁，自动帮你打',slow:.5,max:2.4},fu:{t:'魔法卡：技能多用一次',slow:.5,max:2.2},brk:{t:'变身星冠：直接变身！',slow:.5,max:2.4},
   bottle:{t:'九星满了',s:'净化掉这波 Boss 才能变身',banner:1,max:2.6},mech:{t:'萌宠帮忙啦！',s:'会定时帮你轰击坏情绪',banner:1,max:2.2},
-  sk_bomb:{t:'新技能：星光爆发',s:'先留着，怪压上来时我会叫你用',slow:.35,max:2.6},sk_bolt:{t:'新技能：彩虹光束',s:'先留着，一列怪扎堆时我会叫你用',slow:.35,max:2.6},
-  sk_shield:{t:'新技能：泡泡护盾',s:'先留着，该用时我会叫你',slow:.35,max:2.6},sk_freeze:{t:'新技能：甜梦暂停',s:'先留着，顶不住时我会叫你用',slow:.35,max:2.6},
+  sk_bomb:{t:'新技能：星光爆发',s:'先留着，该用时我会叫你',slow:.35,max:2.6},sk_bolt:{t:'新技能：彩虹光束',s:'先留着，该用时我会叫你',slow:.35,max:2.6},
+  sk_shield:{t:'新技能：泡泡护盾',s:'先留着，该用时我会叫你',slow:.35,max:2.6},sk_freeze:{t:'新技能：甜梦暂停',s:'先留着，该用时我会叫你',slow:.35,max:2.6},
   hex:{t:'瞌睡精：先打它！',s:'读条满了，你的星速会变慢',slow:.45,max:3},guard:{t:'黏人怪：先打它',s:'圈里的怪受伤减少',slow:.45,max:3},
   cast:{t:'Boss 在读条：集火打断！',s:'打掉它 8% 的血就能打断',slow:.4,max:3},
-  use_bomb:{t:'顶不住了？现在放星光爆发！',s:'最佳时机：一大波怪刚压到半屏，先劈最近的',slow:.12,max:9},
+  use_bomb:{t:'现在放星光爆发！',s:'一大波怪压上来时最划算',slow:.12,max:9},
   use_bolt:{t:'这一列堆满了：放彩虹光束！',s:'一列怪扎堆时最划算',slow:.12,max:9},
   use_shield:{t:'Boss 要冲线：开泡泡护盾！',s:'6 秒内冲线不伤你',slow:.12,max:9},
-  use_shieldg:{t:'开泡泡护盾，去左边吃门！',s:'罩子开着 6 秒冲线不伤你，趁机去攒魔力',slow:.15,max:9},
-  use_freeze:{t:'快顶不住了：甜梦暂停！',s:'全场定住 3.5 秒，趁机把最近的打掉',slow:.12,max:9},
-  combo_bomb:{t:'小技巧：先放星光爆发',s:'下面那扇魔法卡门会补回一张＝白用一次',slow:.2,max:7},
-  combo_bolt:{t:'小技巧：先放彩虹光束',s:'再吃下面那扇魔法卡门，马上刷新＝白用一次',slow:.2,max:7},
-  combo_shield:{t:'小技巧：先开泡泡护盾',s:'再吃下面那扇魔法卡门，马上刷新＝白用一次',slow:.2,max:7},
-  combo_freeze:{t:'小技巧：先放甜梦暂停',s:'再吃下面那扇魔法卡门，马上刷新＝白用一次',slow:.2,max:7},
+  use_shieldg:{t:'开泡泡护盾，去左边吃门！',s:'6 秒冲线不伤你，趁机攒魔力',slow:.15,max:9},
+  use_freeze:{t:'顶不住了：放甜梦暂停！',s:'定住 3.5 秒，先打最近的',slow:.12,max:9},
+  combo_bomb:{t:'小技巧：先放星光爆发',s:'再吃魔法卡门补回来＝白用一次',slow:.2,max:7},
+  combo_bolt:{t:'小技巧：先放彩虹光束',s:'再吃魔法卡门马上刷新＝白用',slow:.2,max:7},
+  combo_shield:{t:'小技巧：先开泡泡护盾',s:'再吃魔法卡门马上刷新＝白用',slow:.2,max:7},
+  combo_freeze:{t:'小技巧：先放甜梦暂停',s:'再吃魔法卡门马上刷新＝白用',slow:.2,max:7},
   cgo:{t:'现在去吃这扇门',s:'技能立刻补回来',slow:.35,max:4}};
 const SKN={bomb:'Bomb',bolt:'Bolt',shield:'Shield',freeze:'Freeze'};
 let coach=null,coachGap=0,pop=null;
 const coachOn=()=>{const s=slot();return !!s&&!s.noTips};
-function cSeen(k){const s=slot();return !s||!!s.seen['c_'+k]}
-function cMark(k){const s=slot();if(s){s.seen['c_'+k]=true;commit(Save.cur)}}
+const cLim=k=>(COACH[k]&&COACH[k].banner)||k.startsWith('sk_')||k==='cgo'?1:3;   // each guidance item: up to 3 times, independently
+const cN=k=>{const s=slot();const v=s&&s.seen['c_'+k];return v===true?1:(v|0)};
+function cSeen(k){const s=slot();return !s||!!s.seen['cx_'+k]||cN(k)>=cLim(k)}   // finished (or this item skipped)
+function cOnce(k){const s=slot();return !s||!!s.seen['cx_'+k]||cN(k)>=1}        // shown at least once
+function cMark(k){const s=slot();if(s){s.seen['c_'+k]=cN(k)+1;commit(Save.cur)}if(S){S.cLast=S.cLast||{};S.cLast[k]=S.t}}
 function startCoach(key,o){
   if(coach||pop||cSeen(key)||!coachOn()||!COACH[key])return false;
+  if(S.cLast&&S.cLast[key]!=null&&S.t-S.cLast[key]<45&&!(o&&o.st))return false;   // repeats of the same lesson are spaced out
   coach={key,C:COACH[key],o,t:0,x0:S.x,k0:S.kills,v0:o&&o.val};$('coachSkip').hidden=false;return true;
 }
 function endCoach(done){if(!coach)return;if(done!==false)cMark(coach.key);coach=null;coachGap=.5;$('coachSkip').hidden=true}
@@ -2007,23 +2049,42 @@ function coachScan(dt){
   for(const o of S.objs){
     if(o.dead||o.y<H*.16||o.y>line*.72)continue;
     let key;
-    if(o.k==='z')key=o.boss?(o.cast&&cSeen('boss')?'cast':'boss'):o.type;
+    if(o.k==='z')key=o.boss?(o.cast&&cOnce('boss')?'cast':'boss'):o.type;
     else if(o.stag)key='dodge';else if(o.rid&&o.trap)key='four';else if(!o.rid&&o.trap)key='trap';
     else if(GT[o.g].lock&&!GT[o.g].bad&&o.lock>0&&!cSeen('lock'))key='lock';
-    else if(o.g==='qi'&&cSeen('qi')&&o.val<o.cap&&!cSeen('pump'))key='pump';
+    else if(o.g==='qi'&&cOnce('qi')&&o.val<o.cap&&!cSeen('pump'))key='pump';
     else key=o.g;
     if(key&&!cSeen(key)&&COACH[key]&&startCoach(key,o))return;
   }
+  // staged lesson in progress: when its monsters are pressing, teach the skill right then
+  if(S.stage){const st=S.stage,zs=S.objs.filter(z=>z.k==='z'&&!z.dead&&z.st===st.k);
+    if(!zs.length||S.t-st.t0>25)S.stage=null;
+    else if(zs.some(z=>z.y>line*(st.k==='freeze'?.3:.38))){const key=st.k==='shield'?'use_shieldg':'use_'+st.k,g=st.k==='shield'?S.objs.find(o=>o.k==='gate'&&!o.dead&&o.rid&&o.x1<=mid&&!GT[o.g].bad&&o.y<line*.7):null;
+      if(skReady(st.k)&&!cSeen(key)&&startCoach(key,g||zs[0])){S.stage=null;return}}}
+  // set up a staged lesson for a skill the player has never been taught to use (spawned on purpose, safe: its leaks cost nothing)
+  if(!S.stage&&!S.surgeOn&&!S.bossAlive&&S.t>=PRE&&wph()<MOW-8&&!(S.stageGap>S.t))for(const k of ['bomb','bolt','freeze','shield'])
+    if(has(k)&&cOnce('sk_'+k)&&!cOnce(k==='shield'?'use_shieldg':'use_'+k)&&skReady(k)){stageLesson(k);return}
+  // staged trick: skill ready again → a 魔法卡 gate for it comes down the left lane
+  if(!S.stage&&!S.surgeOn&&!(S.stageGap>S.t))for(const k of ['bolt','freeze','shield'])
+    if(has(k)&&has('fu')&&cOnce('use_'+k)&&!cOnce('combo_'+k)&&skReady(k)&&!S.objs.some(o=>o.g==='fu'&&!o.dead)){const g=mkGate('fu',roadX+7,lmid-4);g.fu=k;g.lock=g.lock0=0;g.rid=++S.rowId;S.objs.push(g);S.stageGap=S.t+30;return}
   // teach each skill at the first moment the player really needs it (slow-mo + spotlight, waits for the tap)
   const dz=S.dangerShow||0;
-  if(S.surgeOn||S.bossAlive)for(const k of ['freeze','bomb','bolt','shield'])if(cSeen('sk_'+k)&&!cSeen('use_'+k)&&skReady(k)&&skUseful(k)&&(dz>.3||k==='shield'||k==='bolt')){if(startCoach('use_'+k))return}
-  if(S.surgeOn&&has('shield')&&skReady('shield')&&!cSeen('use_shieldg')&&cSeen('use_shield')){   // shield as a window to farm gates on the left
+  if(S.surgeOn||S.bossAlive)for(const k of ['freeze','bomb','bolt','shield'])if(cOnce('sk_'+k)&&!cSeen('use_'+k)&&skReady(k)&&skUseful(k)&&(dz>.3||k==='shield'||k==='bolt')){if(startCoach('use_'+k))return}
+  if(S.surgeOn&&has('shield')&&skReady('shield')&&!cSeen('use_shieldg')&&cOnce('use_shield')){   // shield as a window to farm gates on the left
     const g=S.objs.find(o=>o.k==='gate'&&!o.dead&&o.rid&&o.x1<=mid&&!GT[o.g].bad&&!(o.lock>0)&&o.y>line*.3&&o.y<line*.6);
     if(g&&S.objs.filter(z=>z.k==='z'&&!z.dead&&z.y>line*.4).length>=5){if(startCoach('use_shieldg',g))return}}
   // trick: a 魔法卡 gate that refills a skill you can fire right now
   for(const o of S.objs)if(o.k==='gate'&&o.g==='fu'&&!o.dead&&o.y>line*.12&&o.y<line*.5){const k=o.fu;
-    if(has(k)&&skReady(k)&&(k!=='bomb'||S.bombs>=3)&&!cSeen('combo_'+k)&&cSeen('sk_'+k)){if(startCoach('combo_'+k,o))return}}
+    if(has(k)&&skReady(k)&&(k!=='bomb'||S.bombs>=3)&&!cSeen('combo_'+k)&&cOnce('sk_'+k)){if(startCoach('combo_'+k,o))return}}
   if(S.comboGate){const o=S.comboGate;S.comboGate=null;if(!o.dead&&o.y<line-20&&startCoach('cgo',o))return}
+}
+function stageLesson(k){   // 刻意制造场景: a wave built so the skill is obviously the answer
+  const x0=mid+8,x1=roadX+roadW-8,rm=mid+roadW/4,hpB=hpUnit()*.8,add=(x,y,ex)=>{const z=Object.assign({k:'z',type:'n',x:clamp(x,x0+12,x1-12),y,ph:rand(0,6.28),hit:0,tier:Math.min(6,waveK()),r:11,hp:hpB,atk:1,pct:.01,sp:30,coin:1,st:k},ex||{});z.hp0=z.hp;S.objs.push(z)};
+  if(k==='bomb')for(let i=0;i<18;i++)add(rand(x0+20,x1-20),-30-i*12-rand(0,20));
+  else if(k==='bolt'){const c=Math.random()<.5?(x0+rm)/2:(rm+x1)/2;for(let i=0;i<10;i++)add(c+rand(-14,14),-30-i*26)}
+  else if(k==='freeze')for(let i=0;i<12;i++)add(rand(x0+20,x1-20),-30-i*16,{type:'run',r:9,hp:hpB*.7,sp:0,fast:2.6});
+  else if(k==='shield'){for(let i=0;i<10;i++)add(rand(x0+20,x1-20),-30-i*20);S.goodRow=true;S.spawnL=.1}
+  S.stage={k,t0:S.t};S.stageGap=S.t+40;toast({bomb:'一大波怪来了！',bolt:'一列怪堆上来了！',freeze:'急躁鬼冲过来了！',shield:'怪来了，左边也有好门'}[k],'看看这时候该用什么');
 }
 function skReady(k){return has(k)&&(k==='bomb'?S.bombs>0:k==='bolt'?S.boltCd<=0:k==='shield'?S.shieldCd<=0:S.freezeCd<=0)}
 function skUseful(k){
@@ -2047,7 +2108,7 @@ function hintScan(){
     const el=$('sk'+SKN[k]);if(!el)continue;const useful=skReady(k)&&skUseful(k);el.classList.toggle('ready',!!useful);
     el.classList.toggle('new',has(k)&&!(s.used&&s.used[k]));
     if(!pick&&useful&&!(s.used&&s.used[k]))pick=k}
-  if(coach&&coach.C&&!coach.C.banner&&!coach.key.startsWith('sk_')&&!coach.key.startsWith('use_')&&!coach.key.startsWith('combo_')){hideHint();return}
+  if(coach){hideHint();return}
   if(!pick){hideHint();return}
   if(hintK!==pick){hintK=pick;$('skHintT').textContent=COACH['use_'+pick].s+' → 点 '+TIPS[pick].t}
   const el=$('sk'+SKN[pick]),a=el.getBoundingClientRect(),w=$('wrap').getBoundingClientRect(),hb=$('skHint');hb.hidden=false;
@@ -2130,7 +2191,7 @@ function drawDemo(key,t){
     dText('← 按住拖动 →',cx,22,14,'#fff',CN);
   } else if(GT[key]){
     const T=GT[key],D={qi:['元气少女 3星','元气少女 5星','+2星'],vein:['元气少女 3星','元气少女 7星','+4星'],brk:['元气少女 9星','见习魔法生 1星','变身！'],art:['','','星速 UP'],
-      fb:['','','招财猫 Lv1'],fu:['','','星光爆发 +1'],xin:['元气少女 5星','元气少女 4星','−1星'],zou:['','','星速变慢 7秒'],jie:['元气少女 3星','元气少女 4星','通过考验 +1星']}[key];
+      fb:['','','招财猫 Lv1'],fu:['','','星光爆发 +1'],xin:['元气少女 5星','元气少女 4星','−1星'],zou:['','','星速变慢 7秒'],jie:['元气少女 3星','元气少女 4星','考验通过 +1星']}[key];
     const lk=T.lock&&key!=='zou'?Math.min(1,u/1.4):1,open=lk>=1;
     if(!passed){const lockedLook=T.lock&&!T.bad&&!open;dPanel(cx,gy,120,46,lockedLook?'138,143,156':T.fill,lockedLook?'#8a8f9c':T.col,null);
       gateIcon(key,{up:'rate',fbk:'gourd',fu:'bomb'},cx-45,gy,.75,u,lockedLook,dg);dText(key==='fb'?'招财猫':T.n,cx+6,gy-9,14,'#fff',CN);dText(key==='xin'?'−'+(2-Math.min(1,u/1.4)).toFixed(1)+'星':key==='qi'?'+'+(1+Math.min(1,u/1.4)).toFixed(1)+'星':'',cx,gy+10,11,'#fff',CN);
@@ -2249,10 +2310,10 @@ function drawDemo(key,t){
 /* ================= SKILLS ================= */
 function canSkill(k){return running&&!paused&&S&&!tip&&has(k)&&!(S.seal&&S.seal[k]>0)}
 function useShield(){
-  if(!canSkill('shield')||S.shieldCd>0)return;S.shieldT=6;S.shieldCd=45*Math.pow(.85,S.cdUp||0);skillUsed('shield');sfx(392,.4,'sine',.06,1.5);skillUI();
+  if(!canSkill('shield')||S.shieldCd>0)return;S.shieldT=6;S.shieldCd=45*Math.pow(.85,S.cdUp||0)*skCd();skillUsed('shield');sfx(392,.4,'sine',.06,1.5);skillUI();
 }
 function useFreeze(){
-  if(!canSkill('freeze')||S.freezeCd>0)return;S.freezeT=3.5;S.freezeCd=35*Math.pow(.85,S.cdUp||0);skillUsed('freeze');sfx(1200,.3,'sine',.05,.3);skillUI();
+  if(!canSkill('freeze')||S.freezeCd>0)return;S.freezeT=3.5;S.freezeCd=35*Math.pow(.85,S.cdUp||0)*skCd();skillUsed('freeze');sfx(1200,.3,'sine',.05,.3);skillUI();
 }
 const BOMB_S=10,BOLT_S=4;
 function skillPool(sec,inArea,bossCap){   // damage pool = sec seconds of your full DPS; nearest-to-line first; bosses take at most bossCap of max HP
@@ -2265,7 +2326,7 @@ function skillPool(sec,inArea,bossCap){   // damage pool = sec seconds of your f
 function useBomb(){
   if(!canSkill('bomb')||S.bombs<=0)return;S.bombs--;skillUsed('bomb');
   // not a screen wipe: a pool worth BOMB_S seconds of your full fire, spent on the monsters nearest the line first
-  const k=skillPool(BOMB_S,()=>true,.2);ftext(S.x,squadY-110,k>0?'净化 '+k+' 只':'',C.gold,20);
+  const k=skillPool(BOMB_S*skPow(),()=>true,.2);ftext(S.x,squadY-110,k>0?'净化 '+k+' 只':'',C.gold,20);
   S.fxBomb=.7;S.shake=14;burst(W*.7,H*.4,'#fff3c4',40,420,4);
   sfx(60,.6,'sawtooth',.09,.4);sfx(220,.3,'square',.05,.3);skillUI();
 }
@@ -2275,8 +2336,8 @@ function useBolt(){
   if(S.x>=mid)c=S.x<rm?0:1;
   else{let n0=0,n1=0;for(const z of S.objs)if(z.k==='z'&&!z.dead){if(z.x<rm)n0++;else n1++}c=n1>n0?1:0}
   const [x0,x1]=cols[c];
-  skillPool(BOLT_S,z=>z.boss?(z.x+z.r>x0&&z.x-z.r<x1):(z.x>=x0&&z.x<=x1),.06);
-  S.boltCd=20;S.fxBolt={x0,x1,t:.45};S.shake=Math.min(14,S.shake+6);sfx(900,.25,'sawtooth',.06,.2);skillUI();
+  skillPool(BOLT_S*skPow(),z=>z.boss?(z.x+z.r>x0&&z.x-z.r<x1):(z.x>=x0&&z.x<=x1),.06);
+  S.boltCd=20*skCd();S.fxBolt={x0,x1,t:.45};S.shake=Math.min(14,S.shake+6);sfx(900,.25,'sawtooth',.06,.2);skillUI();
 }
 function skillUI(){
   if(!S)return;
@@ -2288,6 +2349,8 @@ function skillUI(){
   for(const k of ['bomb','bolt','shield','freeze']){const el=$('sk'+SKN[k]);el.classList.toggle('sealed',!!(S.seal&&S.seal[k]>0))}
 }
 function drawSkillFx(){
+  if(S.fxSpell){const f=S.fxSpell,a=f.t/.35;ctx.strokeStyle='rgba(255,170,80,'+a+')';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(S.x,squadY-20);ctx.lineTo(f.x,f.y);ctx.stroke();ctx.fillStyle='rgba(255,220,140,'+a+')';ctx.beginPath();ctx.arc(f.x,f.y,22*(1.2-a),0,6.283);ctx.fill()}
+  if(S.regroup>0){const a=Math.min(1,S.regroup);ctx.globalAlpha=a;outlined('休整 · '+Math.ceil(S.regroup)+' 秒',W*.5,H*.24,22,'#7dffa8',CN);outlined('不刷怪 · 去左边吃门',W*.5,H*.24+24,13,'#d8ffe4',CN);ctx.globalAlpha=1}
   if(S.fxBolt){const f=S.fxBolt,a=f.t/.45,cx=(f.x0+f.x1)/2;
     ctx.fillStyle='rgba(180,220,255,'+(.35*a)+')';ctx.fillRect(f.x0,0,f.x1-f.x0,H);
     ctx.strokeStyle='rgba(255,255,255,'+a+')';ctx.lineWidth=4;ctx.beginPath();let x=cx;ctx.moveTo(x,0);
@@ -2303,7 +2366,8 @@ function drawSkillFx(){
     ctx.fillStyle='rgba(255,245,210,'+(.55*a)+')';ctx.fillRect(0,0,W,H);
     ctx.strokeStyle='rgba(255,180,80,'+a+')';ctx.lineWidth=10;ctx.beginPath();ctx.arc(W*.7,H*.45,r,0,6.28);ctx.stroke()}
 }
-$('skBomb').onclick=useBomb;$('skBolt').onclick=useBolt;$('skShield').onclick=useShield;$('skFreeze').onclick=useFreeze;
+for(const [id,f] of [['skBomb',useBomb],['skBolt',useBolt],['skShield',useShield],['skFreeze',useFreeze]]){const el=$(id);
+  el.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();f()});el.addEventListener('click',e=>e.preventDefault())}   // fires on touch-down, works while the other hand is dragging
 
 /* ================= LOOP ================= */
 let hudT=0;
@@ -2329,17 +2393,33 @@ function frame(ts){
 /* ================= INPUT & FLOW ================= */
 const keys={l:false,r:false};
 let drag=null;
-cv.addEventListener('pointerdown',e=>{if(!S||!running)return;drag={px:e.clientX,sx:S.x};try{cv.setPointerCapture(e.pointerId)}catch(_){}});
-cv.addEventListener('pointermove',e=>{if(!drag||!S)return;S.x=clamp(drag.sx+(e.clientX-drag.px)*1.2,minX(),maxX())});
-const end=()=>{drag=null};cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+// multi-touch: the first finger on the field steers; other fingers (e.g. on skill buttons) never disturb it
+cv.addEventListener('pointerdown',e=>{if(!S||!running)return;if(drag&&drag.id!==e.pointerId)return;drag={id:e.pointerId,px:e.clientX,sx:S.x};try{cv.setPointerCapture(e.pointerId)}catch(_){}});
+cv.addEventListener('pointermove',e=>{if(!drag||!S||e.pointerId!==drag.id)return;S.x=clamp(drag.sx+(e.clientX-drag.px)*1.2,minX(),maxX())});
+const end=e=>{if(drag&&e&&e.pointerId!==drag.id)return;drag=null};cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);cv.addEventListener('lostpointercapture',end);
 addEventListener('keydown',e=>{if(e.key==='q')useBomb();if(e.key==='e')useBolt();if(e.key==='r')useShield();if(e.key==='f')useFreeze();if(e.key==='ArrowLeft'||e.key==='a')keys.l=true;if(e.key==='ArrowRight'||e.key==='d')keys.r=true;if(e.key==='Escape'||e.key==='p')togglePause()});
 addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='a')keys.l=false;if(e.key==='ArrowRight'||e.key==='d')keys.r=false});
 
 async function lockWake(){try{if(navigator.wakeLock)await navigator.wakeLock.request('screen')}catch(e){}}
+const RUN_SKIP=new Set(['objs','bullets','parts','texts','cfx','tipObj','comboGate','guards','fxGourd','fxBolt','stage']);
+function saveRun(){   // 存档：把这一局原样存进存档（每 30 秒、切后台、存档退出时都会存）
+  if(!S||S.tut||!running&&!paused)return;const s=slot();if(!s)return;
+  bankCoins();const snap={};for(const k in S)if(!RUN_SKIP.has(k))snap[k]=S[k];snap.rowDone=[...(S.rowDone||[])];
+  try{s.run={v:1,saved:Date.now(),S:JSON.parse(JSON.stringify(snap))}}catch(e){return}
+  s.bestRealm=Math.max(s.bestRealm||0,S.peakCode);s.bestWave=Math.max(s.bestWave||0,S.maxWave);
+  s.bestScore=Math.max(s.bestScore||0,Math.round(S.peakCode*100+S.maxWave*50+S.kills/5));commit(Save.cur);
+}
+function resumeRun(snap){
+  newRun();Object.assign(S,JSON.parse(JSON.stringify(snap)));S.rowDone=new Set(snap.rowDone||[]);
+  Object.assign(S,{objs:[],bullets:[],parts:[],texts:[],cfx:[],guards:[],stage:null,comboGate:null,tipObj:null,fxGourd:null,fxBolt:null,fxBomb:0,
+    surgeOn:false,bossAlive:false,shieldT:0,freezeT:0,hexT:0,zouT:0,pickQ:0,brkPend:0,regroup:0,tut:false,x:lmid,shake:0,flash:0,leakAcc:0,leakRate:0,lastHp:null});
+  S.t=PRE+CYC*(Math.floor(Math.max(0,S.t-PRE)/CYC)+1)+.01;S.dirPh=undefined;S.Dref=refDps();renderUps();
+  toast('继续冒险',rName(realmOf(S.count))+' · 元气 '+Math.round(S.hpF*100)+'%');
+}
 function startRun(){
   if(!slot())return;
   try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.resume)actx.resume()}catch(e){actx=null}
-  newRun();running=true;paused=false;show(null);coinTarget();lockWake();
+  {const sl=slot();if(sl.run&&sl.run.S)resumeRun(sl.run.S);else newRun()}running=true;paused=false;show(null);coinTarget();lockWake();
   if(tipQ.length)openTip(tipQ.shift());
 }
 function togglePause(){if(!running||tip||pickOpts)return;paused=!paused;if(paused){renderUps();$('pauseBuild').innerHTML=$('ups').innerHTML||'<span class="sync">还没有强化</span>'}show(paused?'ovPause':null)}
@@ -2348,7 +2428,7 @@ function bankCoins(){
   if(add>0){slot().coins+=add;S.banked+=add;commit(Save.cur)}
 }
 function endRun(dead){
-  if(!running)return;running=false;paused=false;
+  if(!running)return;running=false;paused=false;coach=null;$('coachSkip').hidden=true;{const sl=slot();if(sl&&sl.run){delete sl.run;commit(Save.cur)}}
   for(const c of S.cfx)S.coins+=c.v;S.cfx=[];
   const s=slot(),dist=Math.round(S.dist/40),earned=Math.floor(S.coins);
   const rec=dist>s.best;
@@ -2375,12 +2455,12 @@ $('bShopBack').onclick=()=>{if(shopBack==='ovHub')renderHub();show(shopBack)};
 $('bTut').onclick=()=>{const s=slot();if(!s)return;s.tutDone=false;s.noTips=false;s.seen={};commit(Save.cur);$('tutNote').hidden=false};
 $('bSlots').onclick=()=>{renderSlots();show('ovTitle')};
 function renderHelp(){const L=$('helpList');L.innerHTML='';
-  const order=['intro','qi','xin','art','vein','fb','fu','zou','jie','brk','n','run','brute','elite','hex','guard','boss','cast','surge','bottle','four','dodge','trap','bomb','bolt','shield','freeze','mech','hp'];
+  const order=['intro','qi','xin','art','vein','fb','fu','zou','jie','brk','n','run','brute','elite','hex','guard','boss','cast','surge','bottle','four','dodge','trap','bomb','bolt','shield','freeze','mech','hp','path','save'];
   const SKI={bomb:'skBomb',bolt:'skBolt',shield:'skShield',freeze:'skFreeze'};
   for(const k of order){const T=TIPS[k];if(!T)continue;const d=document.createElement('div');d.className='rk';
     const ic=document.createElement('canvas');ic.width=56;ic.height=56;ic.style.width='28px';ic.style.height='28px';const g=ic.getContext('2d');g.scale(2,2);
     if(GT[k])gateIcon(k,{up:'rate',fbk:'gourd',fu:'bomb'},14,14,.8,1,false,g);
-    else{g.font='20px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(SKI[k]?$(SKI[k]).querySelector('.ic').textContent:{n:'👾',run:'💨',brute:'🪨',elite:'🌀',hex:'🔮',guard:'🛡',cast:'⏳',boss:'👑',surge:'🌊',bottle:'⛰',four:'⛔',dodge:'↔',trap:'⚠',mech:'✨',hp:'❤️',intro:'👆'}[k]||'•',14,15)}
+    else{g.font='20px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(SKI[k]?$(SKI[k]).querySelector('.ic').textContent:{n:'👾',run:'💨',brute:'🪨',elite:'🌀',hex:'🔮',guard:'🛡',cast:'⏳',boss:'👑',surge:'🌊',bottle:'⛰',four:'⛔',dodge:'↔',trap:'⚠',mech:'✨',hp:'❤️',path:'☯',save:'💾',intro:'👆'}[k]||'•',14,15)}
     const tx=document.createElement('div');tx.innerHTML='<div class="who"></div><div class="what"></div>';tx.querySelector('.who').textContent=T.t;tx.querySelector('.what').textContent=T.d;
     d.appendChild(ic);d.appendChild(tx);L.appendChild(d)}}
 $('bHelp').onclick=()=>{renderHelp();show('ovHelp')};$('bHelpBack').onclick=()=>{renderHub();show('ovHub')};
@@ -2394,7 +2474,11 @@ $('bRankT').onclick=()=>showRank('ovTitle');$('bRankH').onclick=()=>showRank('ov
 $('bRankBack').onclick=()=>{if(Net.rankBack==='ovHub')renderHub();else renderSlots();show(Net.rankBack||'ovTitle')};
 $('bOverHub').onclick=()=>{S=null;renderUps();renderHub();show('ovHub')};
 $('bPause').onclick=togglePause;$('bResume').onclick=togglePause;
-$('bQuit').onclick=()=>endRun(false);
+$('bQuit').onclick=()=>{saveRun();running=false;paused=false;coach=null;$('coachSkip').hidden=true;hideHint();renderHub();show('ovHub')};
+$('bGiveUp').onclick=()=>{const b=$('bGiveUp');if(!b.dataset.arm){b.dataset.arm=1;b.textContent='确认放弃？这局的进度会清掉';setTimeout(()=>{delete b.dataset.arm;b.textContent='放弃这局，重新开始'},3000);return}
+  delete b.dataset.arm;const s=slot();if(s){delete s.run;commit(Save.cur)}renderHub()};
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&running)saveRun()});
+window.addEventListener('pagehide',()=>{if(running)saveRun()});
 $('bSnd').onclick=()=>{sound=!sound;$('bSnd').textContent=sound?'🔊':'🔇'};
 addEventListener('pagehide',()=>{if(running)bankCoins()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&running)bankCoins();if(document.hidden&&running&&!paused)togglePause();else if(!document.hidden&&running)lockWake()});
@@ -2793,7 +2877,7 @@ Object.assign(TIPS,{
   art:{t:'三选一强化',d:'净化大噩梦或变身时会暂停，给你 3 个强化选 1 个。选之前会告诉你下一波是什么，标着“克制下一波”的那个最划算。强化上限随称号提高。'},
   surge:{t:'噩梦潮',d:'每隔一阵会来一波噩梦潮，二十秒内坏情绪又多又强。撑过去，就有一段轻松的时间攒魔力。'},
   bomb:{t:'星光爆发',d:'右下角的星光爆发：星光炸开，威力等于你全力输出 10 秒，从离红线最近的小怪净化起，Boss 最多掉 20% 的血。怪越多净化得越少，清不了场——在小怪刚压上来时用最值。每撑过一波噩梦潮多一次，最多 3 次。'},
-  boss:{t:'大噩梦',d:'噩梦潮中途会来一只大噩梦。每个称号遇到的大噩梦都不一样，称号越高越凶。血很厚、走得慢，提前去右边打它。让它冲线，扣 25%～40% 元气（称号越高扣得越多）、跌 3 星魔力。'},
+  boss:{t:'大噩梦',d:'噩梦潮中途会来一只大噩梦。每个称号遇到的大噩梦都不一样，称号越高越凶。血很厚、走得慢，提前去右边打它。让它冲线，扣 20%～40% 元气（称号越高扣得越多）、跌 3 星魔力。'},
   run:{t:'急躁鬼',d:'跑得特别快，留意右边上方，看到就去打。'},
   bottle:{t:'变身前夕',d:'星星攒满九颗就卡住了，再吃糖也不涨。净化这一波的大噩梦，就能华丽变身，换上下一套衣装。'},
   brk:{t:'变身星冠',d:'卡在变身前夕时才会出现。打开锁撞上去，直接变身，不用打大噩梦。'},
