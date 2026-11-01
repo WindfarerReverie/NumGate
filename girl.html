@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl", "sbjs": "supabase.js"};</script>
-<script>(function(){var B="20261101221939";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261101224440";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" media="print" onload="this.media='all'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -834,7 +834,7 @@ const ROWS=[ // weight, gate A, gate B, (unused), g=good b=bad m=mixed
   [12,'xin','xin',0,'b'],[10,'xin','zou',0,'b']];
 const rowW=r=>r[0]*(inSurge()?(r[4]==='g'?.85:1):(r[4]==='g'?1.3:r[4]==='b'?.7:1));
 const PUMP=.35;   // pumping a gate to its max takes ~45% of its screen time at enemy-level fire, early or late
-const lockUnit=()=>S.Dref*(S.M||1)*squadY*.8/speed();      // damage you deal while a gate crosses the screen
+const lockUnit=()=>(S.path==='fa'?dps()/tempMul():S.Dref*(S.M||1))*squadY*.8/speed();      // damage you deal while a gate crosses the screen（咒语系按自己真实的星光算：魔法打不到门，锁不能按全星力定）
 function mkGate(type,x0,x1,trap){
   const o={k:'gate',g:type,x0,x1,y:-50,h:trap?66:78,trap:!!trap},T=GT[type],U=lockUnit();
   if(T.lock)o.lock=o.lock0=U*T.lock;
