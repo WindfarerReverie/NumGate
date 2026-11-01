@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl", "sbjs": "supabase.js"};if(/(^|\.)youfeng\.app$|\.pages\.dev$/.test(location.hostname))window.NG_CFG.url=location.origin+'/sb';</script>
-<script>(function(){var B="20261102071314";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261102072704";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" media="print" onload="this.media='all'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2275,6 +2275,7 @@ const TIPS={
   path:{t:'星弓系 / 咒语系',d:'晋升筑基时二选一，选了就不能改。星弓系靠星光硬推：星光伤害 ×1.5、受伤 −30%、元气上限 ×1.3、流星雨和贯穿上限各 +1，但技能冷却 +40%、威力 −30%。咒语系靠魔法：七种魔法立刻全会，用「魔法值」施法（魔法值一直在回，魔法间隔很短）；星光前期 ×0.7，越往后越弱，到'+REALMS[10]+'只剩 ×0.1；三选一会出现魔法升级和自动魔法（星星小鸟、守护星、彩虹云，自动清怪）；'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时各进化一种魔法。两条路的数值都跟着称号涨。'},
   save:{t:'存档与长线冒险',d:'这是一场长线冒险：前几个称号十几分钟，越往后越久，修到圣人要几十个小时。随时点暂停 →「存档退出」，下次从原地接着打；平时每 30 秒也会自动存。元气耗尽也不清档：可以回到之前的波次重来，或者选择结束本局结算。'},
   factr:{t:'咒语系克制',d:'烦恼球进阶后各有新本事，咒语系有对应的魔法克它：星星魔弹烧死的烦恼球不分裂、炸中黏人怪破罩；冰晶咒让急躁鬼不能猛冲；彩虹光束给拖延懒懒贯穿并打断狂暴、打断瞌睡精读条；流星乱舞净化中的内耗怪 3 秒内不能吞噬回元气。场上出现被克制的怪时，对应的魔法按钮会发金光。星弓系不用管这些，靠数值硬推。对症的魔法打它伤害还 ×1.5。魔法值不够把所有魔法都放出去，要看场上是哪种怪、挑对症的那个放。'},
+  tier:{t:'烦恼球进阶',d:'每过 3 个称号，六族烦恼球换一批更凶的样子（脚下金菱 = 第几次进阶）。每进一阶都走得快 6%、冲线伤害 +15%，各族还会长出新本事——烦恼球一族第 3 阶起死后分裂（第 5 阶分裂 2 只）；急躁鬼一族每阶再快 8%，第 4 阶起挨打后猛冲；拖延懒懒一族每阶受伤再少 6%，第 4 阶起半血狂暴；内耗怪一族吸魔力更狠，第 3 阶起身边有怪死就吞噬回元气；瞌睡精一族读条更快，第 4 阶起咒成时让身边的怪加速；黏人怪一族护罩更大更强，第 4 阶起护罩里的怪回元气。触发时头上会飘字，第一次遇到新的一阶会先暂停介绍。星弓系靠数值硬推；咒语系看「咒语系克制」，用对症的魔法打。'},
   yq:{t:'坏心情',d:'左上角的「坏心情 ×1.6」：这一季撑得越久，坏心情越浓，所有怪怪和 Boss 的血量一起往上涨（每分钟再强 10%，越滚越快；你打得越轻松涨得越快；筑基前减半），不会因为你变强而停。迟早会顶不住倒下——倒下不清档，坏心情回落一半再继续涨。想撑得更久，就要靠三选一、商店、萌宠和技能时机把自己养得更强。'},
   hp:{t:'元气',d:'左上角的红条。烦恼球冲线扣 1.2%，拖延懒懒 2.5%，内耗怪 6%，Boss 20%～40%（称号越高越多），同时少掉一点魔力。元气不会自己回，只有变身（+30%）、净化 Boss 后休整（+15%）、选「元气精进」（+30%）才回。元气精进、星弓系「星光护甲」能加元气上限。元气归零会弹出选项：回到之前的波次重来（数值全保留），或结束本局。'},
   mana:{t:'咒语系 · 魔法值与自动魔法',d:'咒语系右下角的蓝色圆球是魔法值：每个魔法耗魔法值，魔法值一直在回（星星魔弹一发 30 魔法值、威力大、爆炸范围大，要挑怪最密的时候放），变身回满，补技能的门给咒语系改为魔法值 +40。星光前期 ×0.7，越往后越弱，到'+REALMS[10]+'只剩 ×0.1。三选一会出现魔法升级（星星魔弹、流星乱舞、彩虹光束、冰晶咒、魔法值）和自动魔法（星星小鸟、守护星、彩虹云），被动会自己放、后期能清掉大部分烦恼球；Boss 和大波还得你主动放。'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时魔法各进化一次（超新星魔弹、流星暴雨、冰雪王国、双彩虹光束、魔法少女变身）。暂停页「输出构成」能看到普攻、魔法、自动各占多少。'},
@@ -3136,12 +3137,12 @@ $('bShopBack').onclick=()=>{if(shopBack==='ovHub')renderHub();if(shopBack==='ovP
 $('bTut').onclick=()=>{const s=slot();if(!s)return;s.tutDone=false;s.noTips=false;s.seen={};commit(Save.cur);$('tutNote').hidden=false};
 $('bSlots').onclick=()=>{renderSlots();show('ovTitle')};
 function renderHelp(){const L=$('helpList');L.innerHTML='';
-  const order=['intro','qi','xin','art','vein','fb','fu','zou','jie','brk','n','run','brute','elite','hex','guard','boss','cast','surge','yq','factr','bottle','four','dodge','trap','bomb','bolt','shield','freeze','mech','hp','path','mana','factr','tibr','death','intel','shop','rank','save'];
+  const order=['intro','qi','xin','art','vein','fb','fu','zou','jie','brk','n','run','brute','elite','hex','guard','boss','cast','surge','yq','tier','factr','bottle','four','dodge','trap','bomb','bolt','shield','freeze','mech','hp','path','mana','tibr','death','intel','shop','rank','save'];
   const SKI={bomb:'skBomb',bolt:'skBolt',shield:'skShield',freeze:'skFreeze'};
   for(const k of order){const T=TIPS[k];if(!T)continue;const d=document.createElement('div');d.className='rk';
     const ic=document.createElement('canvas');ic.width=56;ic.height=56;ic.style.width='28px';ic.style.height='28px';const g=ic.getContext('2d');g.scale(2,2);
     if(GT[k])gateIcon(k,{up:'rate',fbk:'gourd',fu:'bomb'},14,14,.8,1,false,g);
-    else{g.font='20px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(SKI[k]?$(SKI[k]).querySelector('.ic').textContent:{n:'👾',run:'💨',brute:'🪨',elite:'🌀',hex:'🔮',guard:'🛡',cast:'⏳',boss:'👑',surge:'🌊',bottle:'⛰',four:'⛔',dodge:'↔',trap:'⚠',mech:'✨',hp:'❤️',yq:'☁️',factr:'🔥',path:'☯',mana:'💧',tibr:'🔰',death:'🔁',rank:'🏆',save:'💾',intel:'📜',shop:'💰',intro:'👆'}[k]||'•',14,15)}
+    else{g.font='20px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(SKI[k]?$(SKI[k]).querySelector('.ic').textContent:{n:'👾',run:'💨',brute:'🪨',elite:'🌀',hex:'🔮',guard:'🛡',cast:'⏳',boss:'👑',surge:'🌊',bottle:'⛰',four:'⛔',dodge:'↔',trap:'⚠',mech:'✨',hp:'❤️',yq:'☁️',tier:'◆',factr:'🔥',path:'☯',mana:'💧',tibr:'🔰',death:'🔁',rank:'🏆',save:'💾',intel:'📜',shop:'💰',intro:'👆'}[k]||'•',14,15)}
     const tx=document.createElement('div');tx.innerHTML='<div class="who"></div><div class="what"></div>';tx.querySelector('.who').textContent=T.t;tx.querySelector('.what').textContent=T.d;
     d.appendChild(ic);d.appendChild(tx);L.appendChild(d)}}
 $('bHelp').onclick=()=>{renderHelp();show('ovHelp')};$('bHelpBack').onclick=()=>{renderHub();show('ovHub')};
