@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl"};</script>
-<script>(function(){var B="20261101194355";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261101195818";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -941,7 +941,7 @@ function bossEvoFront(o,glowCol){
 function spawnBoss(){
   const k=waveK(),heart=S.bottle,fin=heart&&S.maxR>=TOPR,hp=S.Dref*(S.M||1)*(fin?7:heart?2.5:4.5)*(1+.03*kEff())*(1+.15*(S.life-1)),look=fin?Object.assign({},BOSSES[17],{hue:45,stage:3,horns:10,aura:true,n:'永夜',bi:17,ri:17,name:'永夜'}):bossLook(k,S.peakR);
   if(heart)look.name=(fin?'最终噩梦 · ':'负能量 · ')+look.name;
-  S.objs.push({k:'z',boss:true,type:'boss',look,heart,fin,realm:S.peakR,x:(mid+roadX+roadW)/2,y:-60,r:Math.min(64,34+Math.max(k*.8,S.peakR*1.7)),hp,hp0:hp,atk:0,pct:0,sp:0,ph:0,hit:0,coin:25*(1+.5*k)});
+  S.objs.push({k:'z',boss:true,type:'boss',look,heart,heartR:S.maxR,fin,realm:S.peakR,x:(mid+roadX+roadW)/2,y:-60,r:Math.min(64,34+Math.max(k*.8,S.peakR*1.7)),hp,hp0:hp,atk:0,pct:0,sp:0,ph:0,hit:0,coin:25*(1+.5*k)});
   S.bossAlive=true;if(fin)toast('永夜降临','净化它就点亮星空，通关！冲线扣 '+Math.round(bossHpF()*100)+'% 元气');else toast((heart?'负能量 · ':'')+look.n+(look.stage?' '+CNN(look.stage+1)+'阶':''),heart?'净化它就能变身！冲线扣 '+Math.round(bossHpF()*100)+'% 元气':REALMS[S.peakR]+'的大噩梦 · 冲线扣 '+Math.round(bossHpF()*100)+'% 元气');
   sfx(110,.6,'sawtooth',.07,.5);
 }
@@ -1219,6 +1219,7 @@ function regroup(){   // 净化 Boss 后休整：冲击波重创烦恼球、6 �
   S.fxBomb=Math.max(S.fxBomb||0,.5);toast('打败大噩梦 · 休整 6 秒','星光冲击波净化了 '+n+' 只怪，元气 +15%，左边来了好门');
 }
 function breakthrough(){
+  for(const z of S.objs)if(z.heart&&!z.dead){z.heart=false;if(z.look)z.look.name=z.look.name.replace('负能量 · ','')}   // leftover 负能量 become ordinary bosses
   S.maxR=Math.min(REALMS.length-1,S.maxR+1);S.bottle=false;S.bottleShown=false;
   S.count=Math.max(S.count,RBASE*Math.pow(2,RSTART[S.maxR])*1.0001);
   S.dmg*=1.15;heal(.3,'变身');{const n=skillPool(BOMB_S,()=>true,.2);S.fxBomb=.7;S.shake=14;ftext(S.x,squadY-130,'升级流星雨'+(n?' · 净化 '+n+' 只':''),'#fff3c4',24)}S.brkPend=S.maxR;queuePick('变身奖励');
@@ -1238,7 +1239,8 @@ function killZ(o){
     S.bossAlive=false;if(!o.fin)regroup();
     {const sl=slot();if(sl&&o.look){sl.bossSeen=sl.bossSeen||{};sl.bossSeen[o.look.bi]=(sl.bossSeen[o.look.bi]||0)+1}}
     if(o.fin){ftext(o.x,o.y,'点亮星空',C.gold,34);S.fxBreak=1.2;S.won=true;setTimeout(()=>endRun('clear'),900);return}
-    if(S.maxR<TOPR&&(o.heart||S.count>=capOf(S.maxR)*.98)){ftext(o.x,o.y,'净化负能量',C.gold,30);for(let i=0;i<6;i++)dropCoins(o.x+rand(-30,30),o.y+rand(-30,30),o.coin/6);breakthrough();return}
+    if(S.maxR<TOPR&&((o.heart&&o.heartR===S.maxR)||S.count>=capOf(S.maxR)*.98)){   // only breaks through if you are still at the bottleneck (a 负能量 left over after a 变身星冠 no longer counts)
+ftext(o.x,o.y,'净化负能量',C.gold,30);for(let i=0;i<6;i++)dropCoins(o.x+rand(-30,30),o.y+rand(-30,30),o.coin/6);breakthrough();return}
     ftext(o.x,o.y,'BOSS 净化',C.gold,30);toast('BOSS 净化','星钻翻倍');o.coin*=2;S.shake=12;
     for(let i=0;i<6;i++)dropCoins(o.x+rand(-30,30),o.y+rand(-30,30),o.coin/6);
   }
