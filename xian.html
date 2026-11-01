@@ -2,11 +2,11 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "xian", "sbjs": "supabase.js"};</script>
-<script>(function(){var B="20261101233028";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261101235048";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>御剑斩妖录</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -118,7 +118,8 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .sk[hidden]{display:none}
 .sk{--p:0;position:relative;width:52px;height:52px;border-radius:50%;border:2px solid rgba(255,194,58,.7);cursor:pointer;padding:0;color:var(--ink);
   background:conic-gradient(rgba(8,10,15,.78) calc(var(--p)*1turn),rgba(20,25,36,.92) 0);display:flex;flex-direction:column;align-items:center;justify-content:center;
-  box-shadow:0 4px 14px rgba(0,0,0,.45);touch-action:manipulation}
+  box-shadow:0 4px 14px rgba(0,0,0,.45);touch-action:none}
+#skills,#skills *{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .sk .ic{font-size:22px;line-height:1}
 .sk small{font-size:9px;color:var(--muted);margin-top:1px;white-space:nowrap}
 .sk b{position:absolute;top:-6px;right:-6px;min-width:20px;height:20px;border-radius:10px;background:var(--gold);color:#2b1700;font-size:12px;line-height:20px;font-family:var(--display);font-weight:400;padding:0 5px}
@@ -708,7 +709,7 @@ const mmss=t=>{t=Math.round(t||0);return Math.floor(t/60)+'分'+String(t%60).pad
 function renderHub(){
   const s=slot();if(!s)return;{const r=s.run&&s.run.S;$('hubRun').hidden=!r;$('bGiveUp').hidden=!r;$('bFight').textContent=r?'继续修炼':'出 战';
     if(r)$('hubRun').innerHTML='修炼中：<b>'+rName(rFromCode(r.rcode||0))+'</b> · 气血 <b>'+Math.round((r.hpF||0)*100)+'%</b> · 已修 <b>'+hhmm(r.t||0)+'</b>'+(r.path?' · '+(r.path==='ti'?'体修':'法修'):'')+'<br>'+ago(s.run.saved)+'存档，点「继续修炼」从这里接着打'}$('tutNote').hidden=!!s.noTips||Object.keys(s.seen||{}).length>0;
-  $('hubTitle').textContent='存档 '+Save.cur;$('hubCoins').textContent=fmt(s.coins);
+  $('hubTitle').textContent='存档 '+Save.cur;$('hubCoins').textContent=fmt(s.coins);petBadge();
   $('hubBest').textContent=fmt(s.bestScore||0);$('hubWave').textContent=s.bestWave||0;$('hubRealm').textContent=rName(rFromCode(s.bestRealm||0));$('hubRuns').textContent=s.runs;$('hubLife').textContent='第'+CNN(s.life||1)+'世'+(s.clears?' · 通关 '+s.clears+' 次 · 最快 '+mmss(s.bestClear):'');
 }
 
@@ -1987,8 +1988,12 @@ const TIPS={
   guard:{t:'护法妖',d:'身边一圈里的妖受到的伤害减少 40%。先打护法妖，再清其他。'},
   cast:{t:'Boss 技能',d:'第三波起 Boss 会放技能：召唤小妖、冲锋、咒术（剑速 −25%）、封印（某个技能 6 秒不能用）。读条时打掉它 8% 的血就能打断。'},
   path:{t:'体修 / 法修',d:'踏入筑基时二选一，选了就不能改。体修靠剑气硬推：剑气伤害 ×1.5、受伤 −30%、气血上限 ×1.3、剑雨和破甲上限各 +1，但技能冷却 +40%、威力 −30%。法修靠法术：七种法术立刻全会，用「灵力」施法（灵力一直在回，法术间隔很短）；剑气前期 ×0.7，越往后越弱，到'+REALMS[10]+'只剩 ×0.1；三选一会出现法术升级和被动法术（火鸦、护法飞剑、雷云，自动清怪）；'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时各进化一种法术。两条路的数值都跟着境界涨。'},
-  save:{t:'存档与长线修炼',d:'这是一场长线修炼：前几个大境界十几分钟，越往后越久，修到圣人要几十个小时。随时点暂停 →「存档退出」，下次从原地接着打；平时每 30 秒也会自动存。只有气血耗尽，这一局才结束。'},
-  hp:{t:'气血',d:'左上角的红条。小妖冲线扣 1.2%，石甲妖 2.5%，噬元魔 6%，Boss 20%～40%（境界越高越多），同时少掉一点修为。气血不会自己回，只有破境（+30%）、斩 Boss 后整顿（+15%）、选「淬体精进」（+30%）才回。气血归零，这局就结束。'},
+  save:{t:'存档与长线修炼',d:'这是一场长线修炼：前几个大境界十几分钟，越往后越久，修到圣人要几十个小时。随时点暂停 →「存档退出」，下次从原地接着打；平时每 30 秒也会自动存。气血耗尽也不清档：可以回到之前的波次重修，或者选择结束本局结算。'},
+  hp:{t:'气血',d:'左上角的红条。小妖冲线扣 1.2%，石甲妖 2.5%，噬元魔 6%，Boss 20%～40%（境界越高越多），同时少掉一点修为。气血不会自己回，只有破境（+30%）、斩 Boss 后整顿（+15%）、选「淬体精进」（+30%）才回。淬体精进、体修「金身」能加气血上限。气血归零会弹出选项：回到之前的波次重修（数值全保留），或结束本局。'},
+  mana:{t:'法修 · 灵力与被动法术',d:'法修右下角的蓝色圆球是灵力：每个法术耗灵力、间隔很短，灵力一直在回，破境回满，补技能的门给法修改为灵力 +40。剑气前期 ×0.7，越往后越弱，到'+REALMS[10]+'只剩 ×0.1。三选一会出现法术升级（火符、万剑诀、掌心雷、寒冰诀、灵力）和被动法术（火鸦、护法飞剑、雷云），被动会自己放、后期能清掉大部分小妖；Boss 和大波还得你主动放。'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时法术各进化一次（三昧真火、万剑归宗、冰封千里、五雷正法、法相天地）。暂停页「输出构成」能看到普攻、法术、自动各占多少。'},
+  tibr:{t:'体修 · 被动与进化',d:'三选一会出现体修被动：剑罡护体（冲到防线的妖先被重创并震退）、战意（气血越低伤害越高）、剑气纵横（定期射出穿透巨剑）；以及体修升级：重剑、连斩、金身（气血上限）、破军（打噬元魔和 Boss 更痛）。'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时剑气各进化一次（金光剑气、剑罡溅射、不坏金身、万剑齐发、不灭金身：每个大境界一次气血归零保住 30%）。'},
+  death:{t:'倒下与重修',d:'气血耗尽不会清档。可以选回到之前的某一波（大约 3、8、15、30 波前）：数值、境界、灵石全保留，气血回满，敌人按当时的强度出现，再慢慢追回到你倒下时的强度——这段时间是最爽的割草期，多吃门、攒灵石和修为。也可以直接结束本局结算。每次倒下都记在存档里，排行榜会显示。'},
+  rank:{t:'排行榜',d:'先比最高境界，再比得分；每个存档单独上榜，修炼中的存档也会更新。名字后面显示「倒下 N 次」，一次都没倒过的显示「不死」。'},
   mech:{t:'灵宠',d:'在主页「灵宠」里花总灵石收服、培养灵宠，上场只带一只，任何流派都能带。灵宠会自己找妖打：扑咬、法球、俯冲、镇守、吐息、翻海，各有打法；等级越高越强，越珍稀的灵宠底子越好。灵宠的战力不会让敌人变强，灵石花下去就是实打实变强。暂停页也能直接培养。'},
 };
 const TUT=[
@@ -2092,11 +2097,14 @@ const COACH={
   combo_bolt:{t:'小技巧：先放掌心雷',s:'再吃符箓门马上刷新＝白用',slow:.2,max:7},
   combo_shield:{t:'小技巧：先开金钟罩',s:'再吃符箓门马上刷新＝白用',slow:.2,max:7},
   combo_freeze:{t:'小技巧：先放定身符',s:'再吃符箓门马上刷新＝白用',slow:.2,max:7},
-  cgo:{t:'现在去吃这扇门',s:'技能立刻补回来',slow:.35,max:4}};
+  cgo:{t:'现在去吃这扇门',s:'技能立刻补回来',slow:.35,max:4},
+  mana:{t:'灵力不够了',s:'蓝球在慢慢回满；补技能的门给灵力',banner:1,max:2.6},
+  rw:{t:'重修中：敌人变弱了',s:'趁现在多吃门、攒灵石，敌人会慢慢追回',banner:1,max:3}};
 const SKN={bomb:'Bomb',bolt:'Bolt',shield:'Shield',freeze:'Freeze'};
 let coach=null,coachGap=0,pop=null;
 const coachOn=()=>{const s=slot();return !!s&&!s.noTips};
-const cLim=k=>(COACH[k]&&COACH[k].banner)||k.startsWith('sk_')||k==='cgo'?1:3;   // each guidance item: up to 3 times, independently
+const CL_ONE=new Set(['drag','qi','n','xin','pump']);   // 一看就懂的（左右拖动、撞门、打妖、躲门、打涨）只教 1 次（11-01 23:46）
+const cLim=k=>(COACH[k]&&COACH[k].banner)||k.startsWith('sk_')||k==='cgo'||CL_ONE.has(k)?1:3;   // each guidance item: up to 3 times, independently
 const cN=k=>{const s=slot();const v=s&&s.seen['c_'+k];return v===true?1:(v|0)};
 function cSeen(k){const s=slot();return !s||!!s.seen['cx_'+k]||cN(k)>=cLim(k)}   // finished (or this item skipped)
 function cOnce(k){const s=slot();return !s||!!s.seen['cx_'+k]||cN(k)>=1}        // shown at least once
@@ -2447,7 +2455,7 @@ function faCast(k){   // 法修施法：够灵力、过了最短间隔才放；�
   if(!running||paused||!S||S.path!=='fa'||tip)return false;const sp=FA_SP[k];
   if(S[k+'Cd']>0)return false;
   if(S.seal&&S.seal[k]>0)return false;
-  if((S.mp||0)<sp.c){if(!(S.mpWarn>0)){S.mpWarn=1.2;ftext(S.x,squadY-120,'灵力不足（'+Math.floor(S.mp||0)+' / '+sp.c+'）','#9fd0ff',17);sfx(200,.08,'square',.03)}return false}
+  if((S.mp||0)<sp.c){if(!cSeen('mana')&&coachOn())startCoach('mana');if(!(S.mpWarn>0)){S.mpWarn=1.2;ftext(S.x,squadY-120,'灵力不足（'+Math.floor(S.mp||0)+' / '+sp.c+'）','#9fd0ff',17);sfx(200,.08,'square',.03)}return false}
   S.mp-=sp.c;S[k+'Cd']=sp.cd;S.faCasts=(S.faCasts||0)+1;
   if(faEvo('xiang')&&S.faCasts%3===0){S.mp=Math.min(mpMax(),S.mp+15);S.xiangT=.3}
   return true}
@@ -2677,7 +2685,7 @@ const keys={l:false,r:false};
 let drag=null;
 // multi-touch: the first finger on the field steers; other fingers (e.g. on skill buttons) never disturb it
 cv.addEventListener('pointerdown',e=>{if(!S||!running)return;if(drag&&drag.id!==e.pointerId)return;drag={id:e.pointerId,px:e.clientX,sx:S.x};try{cv.setPointerCapture(e.pointerId)}catch(_){}});
-cv.addEventListener('pointermove',e=>{if(!drag||!S||e.pointerId!==drag.id)return;S.x=clamp(drag.sx+(e.clientX-drag.px)*1.2,minX(),maxX())});
+cv.addEventListener('pointermove',e=>{if(!S||!running)return;if(!drag&&(e.pointerType==='touch'||e.buttons))drag={id:e.pointerId,px:e.clientX,sx:S.x};if(!drag||e.pointerId!==drag.id)return;S.x=clamp(drag.sx+(e.clientX-drag.px)*1.2,minX(),maxX())});
 const end=e=>{if(drag&&e&&e.pointerId!==drag.id)return;drag=null};cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);cv.addEventListener('lostpointercapture',end);
 addEventListener('keydown',e=>{if(e.key==='q')useBomb();if(e.key==='e')useBolt();if(e.key==='r')useShield();if(e.key==='f')useFreeze();if(e.key==='ArrowLeft'||e.key==='a')keys.l=true;if(e.key==='ArrowRight'||e.key==='d')keys.r=true;if(e.key==='Escape'||e.key==='p')togglePause()});
 addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='a')keys.l=false;if(e.key==='ArrowRight'||e.key==='d')keys.r=false});
@@ -2774,7 +2782,7 @@ function rewindTo(c,f){
   S.deathOpen=false;S.rwF=Math.max(.02,f);const T=Math.max(60,(S.t-c.t)*.6);S.rwK=-Math.log(S.rwF)/T;
   Object.assign(S,{objs:[],bullets:[],parts:[],texts:[],cfx:[],guards:[],stage:null,comboGate:null,tipObj:null,surgeOn:false,bossAlive:false,shieldT:0,freezeT:0,hexT:0,zouT:0,regroup:0,leakAcc:0,leakRate:0,lastHp:null,hpLossRate:0,dangerShow:0,pet:null,petOrbs:[],fxPet:[]});
   S.hpF=1;S.hpTold=false;S.t=PRE+CYC*(Math.floor(Math.max(0,S.t-PRE)/CYC)+1)+.01;S.dirPh=undefined;S.x=lmid;S.immR=null;
-  paused=false;show(null);skillUI();toast('重修：回到第 '+c.w+' 波的强度','气血回满 · 敌人约 '+Math.round(S.rwF*100)+'% · 越往后越强，直到追回');saveRun();
+  paused=false;show(null);skillUI();if(coachOn()&&!cSeen('rw'))setTimeout(()=>{if(S&&running&&!coach)startCoach('rw')},1500);toast('重修：回到第 '+c.w+' 波的强度','气血回满 · 敌人约 '+Math.round(S.rwF*100)+'% · 越往后越强，直到追回');saveRun();
 }
 function endRun(dead){
   if(!running)return;running=false;paused=false;coach=null;$('coachSkip').hidden=true;{const sl=slot();if(sl&&sl.run){delete sl.run;commit(Save.cur)}}
@@ -2800,6 +2808,7 @@ $('bDeathEnd').onclick=()=>{S.deathOpen=false;paused=false;S.collapse=true;endRu
 $('bFight').onclick=startRun;$('bAgain').onclick=startRun;
 $('bReborn').onclick=()=>{const s=slot();if(!s)return;s.life=(s.life||1)+1;commit(Save.cur);startRun()};
 $('bShop').onclick=()=>{shopBack='ovHub';renderShop();show('ovShop')};
+function petBadge(){const s=slot();if(!s)return;const P=petsOf(s);let can=false;for(let i=0;i<petCount();i++)if(P.own[i]==null&&s.coins>=petUnlockCost(i)){can=true;break}$('bPets').textContent=can?'灵 宠 · 可收服':'灵 宠'}
 $('bPets').onclick=()=>{petsBack='ovHub';renderPets();show('ovPets')};
 $('bPetsBack').onclick=()=>{if(petsBack==='ovHub'){renderHub();show('ovHub')}else{renderPause();show('ovPause')}};
 $('bOverShop').onclick=()=>{shopBack='ovOver';renderShop();show('ovShop')};
@@ -2807,12 +2816,12 @@ $('bShopBack').onclick=()=>{if(shopBack==='ovHub')renderHub();show(shopBack)};
 $('bTut').onclick=()=>{const s=slot();if(!s)return;s.tutDone=false;s.noTips=false;s.seen={};commit(Save.cur);$('tutNote').hidden=false};
 $('bSlots').onclick=()=>{renderSlots();show('ovTitle')};
 function renderHelp(){const L=$('helpList');L.innerHTML='';
-  const order=['intro','qi','xin','art','vein','fb','fu','zou','jie','brk','n','run','brute','elite','hex','guard','boss','cast','surge','bottle','four','dodge','trap','bomb','bolt','shield','freeze','mech','hp','path','save'];
+  const order=['intro','qi','xin','art','vein','fb','fu','zou','jie','brk','n','run','brute','elite','hex','guard','boss','cast','surge','bottle','four','dodge','trap','bomb','bolt','shield','freeze','mech','hp','path','mana','tibr','death','rank','save'];
   const SKI={bomb:'skBomb',bolt:'skBolt',shield:'skShield',freeze:'skFreeze'};
   for(const k of order){const T=TIPS[k];if(!T)continue;const d=document.createElement('div');d.className='rk';
     const ic=document.createElement('canvas');ic.width=56;ic.height=56;ic.style.width='28px';ic.style.height='28px';const g=ic.getContext('2d');g.scale(2,2);
     if(GT[k])gateIcon(k,{up:'rate',fbk:'gourd',fu:'bomb'},14,14,.8,1,false,g);
-    else{g.font='20px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(SKI[k]?$(SKI[k]).querySelector('.ic').textContent:{n:'👾',run:'💨',brute:'🪨',elite:'🌀',hex:'🔮',guard:'🛡',cast:'⏳',boss:'👑',surge:'🌊',bottle:'⛰',four:'⛔',dodge:'↔',trap:'⚠',mech:'✨',hp:'❤️',path:'☯',save:'💾',intro:'👆'}[k]||'•',14,15)}
+    else{g.font='20px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(SKI[k]?$(SKI[k]).querySelector('.ic').textContent:{n:'👾',run:'💨',brute:'🪨',elite:'🌀',hex:'🔮',guard:'🛡',cast:'⏳',boss:'👑',surge:'🌊',bottle:'⛰',four:'⛔',dodge:'↔',trap:'⚠',mech:'✨',hp:'❤️',path:'☯',mana:'💧',tibr:'🔰',death:'🔁',rank:'🏆',save:'💾',intro:'👆'}[k]||'•',14,15)}
     const tx=document.createElement('div');tx.innerHTML='<div class="who"></div><div class="what"></div>';tx.querySelector('.who').textContent=T.t;tx.querySelector('.what').textContent=T.d;
     d.appendChild(ic);d.appendChild(tx);L.appendChild(d)}}
 $('bHelp').onclick=()=>{renderHelp();show('ovHelp')};$('bHelpBack').onclick=()=>{renderHub();show('ovHub')};

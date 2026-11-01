@@ -2,11 +2,11 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl", "sbjs": "supabase.js"};</script>
-<script>(function(){var B="20261101233028";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261101235048";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" media="print" onload="this.media='all'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -119,7 +119,8 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .sk[hidden]{display:none}
 .sk{--p:0;position:relative;width:52px;height:52px;border-radius:50%;border:2px solid rgba(255,194,58,.7);cursor:pointer;padding:0;color:var(--ink);
   background:conic-gradient(rgba(8,10,15,.78) calc(var(--p)*1turn),rgba(20,25,36,.92) 0);display:flex;flex-direction:column;align-items:center;justify-content:center;
-  box-shadow:0 4px 14px rgba(0,0,0,.45);touch-action:manipulation}
+  box-shadow:0 4px 14px rgba(0,0,0,.45);touch-action:none}
+#skills,#skills *{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .sk .ic{font-size:22px;line-height:1}
 .sk small{font-size:9px;color:var(--muted);margin-top:1px;white-space:nowrap}
 .sk b{position:absolute;top:-6px;right:-6px;min-width:20px;height:20px;border-radius:10px;background:var(--gold);color:#2b1700;font-size:12px;line-height:20px;font-family:var(--display);font-weight:400;padding:0 5px}
@@ -316,7 +317,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
       <button class="sb ghost" id="bGiveUp" hidden>放弃这局，重新开始</button>
       <div class="row2">
         <button class="go alt" id="bShop">商 店</button>
-        <button class="go alt" id="bPets">灵 宠</button>
+        <button class="go alt" id="bPets">萌 宠</button>
       </div>
       <div class="row2"><button class="go alt" id="bBook">衣橱图鉴</button><button class="go alt" id="bRankH" hidden>排行榜</button></div>
       <button class="sb ghost" id="bSlots">换存档</button>
@@ -726,7 +727,7 @@ const mmss=t=>{t=Math.round(t||0);return Math.floor(t/60)+'分'+String(t%60).pad
 function renderHub(){
   const s=slot();if(!s)return;{const r=s.run&&s.run.S;$('hubRun').hidden=!r;$('bGiveUp').hidden=!r;$('bFight').textContent=r?'继续冒险':'出 战';
     if(r)$('hubRun').innerHTML='冒险中：<b>'+rName(rFromCode(r.rcode||0))+'</b> · 元气 <b>'+Math.round((r.hpF||0)*100)+'%</b> · 已玩 <b>'+hhmm(r.t||0)+'</b>'+(r.path?' · '+(r.path==='ti'?'星弓系':'咒语系'):'')+'<br>'+ago(s.run.saved)+'存档，点「继续冒险」从这里接着打'}$('tutNote').hidden=!!s.noTips||Object.keys(s.seen||{}).length>0;
-  $('hubTitle').textContent='存档 '+Save.cur;$('hubCoins').textContent=fmt(s.coins);
+  $('hubTitle').textContent='存档 '+Save.cur;$('hubCoins').textContent=fmt(s.coins);petBadge();
   $('hubBest').textContent=fmt(s.bestScore||0);$('hubWave').textContent=s.bestWave||0;$('hubRealm').textContent=rName(rFromCode(s.bestRealm||0));$('hubRuns').textContent=s.runs;$('hubLife').textContent='第'+CNN(s.life||1)+'季'+(s.clears?' · 通关 '+s.clears+' 次 · 最快 '+mmss(s.bestClear):'');
 }
 
@@ -1241,13 +1242,13 @@ const POPT={
   inf_dmg:{ok:()=>(S.inf.dmg||0)<infCap(),line:()=>'伤害 +12%（已叠 '+(S.inf.dmg||0)+'/'+infCap()+'，称号越高上限越高）',ic:{g:'art',o:{up:'dmg'}},go:()=>{S.inf.dmg=(S.inf.dmg||0)+1;S.dmg*=1.12;S.upMul*=1.12}},
   inf_rate:{ok:()=>(S.inf.rate||0)<infCap(),line:()=>'星速 +10%（已叠 '+(S.inf.rate||0)+'/'+infCap()+'，称号越高上限越高）',ic:{g:'art',o:{up:'rate'}},go:()=>{S.inf.rate=(S.inf.rate||0)+1;S.rate*=1.1;S.upMul*=1.1}},
   inf_hp:{ok:()=>(S.inf.hp||0)<infCap(),line:()=>'元气立刻回 30%，冲线伤害 −5%（已叠 '+(S.inf.hp||0)+'/'+infCap()+'）',ic:{e:'❤️'},go:()=>{S.inf.hp=(S.inf.hp||0)+1;S.armor*=.95;heal(.3,'淬体')}}};
-POPT.path_ti={ok:()=>true,line:()=>'一箭破万难：靠星光硬推、更抗打。星光伤害 ×1.5（敌人不跟着变强）、受伤 −30%、元气上限 ×1.3、流星雨和贯穿上限各 +1；技能冷却 +40%、威力 −30%。三选一会出现星弓系被动（星光护盾、勇气、星光纵横）和星弓系升级（重箭、连净化、星光护甲、破防）；称号时星光会进化',ic:{g:'art',o:{up:'dmg'}},go:()=>{S.pathV2=S.pathV3=S.pathV4=true;S.path='ti';S.ti={};S.pathAnim={k:'ti',t:0};S.armor*=.7;toast('成为星弓系','星光 ×1.5、更抗打、元气更厚')}};
+POPT.path_ti={ok:()=>true,line:()=>'一箭破万难：靠星光硬推、更抗打。星光伤害 ×1.5（敌人不跟着变强）、受伤 −30%、元气上限 ×1.3、流星雨和贯穿上限各 +1；技能冷却 +40%、威力 −30%。三选一会出现星弓系被动（星光护盾、勇气、星光纵横）和星弓系升级（重箭、连射、星光护甲、破防）；称号时星光会进化',ic:{g:'art',o:{up:'dmg'}},go:()=>{S.pathV2=S.pathV3=S.pathV4=true;S.path='ti';S.ti={};S.pathAnim={k:'ti',t:0};S.armor*=.7;toast('成为星弓系','星光 ×1.5、更抗打、元气更厚')}};
 POPT.path_fa={ok:()=>true,line:()=>'咒语引星辰：前期星光还能帮忙（×'+FA_ATKR[3]+'），越往后越弱，到'+REALMS[10]+'只剩 ×0.1，主要靠魔法。七种魔法立刻全会，用「魔法值」施法：魔法值一直在回，魔法间隔很短，想放就放；还能修自动魔法（星星小鸟、守护星、彩虹云）自动清怪，称号时魔法会进化',ic:{g:'fu',o:{fu:'bomb'}},go:()=>{S.pathV2=S.pathV3=S.pathV4=true;S.path='fa';S.fa={};S.mp=mpMax();S.fireCd=0;S.iceCd=0;S.swordCd=0;S.pathAnim={k:'fa',t:0};setTimeout(()=>effectPop('fa_intro','咒语系 · 魔法值施法','右下角的蓝色圆球是魔法值：每个魔法耗魔法值，魔法值一直在回。星光越往后越弱，要多放魔法；三选一里会出现魔法升级和自动魔法。',{e:'💧'}),2800);toast('成为咒语系','七种魔法全会，靠魔法值施法；星光越往后越弱');skillUI()}};
 for(const k of ['crow','orb','cloud'])POPT['fa_'+k]={ok:()=>S.path==='fa'&&faLv(k)<fbCap(),line:()=>{const L=faLv(k)+1;return '自动魔法 Lv'+L+'：'+FA_PS[k].d(L)+(L<5?'\n满级：'+FA_PS[k].d(5):'')},ic:{e:{crow:'🐦',orb:'⭐',cloud:'🌈'}[k]},go:()=>{(S.fa=S.fa||{})[k]=faLv(k)+1}};
 for(const k of ['fire','sword','ice','bolt','mp'])POPT['fa_'+k]={ok:()=>S.path==='fa'&&faLv(k)<fbCap(),line:()=>FA_UPD[k]+(k==='fire'&&faLv(k)===2?'；Lv3 起一次两颗':'')+'（Lv'+(faLv(k)+1)+' / 本称号上限 '+fbCap()+'）',ic:{e:{fire:'🔥',sword:'🗡',ice:'❄️',bolt:'⚡',mp:'💧'}[k]},go:()=>{(S.fa=S.fa||{})[k]=faLv(k)+1}};
 for(const k of ['gang','zhan','jj'])POPT['ti_'+k]={ok:()=>S.path==='ti'&&tiLv(k)<fbCap(),line:()=>{const L=tiLv(k)+1;return '星弓系被动 Lv'+L+'：'+TI_PS[k].d(L)+(L<5?'\n满级：'+TI_PS[k].d(5):'')},ic:{e:{gang:'🔰',zhan:'🔥',jj:'🗡'}[k]},go:()=>{(S.ti=S.ti||{})[k]=tiLv(k)+1}};
 for(const k of ['heavy','lian','body','pojun'])POPT['ti_'+k]={ok:()=>S.path==='ti'&&tiLv(k)<fbCap(),line:()=>TI_UPD[k]+'（Lv'+(tiLv(k)+1)+' / 本称号上限 '+fbCap()+'）',ic:{e:{heavy:'⚔️',lian:'💨',body:'🛡',pojun:'💢'}[k]},go:()=>{(S.ti=S.ti||{})[k]=tiLv(k)+1;if(k==='body')S.hpF=Math.min(1,S.hpF+.05)}};
-Object.assign(PNAME,{ti_gang:'星光护盾',ti_zhan:'勇气',ti_jj:'星光纵横',ti_heavy:'重箭',ti_lian:'连净化',ti_body:'星光护甲',ti_pojun:'破防'});
+Object.assign(PNAME,{ti_gang:'星光护盾',ti_zhan:'勇气',ti_jj:'星光纵横',ti_heavy:'重箭',ti_lian:'连射',ti_body:'星光护甲',ti_pojun:'破防'});
 Object.assign(PNAME,{fa_crow:'星星小鸟',fa_orb:'守护星',fa_cloud:'彩虹云',fa_fire:'星星魔弹升级',fa_sword:'流星乱舞升级',fa_ice:'冰晶咒升级',fa_bolt:'彩虹光束升级',fa_mp:'魔法值'});
 POPT.coin={ok:()=>true,line:()=>'本称号能强化的都满了：星钻 +'+fmt(coinPack())+'（突破称号后上限会提高）',ic:{e:'💰'},go:()=>{S.coins+=coinPack()}};
 const coinPack=()=>Math.round(40*(1+S.maxR)*S.coinMul);
@@ -2005,8 +2006,12 @@ const TIPS={
   guard:{t:'黏人怪',d:'身边一圈里的怪受到的伤害减少 40%。先打黏人怪，再清其他。'},
   cast:{t:'Boss 技能',d:'第三波起 Boss 会放技能：召唤烦恼球、冲锋、瞌睡咒（星速 −25%）、封印（某个技能 6 秒不能用）。读条时打掉它 8% 的血就能打断。'},
   path:{t:'星弓系 / 咒语系',d:'晋升筑基时二选一，选了就不能改。星弓系靠星光硬推：星光伤害 ×1.5、受伤 −30%、元气上限 ×1.3、流星雨和贯穿上限各 +1，但技能冷却 +40%、威力 −30%。咒语系靠魔法：七种魔法立刻全会，用「魔法值」施法（魔法值一直在回，魔法间隔很短）；星光前期 ×0.7，越往后越弱，到'+REALMS[10]+'只剩 ×0.1；三选一会出现魔法升级和自动魔法（星星小鸟、守护星、彩虹云，自动清怪）；'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时各进化一种魔法。两条路的数值都跟着称号涨。'},
-  save:{t:'存档与长线冒险',d:'这是一场长线冒险：前几个称号十几分钟，越往后越久，修到圣人要几十个小时。随时点暂停 →「存档退出」，下次从原地接着打；平时每 30 秒也会自动存。只有元气耗尽，这一局才结束。'},
-  hp:{t:'元气',d:'左上角的红条。烦恼球冲线扣 1.2%，拖延懒懒 2.5%，内耗怪 6%，Boss 20%～40%（称号越高越多），同时少掉一点魔力。元气不会自己回，只有变身（+30%）、净化 Boss 后休整（+15%）、选「元气精进」（+30%）才回。元气归零，这局就结束。'},
+  save:{t:'存档与长线冒险',d:'这是一场长线冒险：前几个称号十几分钟，越往后越久，修到圣人要几十个小时。随时点暂停 →「存档退出」，下次从原地接着打；平时每 30 秒也会自动存。元气耗尽也不清档：可以回到之前的波次重来，或者选择结束本局结算。'},
+  hp:{t:'元气',d:'左上角的红条。烦恼球冲线扣 1.2%，拖延懒懒 2.5%，内耗怪 6%，Boss 20%～40%（称号越高越多），同时少掉一点魔力。元气不会自己回，只有变身（+30%）、净化 Boss 后休整（+15%）、选「元气精进」（+30%）才回。元气精进、星弓系「星光护甲」能加元气上限。元气归零会弹出选项：回到之前的波次重来（数值全保留），或结束本局。'},
+  mana:{t:'咒语系 · 魔法值与自动魔法',d:'咒语系右下角的蓝色圆球是魔法值：每个魔法耗魔法值、间隔很短，魔法值一直在回，变身回满，补技能的门给咒语系改为魔法值 +40。星光前期 ×0.7，越往后越弱，到'+REALMS[10]+'只剩 ×0.1。三选一会出现魔法升级（星星魔弹、流星乱舞、彩虹光束、冰晶咒、魔法值）和自动魔法（星星小鸟、守护星、彩虹云），被动会自己放、后期能清掉大部分烦恼球；Boss 和大波还得你主动放。'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时魔法各进化一次（超新星魔弹、流星暴雨、冰雪王国、双彩虹光束、魔法少女变身）。暂停页「输出构成」能看到普攻、魔法、自动各占多少。'},
+  tibr:{t:'星弓系 · 被动与进化',d:'三选一会出现星弓系被动：星光护盾（冲到防线的怪先被重创并震退）、勇气（元气越低伤害越高）、星光纵横（定期射出穿透巨箭）；以及星弓系升级：重箭、连射、星光护甲（元气上限）、破防（打内耗怪和 Boss 更痛）。'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时星光各进化一次（金光星光、星爆溅射、钻石护甲、万星齐发、不灭星光：每个称号一次元气归零保住 30%）。'},
+  death:{t:'倒下与重来',d:'元气耗尽不会清档。可以选回到之前的某一波（大约 3、8、15、30 波前）：数值、称号、星钻全保留，元气回满，敌人按当时的强度出现，再慢慢追回到你倒下时的强度——这段时间是最爽的割草期，多吃门、攒星钻和魔力。也可以直接结束本局结算。每次倒下都记在存档里，排行榜会显示。'},
+  rank:{t:'排行榜',d:'先比最高称号，再比得分；每个存档单独上榜，冒险中的存档也会更新。名字后面显示「倒下 N 次」，一次都没倒过的显示「不死」。'},
   mech:{t:'萌宠',d:'在主页「萌宠」里花总星钻领养、喂养萌宠，上场只带一只，任何流派都能带。萌宠会自己找怪打：扑扑、魔法泡泡、俯冲、守护、吐息、大浪，各有打法；等级越高越强，越珍稀的萌宠底子越好。萌宠的战力不会让敌人变强，星钻花下去就是实打实变强。暂停页也能直接喂养。'},
 };
 const TUT=[
@@ -2110,11 +2115,14 @@ const COACH={
   combo_bolt:{t:'小技巧：先放彩虹光束',s:'再吃魔法卡门马上刷新＝白用',slow:.2,max:7},
   combo_shield:{t:'小技巧：先开泡泡护盾',s:'再吃魔法卡门马上刷新＝白用',slow:.2,max:7},
   combo_freeze:{t:'小技巧：先放甜梦暂停',s:'再吃魔法卡门马上刷新＝白用',slow:.2,max:7},
-  cgo:{t:'现在去吃这扇门',s:'技能立刻补回来',slow:.35,max:4}};
+  cgo:{t:'现在去吃这扇门',s:'技能立刻补回来',slow:.35,max:4},
+  mana:{t:'魔法值不够了',s:'蓝球在慢慢回满；补技能的门给魔法值',banner:1,max:2.6},
+  rw:{t:'重来中：怪变弱了',s:'趁现在多吃门、攒星钻，敌人会慢慢追回',banner:1,max:3}};
 const SKN={bomb:'Bomb',bolt:'Bolt',shield:'Shield',freeze:'Freeze'};
 let coach=null,coachGap=0,pop=null;
 const coachOn=()=>{const s=slot();return !!s&&!s.noTips};
-const cLim=k=>(COACH[k]&&COACH[k].banner)||k.startsWith('sk_')||k==='cgo'?1:3;   // each guidance item: up to 3 times, independently
+const CL_ONE=new Set(['drag','qi','n','xin','pump']);   // 一看就懂的（左右拖动、撞门、打怪、躲门、打涨）只教 1 次（11-01 23:46）
+const cLim=k=>(COACH[k]&&COACH[k].banner)||k.startsWith('sk_')||k==='cgo'||CL_ONE.has(k)?1:3;   // each guidance item: up to 3 times, independently
 const cN=k=>{const s=slot();const v=s&&s.seen['c_'+k];return v===true?1:(v|0)};
 function cSeen(k){const s=slot();return !s||!!s.seen['cx_'+k]||cN(k)>=cLim(k)}   // finished (or this item skipped)
 function cOnce(k){const s=slot();return !s||!!s.seen['cx_'+k]||cN(k)>=1}        // shown at least once
@@ -2465,7 +2473,7 @@ function faCast(k){   // 咒语系施法：够魔法值、过了最短间隔才�
   if(!running||paused||!S||S.path!=='fa'||tip)return false;const sp=FA_SP[k];
   if(S[k+'Cd']>0)return false;
   if(S.seal&&S.seal[k]>0)return false;
-  if((S.mp||0)<sp.c){if(!(S.mpWarn>0)){S.mpWarn=1.2;ftext(S.x,squadY-120,'魔法值不足（'+Math.floor(S.mp||0)+' / '+sp.c+'）','#9fd0ff',17);sfx(200,.08,'square',.03)}return false}
+  if((S.mp||0)<sp.c){if(!cSeen('mana')&&coachOn())startCoach('mana');if(!(S.mpWarn>0)){S.mpWarn=1.2;ftext(S.x,squadY-120,'魔法值不足（'+Math.floor(S.mp||0)+' / '+sp.c+'）','#9fd0ff',17);sfx(200,.08,'square',.03)}return false}
   S.mp-=sp.c;S[k+'Cd']=sp.cd;S.faCasts=(S.faCasts||0)+1;
   if(faEvo('xiang')&&S.faCasts%3===0){S.mp=Math.min(mpMax(),S.mp+15);S.xiangT=.3}
   return true}
@@ -2548,7 +2556,7 @@ const tiEvo=k=>!!S&&S.path==='ti'&&!!TI_EVO[k]&&S.maxR>=TI_EVO[k].r;
 const TI_PS={gang:{n:'星光护盾',e:'🔰',d:L=>'冲到防线的怪先被星光重击（约 '+(.8+.5*L).toFixed(1)+' 秒星力）并震退，Boss 也会被弹开一段'},
   zhan:{n:'勇气',e:'🔥',d:L=>'元气越低星光越狠：元气每少 10%，伤害 +'+(3*L)+'%（空血时 +'+(30*L)+'%）'},
   jj:{n:'星光纵横',e:'🗡',d:L=>'每 '+(8-L)+' 轮星光多射出一把穿透巨箭（约 3 倍伤害，穿透全部）'}};
-const TI_UPD={heavy:'重箭：星光伤害 +12%',lian:'连净化：星速 +10%',body:'星光护甲：元气上限 +10%',pojun:'破防：对内耗怪和 Boss 伤害 +20%'};
+const TI_UPD={heavy:'重箭：星光伤害 +12%',lian:'连射：星速 +10%',body:'星光护甲：元气上限 +10%',pojun:'破防：对内耗怪和 Boss 伤害 +20%'};
 function tiTick(dt){
   if(S.path!=='ti')return;
   if(tiEvo('body')&&!S.tiBody){S.tiBody=true;S.armor*=.85}
@@ -2695,7 +2703,7 @@ const keys={l:false,r:false};
 let drag=null;
 // multi-touch: the first finger on the field steers; other fingers (e.g. on skill buttons) never disturb it
 cv.addEventListener('pointerdown',e=>{if(!S||!running)return;if(drag&&drag.id!==e.pointerId)return;drag={id:e.pointerId,px:e.clientX,sx:S.x};try{cv.setPointerCapture(e.pointerId)}catch(_){}});
-cv.addEventListener('pointermove',e=>{if(!drag||!S||e.pointerId!==drag.id)return;S.x=clamp(drag.sx+(e.clientX-drag.px)*1.2,minX(),maxX())});
+cv.addEventListener('pointermove',e=>{if(!S||!running)return;if(!drag&&(e.pointerType==='touch'||e.buttons))drag={id:e.pointerId,px:e.clientX,sx:S.x};if(!drag||e.pointerId!==drag.id)return;S.x=clamp(drag.sx+(e.clientX-drag.px)*1.2,minX(),maxX())});
 const end=e=>{if(drag&&e&&e.pointerId!==drag.id)return;drag=null};cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);cv.addEventListener('lostpointercapture',end);
 addEventListener('keydown',e=>{if(e.key==='q')useBomb();if(e.key==='e')useBolt();if(e.key==='r')useShield();if(e.key==='f')useFreeze();if(e.key==='ArrowLeft'||e.key==='a')keys.l=true;if(e.key==='ArrowRight'||e.key==='d')keys.r=true;if(e.key==='Escape'||e.key==='p')togglePause()});
 addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='a')keys.l=false;if(e.key==='ArrowRight'||e.key==='d')keys.r=false});
@@ -2768,7 +2776,7 @@ function renderPause(){   // 暂停页：当前阶段 + 每项数值 / 本称号
     for(const k of ['fire','sword','ice','bolt'])h+=row(FA_SP[k].n+'升级',faLv(k),fbCap(),5,'威力 ×'+faUp(k).toFixed(1),gap(faLv(k),fbCap()));
     for(const k of ['crow','orb','cloud']){const L=faLv(k);h+=row(FA_PS[k].n,L,fbCap(),5,L?FA_PS[k].d(L):'还没有（三选一里出现）',L<5?'下一级：'+FA_PS[k].d(L+1):'')}
     h+='<div class="r"><b>魔法进化</b><span class="v">'+Object.values(FA_EVO).map(v=>(S.maxR>=v.r?'✓ ':'')+v.n+'（'+REALMS[v.r]+'）').join(' · ')+'</span></div>'}
-  if(S.path)h+='<div class="r"><b>'+(S.path==='ti'?'星弓系':'咒语系')+'</b><span class="v">'+(S.path==='ti'?'星光 ×'+tiAtk().toFixed(2)+'（含重箭/连净化/勇气）、受伤 −30%、元气 ×1.3；技能冷却 +40%、威力 −30%':'星光 ×'+faAtk()+'（越往后越弱，'+REALMS[10]+'后 ×0.1）；魔法耗魔法值、间隔短，威力随称号涨；星光爆发最多 5 张')+'</span></div>';
+  if(S.path)h+='<div class="r"><b>'+(S.path==='ti'?'星弓系':'咒语系')+'</b><span class="v">'+(S.path==='ti'?'星光 ×'+tiAtk().toFixed(2)+'（含重箭/连射/勇气）、受伤 −30%、元气 ×1.3；技能冷却 +40%、威力 −30%':'星光 ×'+faAtk()+'（越往后越弱，'+REALMS[10]+'后 ×0.1）；魔法耗魔法值、间隔短，威力随称号涨；星光爆发最多 5 张')+'</span></div>';
   else h+='<div class="r off"><b>收集路线</b><span class="v">晋升筑基时选择星弓系或咒语系</span></div>';
   $('pauseBuild').innerHTML=h;
 }
@@ -2792,7 +2800,7 @@ function rewindTo(c,f){
   S.deathOpen=false;S.rwF=Math.max(.02,f);const T=Math.max(60,(S.t-c.t)*.6);S.rwK=-Math.log(S.rwF)/T;
   Object.assign(S,{objs:[],bullets:[],parts:[],texts:[],cfx:[],guards:[],stage:null,comboGate:null,tipObj:null,surgeOn:false,bossAlive:false,shieldT:0,freezeT:0,hexT:0,zouT:0,regroup:0,leakAcc:0,leakRate:0,lastHp:null,hpLossRate:0,dangerShow:0,pet:null,petOrbs:[],fxPet:[]});
   S.hpF=1;S.hpTold=false;S.t=PRE+CYC*(Math.floor(Math.max(0,S.t-PRE)/CYC)+1)+.01;S.dirPh=undefined;S.x=lmid;S.immR=null;
-  paused=false;show(null);skillUI();toast('重来：回到第 '+c.w+' 波的强度','元气回满 · 敌人约 '+Math.round(S.rwF*100)+'% · 越往后越强，直到追回');saveRun();
+  paused=false;show(null);skillUI();if(coachOn()&&!cSeen('rw'))setTimeout(()=>{if(S&&running&&!coach)startCoach('rw')},1500);toast('重来：回到第 '+c.w+' 波的强度','元气回满 · 敌人约 '+Math.round(S.rwF*100)+'% · 越往后越强，直到追回');saveRun();
 }
 function endRun(dead){
   if(!running)return;running=false;paused=false;coach=null;$('coachSkip').hidden=true;{const sl=slot();if(sl&&sl.run){delete sl.run;commit(Save.cur)}}
@@ -2818,6 +2826,7 @@ $('bDeathEnd').onclick=()=>{S.deathOpen=false;paused=false;S.collapse=true;endRu
 $('bFight').onclick=startRun;$('bAgain').onclick=startRun;
 $('bReborn').onclick=()=>{const s=slot();if(!s)return;s.life=(s.life||1)+1;commit(Save.cur);startRun()};
 $('bShop').onclick=()=>{shopBack='ovHub';renderShop();show('ovShop')};
+function petBadge(){const s=slot();if(!s)return;const P=petsOf(s);let can=false;for(let i=0;i<petCount();i++)if(P.own[i]==null&&s.coins>=petUnlockCost(i)){can=true;break}$('bPets').textContent=can?'萌 宠 · 可领养':'萌 宠'}
 $('bPets').onclick=()=>{petsBack='ovHub';renderPets();show('ovPets')};
 $('bPetsBack').onclick=()=>{if(petsBack==='ovHub'){renderHub();show('ovHub')}else{renderPause();show('ovPause')}};
 $('bOverShop').onclick=()=>{shopBack='ovOver';renderShop();show('ovShop')};
@@ -2825,12 +2834,12 @@ $('bShopBack').onclick=()=>{if(shopBack==='ovHub')renderHub();show(shopBack)};
 $('bTut').onclick=()=>{const s=slot();if(!s)return;s.tutDone=false;s.noTips=false;s.seen={};commit(Save.cur);$('tutNote').hidden=false};
 $('bSlots').onclick=()=>{renderSlots();show('ovTitle')};
 function renderHelp(){const L=$('helpList');L.innerHTML='';
-  const order=['intro','qi','xin','art','vein','fb','fu','zou','jie','brk','n','run','brute','elite','hex','guard','boss','cast','surge','bottle','four','dodge','trap','bomb','bolt','shield','freeze','mech','hp','path','save'];
+  const order=['intro','qi','xin','art','vein','fb','fu','zou','jie','brk','n','run','brute','elite','hex','guard','boss','cast','surge','bottle','four','dodge','trap','bomb','bolt','shield','freeze','mech','hp','path','mana','tibr','death','rank','save'];
   const SKI={bomb:'skBomb',bolt:'skBolt',shield:'skShield',freeze:'skFreeze'};
   for(const k of order){const T=TIPS[k];if(!T)continue;const d=document.createElement('div');d.className='rk';
     const ic=document.createElement('canvas');ic.width=56;ic.height=56;ic.style.width='28px';ic.style.height='28px';const g=ic.getContext('2d');g.scale(2,2);
     if(GT[k])gateIcon(k,{up:'rate',fbk:'gourd',fu:'bomb'},14,14,.8,1,false,g);
-    else{g.font='20px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(SKI[k]?$(SKI[k]).querySelector('.ic').textContent:{n:'👾',run:'💨',brute:'🪨',elite:'🌀',hex:'🔮',guard:'🛡',cast:'⏳',boss:'👑',surge:'🌊',bottle:'⛰',four:'⛔',dodge:'↔',trap:'⚠',mech:'✨',hp:'❤️',path:'☯',save:'💾',intro:'👆'}[k]||'•',14,15)}
+    else{g.font='20px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(SKI[k]?$(SKI[k]).querySelector('.ic').textContent:{n:'👾',run:'💨',brute:'🪨',elite:'🌀',hex:'🔮',guard:'🛡',cast:'⏳',boss:'👑',surge:'🌊',bottle:'⛰',four:'⛔',dodge:'↔',trap:'⚠',mech:'✨',hp:'❤️',path:'☯',mana:'💧',tibr:'🔰',death:'🔁',rank:'🏆',save:'💾',intro:'👆'}[k]||'•',14,15)}
     const tx=document.createElement('div');tx.innerHTML='<div class="who"></div><div class="what"></div>';tx.querySelector('.who').textContent=T.t;tx.querySelector('.what').textContent=T.d;
     d.appendChild(ic);d.appendChild(tx);L.appendChild(d)}}
 $('bHelp').onclick=()=>{renderHelp();show('ovHelp')};$('bHelpBack').onclick=()=>{renderHub();show('ovHub')};
