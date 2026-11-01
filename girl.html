@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl", "sbjs": "supabase.js"};if(/(^|\.)youfeng\.app$|\.pages\.dev$/.test(location.hostname))window.NG_CFG.url=location.origin+'/sb';</script>
-<script>(function(){var B="20261102022103";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261102023232";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" media="print" onload="this.media='all'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1511,13 +1511,13 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
 /* ================= DRAWING ================= */
 let scroll=0;
 /* ===== 手绘素材（11-02 ChatGPT 出图）：有图用图，没图继续用代码画；女生版关掉 ===== */
-/*ARTMAN*/const ART_MAN={"hero_ti_0":1,"hero_ti_1":1,"hero_ti_2":1,"hero_fa_0":1,"hero_fa_1":1,"hero_fa_2":1,"pet_0":1,"pet_4":1,"pet_6":1,"pet_1":1,"pet_5":1,"pet_11":1,"mon_n":1,"mon_run":1,"mon_brute":1,"mon_elite":1,"mon_hex":1,"mon_guard":1,"boss_3":1,"boss_4":1,"bg_cover":1,"bg_r0":1,"bg_r4":1},ART_V='f1c572a8';/*ARTMAN_END*/
+/*ARTMAN*/const ART_MAN={"hero_ti_0":1,"hero_ti_1":1,"hero_ti_2":1,"hero_fa_0":1,"hero_fa_1":1,"hero_fa_2":1,"pet_0":1,"pet_4":1,"pet_6":1,"pet_1":1,"pet_5":1,"pet_11":1,"mon_n":1,"mon_run":1,"mon_brute":1,"mon_elite":1,"mon_hex":1,"mon_guard":1,"boss_3":1,"boss_4":1,"bg_cover":1,"bg_r0":1,"bg_r4":1,"boss_0":1,"boss_1":1,"boss_2":1,"boss_5":1,"bg_r3":1},ART_V='2ccd5a60';/*ARTMAN_END*/
 let ART_ON=true;const ART_IMG={};
 function artImg(k){if(!ART_ON||!ART_MAN[k])return null;let e=ART_IMG[k];if(!e){e=ART_IMG[k]=new Image();e.decoding='async';e.src='art/'+k+'.webp?v='+ART_V}return e.complete&&e.naturalWidth?e:null}
 function artPreload(){if(!ART_ON)return;for(const k in ART_MAN)artImg(k)}
 function artDraw(g,im,cx,bottom,h,alpha){const w=h*im.naturalWidth/im.naturalHeight;if(alpha!=null){const a=g.globalAlpha;g.globalAlpha=a*alpha;g.drawImage(im,cx-w/2,bottom-h,w,h);g.globalAlpha=a}else g.drawImage(im,cx-w/2,bottom-h,w,h);return w}
 function artCover(g,im,w,h){const s=Math.max(w/im.naturalWidth,h/im.naturalHeight),iw=im.naturalWidth*s,ih=im.naturalHeight*s;g.drawImage(im,(w-iw)/2,(h-ih)/2,iw,ih)}
-function heroArtKey(r){return 'hero_'+(S&&S.path==='fa'?'fa':'ti')+'_'+(r>=6?2:r>=4?1:0)}
+function heroArtKey(r){const p=S&&S.path==='fa'?'fa':'ti';for(let st=r>=11?4:r>=9?3:r>=6?2:r>=4?1:0;st>0;st--)if(ART_MAN['hero_'+p+'_'+st])return 'hero_'+p+'_'+st;return 'hero_'+p+'_0'}   // 阶段：炼气及以下/金丹/化神/大乘渡劫/成仙
 function outlined(text,x,y,size,col,font=FONT){
   ctx.font=size+'px '+font;ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.lineWidth=Math.max(3,size*.16);ctx.strokeStyle='rgba(0,0,0,.85)';ctx.lineJoin='round';ctx.strokeText(text,x,y);
@@ -1555,7 +1555,7 @@ function drawRealmBg(){
 }
 function paintBg(T,full){
   const ga=ctx.globalAlpha,g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,T.sky[0]);g.addColorStop(1,T.sky[1]);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-  const BGI=artImg('bg_r'+BG_THEMES.indexOf(T))||(BG_THEMES.indexOf(T)<=2?artImg('bg_r0'):null);if(BGI){artCover(ctx,BGI,W,H);ctx.fillStyle='rgba(248,244,234,.22)';ctx.fillRect(0,0,W,H)}
+  const BGI=artImg('bg_r'+BG_THEMES.indexOf(T))||(BG_THEMES.indexOf(T)<=2?artImg('bg_r0'):null);if(BGI){artCover(ctx,BGI,W,H);ctx.fillStyle=T.light?'rgba(248,244,234,.22)':'rgba(8,10,18,.25)';ctx.fillRect(0,0,W,H)}
   if(!BGI){
   if(!paperPat){const c=document.createElement('canvas');c.width=c.height=96;const q=c.getContext('2d');for(let i=0;i<900;i++){q.fillStyle='rgba(60,50,40,'+(Math.random()*.08)+')';q.fillRect(Math.random()*96,Math.random()*96,1,1+Math.random()*2)}paperPat=ctx.createPattern(c,'repeat')}
   ctx.globalAlpha=ga*(T.light?.9:.35);ctx.fillStyle=paperPat;ctx.fillRect(0,0,W,H);ctx.globalAlpha=ga;
