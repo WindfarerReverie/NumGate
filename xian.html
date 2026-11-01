@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
-<script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "xian"};</script>
-<script>(function(){var B="20261101195818";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "xian", "sbjs": "supabase.js"};</script>
+<script>(function(){var B="20261101204324";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>御剑斩妖录</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Russo+One&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Russo+One&display=swap" media="print" onload="this.media='all'">
 <style>
 /* Layout: full-screen canvas road (left lane split into two gate columns, right lane = zombies), thin HUD on top, menu overlays */
 :root{
@@ -135,6 +135,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .rank{display:flex;flex-direction:column;gap:4px;text-align:left;max-height:46vh;overflow:auto}
 .rk{display:grid;grid-template-columns:28px 1fr auto;gap:6px;align-items:center;padding:7px 10px;border-radius:9px;background:rgba(255,255,255,.05);font-size:13px}
 .rk b{color:var(--gold);font-size:14px}.rk .who{font-weight:700}.rk .what{color:var(--muted);font-size:12px}
+.quota{margin:0;font-size:13px;color:var(--muted)}.quota b{color:var(--gold)}
 .runinfo{margin:0;padding:8px 10px;border-radius:10px;background:rgba(125,255,168,.1);border:1px solid rgba(125,255,168,.35);font-size:13px;line-height:1.5}.runinfo b{color:#7dffa8}
 .rk .sc{font-family:var(--display);font-size:17px;color:var(--gold);white-space:nowrap}.rk .sc small{font-size:11px;margin-left:2px;color:var(--muted)}
 .rk.me{background:rgba(255,214,119,.16);outline:1px solid rgba(255,214,119,.5)}
@@ -216,6 +217,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
     <div class="card">
       <div class="cover"><canvas class="covCv"></canvas><h1 class="ttl">御剑<br>斩妖录</h1></div>
       <p class="label">登录后存档跟着账号走，还能上排行榜</p>
+      <p class="quota" id="lgQuota" hidden></p>
       <input class="inp" id="lgName" maxlength="10" placeholder="昵称（朋友看到的名字）" autocomplete="username">
       <input class="inp" id="lgPass" type="password" maxlength="40" placeholder="密码（至少 6 位）" autocomplete="current-password">
       <div class="row2"><button class="go" id="bLogin">登 录</button><button class="go alt" id="bSignup">注 册</button></div>
@@ -473,17 +475,22 @@ function setSync(ok){
 const NG_CFG=window.NG_CFG&&window.NG_CFG.url?window.NG_CFG:null;
 const NGV=()=>(window.NG_CFG&&window.NG_CFG.ver)||'xian';
 const Net={sb:null,user:null,name:'',on:false,t:null,busy:false,again:false};
-function loadSB(){return new Promise((res,rej)=>{if(window.supabase)return res(window.supabase);const el=document.createElement('script');
-  el.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';el.onload=()=>res(window.supabase);el.onerror=rej;document.head.appendChild(el)})}
+function loadSB(){const srcs=[NG_CFG&&NG_CFG.sbjs,'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js'].filter(Boolean);
+  return new Promise((res,rej)=>{if(window.supabase)return res(window.supabase);const tryN=i=>{if(i>=srcs.length)return rej(new Error('load'));const el=document.createElement('script');
+    el.src=srcs[i];el.onload=()=>res(window.supabase);el.onerror=()=>tryN(i+1);document.head.appendChild(el)};tryN(0)})}
 const nickMail=n=>'u'+[...new TextEncoder().encode(n.trim())].map(x=>x.toString(16).padStart(2,'0')).join('')+'@numgate.app';
 function acctUI(){const on=Net.on;$('acctBar').hidden=!NG_CFG;$('bRankH').hidden=!on;
   $('acctName').textContent=on?'已登录：'+Net.name:'单机模式';$('bLogout').textContent=on?'退出':'登录';$('bRankT').hidden=!on;
   if(NG_CFG)$('syncNote').textContent=on?'存档保存在你的账号里，换手机、换电脑登录都能继续':'单机模式：存档只在这台设备上，不上排行榜'}
+async function showQuota(){   // 限量开放：先注册先玩，名额满了只能登录已有账号
+  try{const {data}=await timeout(Net.sb.rpc('ng_slots'),8000);if(!data)return;Net.quota=data;const full=data.used>=data.max;
+    $('lgQuota').hidden=false;$('lgQuota').innerHTML=full?'名额已满（'+data.max+' / '+data.max+'），只能登录已有账号':'限量开放：已注册 <b>'+data.used+'</b> / '+data.max+' 个名额，先注册先玩';
+    $('bSignup').hidden=full;$('bGuest').hidden=full}catch(e){}}
 async function initNet(){
   if(!NG_CFG)return;
   show('ovLogin');$('lgMsg').textContent='连接中…';
   try{const lib=await timeout(loadSB(),12000);Net.sb=lib.createClient(NG_CFG.url,NG_CFG.key,{auth:{persistSession:true,storageKey:'ng_auth'}});
-    const r=await timeout(Net.sb.auth.getSession(),12000);$('lgMsg').textContent='';
+    const r=await timeout(Net.sb.auth.getSession(),12000);$('lgMsg').textContent='';showQuota();
     if(r&&r.data&&r.data.session)await onLogin(r.data.session.user);
   }catch(e){$('lgMsg').textContent='暂时连不上服务器，可以先单机玩'}
 }
@@ -498,9 +505,9 @@ async function onLogin(user){
   }catch(e){$('syncNote').textContent='云存档暂时读不到，先用这台设备上的存档'}
   acctUI();renderSlots();show('ovTitle');
 }
-function netQueue(delay=1500){if(!Net.on)return;clearTimeout(Net.t);Net.t=setTimeout(netPush,delay)}
+function netQueue(delay=1500){if(!Net.on)return;clearTimeout(Net.t);const wait=Math.max(delay,120000-(Date.now()-(Net.last||0)));Net.t=setTimeout(netPush,wait)}
 async function netPush(){
-  if(!Net.on)return;if(Net.busy){Net.again=true;return}Net.busy=true;
+  if(!Net.on)return;if(Net.busy){Net.again=true;return}Net.busy=true;Net.last=Date.now();clearTimeout(Net.t);
   try{const uid=Net.user.id;
     await Net.sb.from('saves').upsert({id:uid,ver:NGV(),data:{slots:JSON.parse(JSON.stringify(Save.slots))},updated_at:new Date().toISOString()});
     const rows=[];for(let i=1;i<=SLOTS;i++){const d=Save.slots[i];if(d&&(d.bestRealm||d.runs))rows.push({id:uid,ver:NGV(),slot:i,score:d.bestScore||0,name:Net.name.slice(0,16),best_realm:d.bestRealm||0,best_wave:d.bestWave||0,clears:d.clears||0,best_clear:d.clears?Math.round(d.bestClear):null,life:d.life||1,updated_at:new Date().toISOString()})}
@@ -532,6 +539,7 @@ async function endRank(){
   try{clearTimeout(Net.t);await netPush();rankRows(el,await fetchRank(50),5)}catch(e){el.innerHTML='<p class="sync">排行榜暂时加载不了</p>'}
 }
 function lgErr(e){const m=(e&&e.message)||'';
+  if(/NG_FULL|saving new user/i.test(m)){showQuota();return '名额已满，只能登录已有账号'}
   if(/already|registered|exists/i.test(m))return '这个昵称已经有人注册了，换一个，或者直接登录';
   if(/invalid login|credentials/i.test(m))return '昵称或密码不对';
   if(/password/i.test(m))return '密码至少 6 位';
@@ -2459,10 +2467,10 @@ $('bRankT').onclick=()=>showRank('ovTitle');$('bRankH').onclick=()=>showRank('ov
 $('bRankBack').onclick=()=>{if(Net.rankBack==='ovHub')renderHub();else renderSlots();show(Net.rankBack||'ovTitle')};
 $('bOverHub').onclick=()=>{S=null;renderUps();renderHub();show('ovHub')};
 $('bPause').onclick=togglePause;$('bResume').onclick=togglePause;
-$('bQuit').onclick=()=>{saveRun();running=false;paused=false;coach=null;$('coachSkip').hidden=true;hideHint();renderHub();show('ovHub')};
+$('bQuit').onclick=()=>{saveRun();if(Net.on)netPush();running=false;paused=false;coach=null;$('coachSkip').hidden=true;hideHint();renderHub();show('ovHub')};
 $('bGiveUp').onclick=()=>{const b=$('bGiveUp');if(!b.dataset.arm){b.dataset.arm=1;b.textContent='确认放弃？这局的进度会清掉';setTimeout(()=>{delete b.dataset.arm;b.textContent='放弃这局，重新开始'},3000);return}
   delete b.dataset.arm;const s=slot();if(s){delete s.run;commit(Save.cur)}renderHub()};
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&running)saveRun()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){if(running)saveRun();if(Net.on)netPush()}});
 window.addEventListener('pagehide',()=>{if(running)saveRun()});
 $('bSnd').onclick=()=>{sound=!sound;$('bSnd').textContent=sound?'🔊':'🔇'};
 addEventListener('pagehide',()=>{if(running)bankCoins()});
