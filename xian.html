@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "xian", "sbjs": "supabase.js"};</script>
-<script>(function(){var B="20261101214042";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261101221939";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>御剑斩妖录</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -111,7 +111,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .skills[hidden]{display:none}
 .skills{display:grid!important;grid-template-columns:repeat(2,52px);gap:8px}
 .farow{position:absolute;right:0;bottom:calc(100% + 10px);display:flex;gap:8px}
-.skills.fa{grid-template-columns:repeat(4,50px)!important;gap:7px!important}.skills.fa .farow{display:contents!important}.skills.fa #skFire{grid-column-start:2}.skills.fa .farow[hidden]{display:none!important}.skills.fa .sk{width:50px!important;height:50px!important}.skills.fa .sk .ic{font-size:22px!important}.farow[hidden]{display:none!important}.skills[hidden]{display:none!important}
+.skills.fa{grid-template-columns:repeat(4,50px)!important;gap:7px!important}.skills.fa .farow{display:contents!important}.skills.fa #skFire{grid-column-start:2}.mporb{grid-column:1;grid-row:1;width:50px;height:50px;border-radius:50%;border:2px solid rgba(140,200,255,.85);position:relative;overflow:hidden;background:rgba(10,20,40,.78);box-shadow:0 0 10px rgba(80,160,255,.35)}.mporb[hidden]{display:none!important}.mporb i{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,#2f6cff,#8fd4ff);opacity:.85;transition:height .2s}.mporb span{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-shadow:0 1px 2px #000;line-height:1.05}.mporb b{font-size:15px}.mporb small{font-size:9px}.skills.fa .farow[hidden]{display:none!important}.skills.fa .sk{width:50px!important;height:50px!important}.skills.fa .sk .ic{font-size:22px!important}.farow[hidden]{display:none!important}.skills[hidden]{display:none!important}
 .sk[hidden]{display:none}
 .sk{--p:0;position:relative;width:52px;height:52px;border-radius:50%;border:2px solid rgba(255,194,58,.7);cursor:pointer;padding:0;color:var(--ink);
   background:conic-gradient(rgba(8,10,15,.78) calc(var(--p)*1turn),rgba(20,25,36,.92) 0);display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -221,6 +221,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
     <button class="sk" id="skFreeze" aria-label="定身符" hidden><span class="ic">📜</span><b id="skFreezeT"></b><small>定身符</small></button>
     <button class="sk" id="skBolt" aria-label="掌心雷" hidden><span class="ic">⚡</span><b id="skBoltT"></b><small>掌心雷</small></button>
     <div class="skhint" id="skHint" hidden><span id="skHintT"></span></div>
+    <div class="mporb" id="mpOrb" hidden><i id="mpFill"></i><span><b id="mpT">0</b><small>灵力</small></span></div>
     <button class="sk" id="skBomb" aria-label="雷劫符" hidden><span class="ic">🌩</span><b id="skBombN">1</b><small>雷劫符</small></button>
   </div>
   <div class="toast" id="toast"></div>
@@ -734,7 +735,7 @@ const maxX=()=>roadX+roadW-sw()/2-4;
 const tempOn=k=>!!(S&&S.temp&&S.temp.k===k&&S.surgeOn&&waveK()===S.temp.wave);
 const spr=()=>S.spread+(tempOn('swarm')?3:0);
 const tempMul=()=>tempOn('power')?1.8:1;
-const FA_ATK=.5,TI_ATK=1.5,pathAtk=()=>S&&S.path==='fa'?FA_ATK:S&&S.path==='ti'?TI_ATK:1;   // 流派普攻倍率：敌人强度不跟着它走，所以玩家真能感觉到
+const FA_ATKR=[.7,.7,.7,.7,.55,.45,.35,.27,.2,.15,.1],TI_ATK=1.5,faAtk=()=>FA_ATKR[Math.min(FA_ATKR.length-1,S.maxR)],pathAtk=()=>S&&S.path==='fa'?faAtk():S&&S.path==='ti'?TI_ATK:1;   // 法修普攻：筑基 ×0.6，越往后越弱（渡劫后 ×0.1）   // 流派普攻倍率：敌人强度不跟着它走，所以玩家真能感觉到
 const dps=()=>pathAtk()*.12*power()*S.dmg*S.rate*(S&&S.zouT>0?.7:1)*(S&&S.hexT>0?.75:1)*(1+.35*spr())*tempMul();
 const mechX=()=>{const side=S.x<mid?1:-1;return clamp(S.x+side*(sw()/2+16+7*S.mech),roadX+18,roadX+roadW-18)};
 
@@ -1026,7 +1027,7 @@ function minions(o,n,f){const hpB=hpUnit();for(let i=0;i<n&&S.objs.length<260;i+
 function dangerRaw(){
   if(!S||!S.objs)return 0;
   const line=cLine(),r=Math.max(1,realmOf(S.count).r);
-  const D=Math.max(1e-9,dps()*.7),v=speed();
+  const D=Math.max(1e-9,dps()*.7+(S.path==='fa'?dps()/pathAtk()*.6*(mpReg()*FA_E*faG()*(1+.12*((faLv('fire')+faLv('bolt'))/2))+psG()*(.1*faLv('crow')+.07*faLv('orb')+.12*faLv('cloud'))):0)),v=speed();   // 法修：把灵力能持续打出的法术和被动法术也算进去
   const zs=[];for(const z of S.objs){if(z.k!=='z'||z.dead||z.hp<=0)continue;
     const sp=z.boss?v*.3:(v*.5+(z.sp||0))*(z.fast||1)*(S.surgeOn?1.1:1);zs.push([z,Math.max(.3,(line-z.y-z.r)/Math.max(1,sp))+(S.freezeT||0)])}
   zs.sort((a,b)=>a[1]-b[1]);
@@ -1064,7 +1065,7 @@ function dangerTick(dt){
    Enemy strength = what an AVERAGE player should have at this wave (expBuild), blended 50/50 (in log scale) with
    your actual build. Pick well and you really are ahead (√ of your edge stays with you); pick badly and you feel it.
    On top of that the director (S.M) only steps in when monsters keep dying far up the screen (clear overpower). */
-function build(){return S.upMul*(1+.35*S.spread)*(1+.15*S.pierce)*(1+.04*S.fb.gourd)*(1+.03*S.fb.bell)*(1+.06*S.fb.mirror)*(1+.04*S.armorUp)}
+function build(){return S.upMul*(1+.35*S.spread)*(1+.15*S.pierce)*(1+.04*S.fb.gourd)*(1+.03*S.fb.bell)*(1+.06*S.fb.mirror)*(1+.04*S.armorUp)*faBuild()}
 const EXPG=1.22;   // average build growth per wave (one pick per boss + gates)
 function expBuild(){return Math.min(2500,Math.pow(EXPG,kEff()))}   // S.expK: waves of growth; grows at 30% speed while you sit at a bottleneck, so a stuck player still gets a fair shot at the 心魔
 function kdNote(d){d=Math.min(1,d);S.kdSum=(S.kdSum||0)+d;S.kdN=(S.kdN||0)+1;S.kdEma=S.kdEma==null?d:S.kdEma+(d-S.kdEma)*.04}
@@ -1076,8 +1077,9 @@ function director(dt){   // evaluated once per phase (end of each mow / surge): 
   if(S.t>40&&n>=12&&d<T)S.M*=1+Math.min(S.dirPh?.12:.05,(T-d)*(S.dirPh?.6:.25));
   S.dirPh=sg;S.kdSum=0;S.kdN=0;
 }
+function dNote(k,v){if(!S||!(v>0))return;const d=S.dsrc||(S.dsrc={});d[k]=(d[k]||0)+v}   // 输出构成统计（近 1 分钟，指数衰减）
 function dmgMul(o){
-  let m=1;
+  let m=1;if(S.iceAmp>0&&S.slowT>0)m*=S.iceAmp;
   if(o.realm!=null){const gap=(o.boss?o.realm:Math.min(o.realm,S.rR+1))-S.rR;m=gap>0?Math.pow(.5,gap):gap<0?Math.min(3,1-.5*gap):1}   // realm suppression
   if((o.boss||o.type==='elite')&&S.fb.mirror)m*=1+.3*S.fb.mirror;
   if(o.type==='brute')m*=tempOn('armor')?2.5:Math.min(1,.55+.06*S.lv.dmg);
@@ -1112,7 +1114,7 @@ function applyGate(o){
   else if(g==='brk'){if(S.bottle&&S.maxR<TOPR){breakthrough();return}addLayers(o.val);txt='+'+fmtL(o.val)}
   else if(g==='art'){applyUpg(o.up);txt=UPG[o.up].name+' UP';effectPop('art_'+o.up,GT.art.n+' · '+UPG[o.up].name,UPG[o.up].desc+'，整局有效',{g:'art',o})}
   else if(g==='fb'){S.fb[o.fbk]=Math.min(5,S.fb[o.fbk]+1);txt=FABAO[o.fbk].n+' Lv'+S.fb[o.fbk];toast(txt,FABAO[o.fbk].d);renderUps();effectPop('fb_'+o.fbk,FABAO[o.fbk].n,FABAO[o.fbk].d+'（最高 5 级）',{g:'fb',o})}
-  else if(g==='fu'){if(o.fu==='bomb')S.bombs=Math.min(bombCap(),S.bombs+1);else if(o.fu==='bolt')S.boltCd=0;else if(o.fu==='shield')S.shieldCd=0;else S.freezeCd=0;txt=FUS[o.fu];effectPop('fu_'+o.fu,GT.fu.n,FUS[o.fu],{g:'fu',o})}
+  else if(g==='fu'){if(o.fu==='bomb')S.bombs=Math.min(bombCap(),S.bombs+1);else if(o.fu==='bolt')S.boltCd=0;else if(o.fu==='shield')S.shieldCd=0;else S.freezeCd=0;txt=FUS[o.fu];if(S.path==='fa'&&o.fu!=='bomb'){S.mp=Math.min(mpMax(),(S.mp||0)+40);txt='灵力 +40'}effectPop('fu_'+o.fu,GT.fu.n,FUS[o.fu],{g:'fu',o})}
   else if(g==='xin'){addLayers(o.val);txt='心魔 −'+fmtL(o.val);good=false;effectPop('xin',GT.xin.n,'修为 −'+fmtL(o.val)+'，下次躲开它',{g:'xin',o},true)}
   else if(g==='zou'){S.zouT=Math.max(S.zouT,o.lock>0?7+8*o.lock/o.lock0:7);txt='走火入魔 '+Math.round(S.zouT)+'秒';good=false;effectPop('zou',GT.zou.n,'剑速 −30%，持续 '+Math.round(S.zouT)+' 秒',{g:'zou',o},true)}
   else if(g==='jie'){if(o.lock>0){loseHp(.15*S.armor,S.x);addLayers(-.4);txt='雷劫加身：气血 −'+Math.round(15*S.armor)+'%';good=false;S.jieFail=(S.jieFail||0)+1}
@@ -1160,8 +1162,11 @@ const POPT={
   inf_dmg:{ok:()=>(S.inf.dmg||0)<infCap(),line:()=>'伤害 +12%（已叠 '+(S.inf.dmg||0)+'/'+infCap()+'，境界越高上限越高）',ic:{g:'art',o:{up:'dmg'}},go:()=>{S.inf.dmg=(S.inf.dmg||0)+1;S.dmg*=1.12;S.upMul*=1.12}},
   inf_rate:{ok:()=>(S.inf.rate||0)<infCap(),line:()=>'剑速 +10%（已叠 '+(S.inf.rate||0)+'/'+infCap()+'，境界越高上限越高）',ic:{g:'art',o:{up:'rate'}},go:()=>{S.inf.rate=(S.inf.rate||0)+1;S.rate*=1.1;S.upMul*=1.1}},
   inf_hp:{ok:()=>(S.inf.hp||0)<infCap(),line:()=>'气血立刻回 30%，冲线伤害 −5%（已叠 '+(S.inf.hp||0)+'/'+infCap()+'）',ic:{e:'❤️'},go:()=>{S.inf.hp=(S.inf.hp||0)+1;S.armor*=.95;heal(.3,'淬体')}}};
-POPT.path_ti={ok:()=>true,line:()=>'以剑破万法：靠剑气硬推。剑气伤害 ×1.5（敌人不跟着变强）、受伤 −30%、气血上限 ×1.3、剑雨和破甲上限各 +1；技能冷却 +40%、技能威力 −30%',ic:{g:'art',o:{up:'dmg'}},go:()=>{S.pathV2=S.pathV3=true;S.path='ti';S.armor*=.7;toast('走上体修之路','剑气 ×1.5、更抗打、气血更厚')}};
-POPT.path_fa={ok:()=>true,line:()=>'以法御万剑：靠法术操作。四种法术立刻全部学会，威力 ×2.5、冷却减半，雷劫符最多存 5 张；另得三门法修专属法术：火符、寒冰诀、万剑诀。剑气只剩 ×0.5，不放法术会很吃力',ic:{g:'fu',o:{fu:'bomb'}},go:()=>{S.pathV2=S.pathV3=true;S.path='fa';S.fireCd=0;S.iceCd=0;S.swordCd=0;effectPop('fa_intro','法修三诀','右下角多了三个法术：火符（砸最近一团，3 秒一发）、寒冰诀（全场减速 5 秒）、万剑诀（3 秒剑雨乱斩）。剑气只剩一半，要靠法术推进。',{e:'🔥'});toast('走上法修之路','法术全开、威力 ×2.5、冷却减半，右下角多了「火符」');skillUI()}};
+POPT.path_ti={ok:()=>true,line:()=>'以剑破万法：靠剑气硬推。剑气伤害 ×1.5（敌人不跟着变强）、受伤 −30%、气血上限 ×1.3、剑雨和破甲上限各 +1；技能冷却 +40%、技能威力 −30%',ic:{g:'art',o:{up:'dmg'}},go:()=>{S.pathV2=S.pathV3=S.pathV4=true;S.path='ti';S.armor*=.7;toast('走上体修之路','剑气 ×1.5、更抗打、气血更厚')}};
+POPT.path_fa={ok:()=>true,line:()=>'以法御万剑：前期剑气还能帮忙（×0.6），越往后越弱，到'+REALMS[10]+'只剩 ×0.1，主要靠法术。七种法术立刻全会，用「灵力」施法：灵力一直在回，法术间隔很短，想放就放；还能修被动法术（火鸦、护法飞剑、雷云）自动清怪，大境界时法术会进化',ic:{g:'fu',o:{fu:'bomb'}},go:()=>{S.pathV2=S.pathV3=S.pathV4=true;S.path='fa';S.fa={};S.mp=mpMax();S.fireCd=0;S.iceCd=0;S.swordCd=0;effectPop('fa_intro','法修 · 灵力施法','右下角的蓝色圆球是灵力：每个法术耗灵力，灵力一直在回。剑气越往后越弱，要多放法术；三选一里会出现法术升级和被动法术。',{e:'💧'});toast('走上法修之路','七种法术全会，靠灵力施法；剑气越往后越弱');skillUI()}};
+for(const k of ['crow','orb','cloud'])POPT['fa_'+k]={ok:()=>S.path==='fa'&&faLv(k)<fbCap(),line:()=>{const L=faLv(k)+1;return '被动法术 Lv'+L+'：'+FA_PS[k].d(L)+(L<5?'\n满级：'+FA_PS[k].d(5):'')},ic:{e:{crow:'🐦',orb:'🗡',cloud:'⛈'}[k]},go:()=>{(S.fa=S.fa||{})[k]=faLv(k)+1}};
+for(const k of ['fire','sword','ice','bolt','mp'])POPT['fa_'+k]={ok:()=>S.path==='fa'&&faLv(k)<fbCap(),line:()=>FA_UPD[k]+(k==='fire'&&faLv(k)===2?'；Lv3 起一次两颗':'')+'（Lv'+(faLv(k)+1)+' / 本境界上限 '+fbCap()+'）',ic:{e:{fire:'🔥',sword:'🗡',ice:'❄️',bolt:'⚡',mp:'💧'}[k]},go:()=>{(S.fa=S.fa||{})[k]=faLv(k)+1}};
+Object.assign(PNAME,{fa_crow:'火鸦',fa_orb:'护法飞剑',fa_cloud:'雷云',fa_fire:'火符升级',fa_sword:'万剑诀升级',fa_ice:'寒冰诀升级',fa_bolt:'掌心雷升级',fa_mp:'灵力'});
 POPT.coin={ok:()=>true,line:()=>'本境界能强化的都满了：灵石 +'+fmt(coinPack())+'（突破大境界后上限会提高）',ic:{e:'💰'},go:()=>{S.coins+=coinPack()}};
 const coinPack=()=>Math.round(40*(1+S.maxR)*S.coinMul);
 const INFK=['inf_dmg','inf_rate','inf_hp'];
@@ -1171,15 +1176,15 @@ const TEMPS={   // 限时符 for the next surge, one per trait (+ a generic one)
   armor:{n:'破甲符',d:'下一波：对石甲妖伤害 ×2.5，无视护甲'},guard:{n:'破法符',d:'下一波：无视护法减伤'},
   swarm:{n:'万剑符',d:'下一波：剑雨临时 +3 对'},fast:{n:'缚足符',d:'下一波：疾风妖速度减半'},
   elite:{n:'斩魔符',d:'下一波：对噬元魔伤害 ×3'},hex:{n:'清心符',d:'下一波：咒怨减速对你无效'},power:{n:'聚灵符',d:'下一波：伤害 +80%'}};
-const LONGK=['gourd','mirror','bell'],PERMK=['rate','dmg','spread','pierce','armor','cd'];
+const LONGK=['gourd','mirror','bell'],PERMK=['rate','dmg','spread','pierce','armor','cd'],FA_LONG=['fa_crow','fa_orb','fa_cloud'],FA_PERM=['fa_fire','fa_sword','fa_ice','fa_bolt','fa_mp'];
 let pickOpts=null;
 function fbLine(k){const L=S.fb[k]+1;return 'Lv'+L+'：'+FBROAD[k][L]+(L<5?'\n满级：'+FBROAD[k][5].replace(/^满级/,''):'')}
 function queuePick(why){S.pickQ=(S.pickQ||0)+1;S.pickWhy=why}
 function rollPick(){   // always: one 短期 (this next wave), one 长期 (grows into a late-game engine), one 常驻
   const tr=nextTrait(),out=['t_'+(tr&&TEMPS[tr]?tr:'power')];
-  const lg=LONGK.filter(k=>POPT[k].ok());const pm=PERMK.filter(k=>POPT[k].ok());
+  const fa=S.path==='fa',lg=LONGK.concat(fa?FA_LONG:[]).filter(k=>POPT[k].ok()),fu=fa?FA_PERM.filter(k=>POPT[k].ok()):[],pm=PERMK.filter(k=>POPT[k].ok()).concat(fu);
   if(lg.length)out.push(lg[ri(0,lg.length-1)]);
-  const pc=pm.filter(k=>tr&&TRAITS[tr].c.includes(k)),pp=pc.length&&Math.random()<.5?pc:pm;
+  const pc=pm.filter(k=>tr&&TRAITS[tr].c.includes(k)),pp=pc.length&&Math.random()<.5?pc:fu.length&&Math.random()<.6?fu:pm;
   if(pp.length)out.push(pp[ri(0,pp.length-1)]);
   while(out.length<3){const rest=pm.filter(k=>!out.includes(k));if(!rest.length)break;out.push(rest[ri(0,rest.length-1)])}
   // everything maxed for now: the free slots become uncapped basics (late game you just keep stacking)
@@ -1194,7 +1199,7 @@ function pickScan(){
   $('pickWhy').textContent=pathNow?'踏入'+REALMS[S.maxR]+' · 选择修炼路线':S.pickWhy||'选一个强化';
   $('pickNext').innerHTML=pathNow?'两条路的数值都跟着境界涨。选了就不能改。':tr?'下一波：<b>'+TRAITS[tr].n+'</b> · '+TRAITS[tr].d:'下一波：普通妖潮';
   for(const k of o){const tk=k.startsWith('t_')?k.slice(2):null,P=tk?{ic:{g:'fu',o:{fu:'bomb'}},line:()=>TEMPS[tk].d}:POPT[k],b=document.createElement('button');b.className='pk';
-    const cnt=!tk&&tr&&TRAITS[tr].c.includes(k),kind=tk?['短期 · 只管下一波','ts']:LONGK.includes(k)?['长期 · 越养越强','tl']:INFK.includes(k)?['已满级 · 精进（上限随境界）','ti']:k.startsWith('path_')?['路线 · 二选一，不可更改','tl']:['常驻','tp'];
+    const cnt=!tk&&tr&&TRAITS[tr].c.includes(k),kind=tk?['短期 · 只管下一波','ts']:LONGK.includes(k)||FA_LONG.includes(k)?['长期 · 越养越强','tl']:INFK.includes(k)?['已满级 · 精进（上限随境界）','ti']:k.startsWith('path_')?['路线 · 二选一，不可更改','tl']:['常驻','tp'];
     const cv2=document.createElement('canvas');cv2.width=88;cv2.height=88;const g=cv2.getContext('2d');g.scale(2,2);
     if(P.ic.g)gateIcon(P.ic.g,P.ic.o,22,22,1.1,1,false,g);else{g.font='26px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(P.ic.e,22,23)}
     const tx=document.createElement('div');tx.innerHTML='<span class="ptag '+kind[1]+'">'+kind[0]+'</span><h4></h4><p></p>'+(cnt?'<em>也克制下一波</em>':'');tx.querySelector('h4').textContent=tk?TEMPS[tk].n:PNAME[k];tx.querySelector('p').textContent=P.line();
@@ -1233,7 +1238,7 @@ function breakthrough(){
   S.count=Math.max(S.count,RBASE*Math.pow(2,RSTART[S.maxR])*1.0001);
   S.dmg*=1.15;heal(.3,'破境');{const n=skillPool(BOMB_S,()=>true,.2);S.fxBomb=.7;S.shake=14;ftext(S.x,squadY-130,'破境天雷'+(n?' · 劈散 '+n+' 只':''),'#fff3c4',24)}S.brkPend=S.maxR;queuePick('破境奖励');
   toast('破境！踏入'+REALMS[S.maxR],'气血 +30%、上限提升，剑意 +15%，天雷护体');S.flash=0;S.fxBreak=1.2;S.shake=10;
-  sfx(523,.15);setTimeout(()=>sfx(659,.15),120);setTimeout(()=>sfx(784,.15),240);setTimeout(()=>sfx(1046,.35),360);renderUps();
+  if(S.path==='fa'){S.mp=mpMax();faEvoPop()}sfx(523,.15);setTimeout(()=>sfx(659,.15),120);setTimeout(()=>sfx(784,.15),240);setTimeout(()=>sfx(1046,.35),360);renderUps();
 }
 function dropCoins(x,y,base){
   const v=base*(1+Math.min(S.t,600)/60)*S.coinMul;   // value per drop stops growing after 10 min, so long runs don't break the shop
@@ -1287,7 +1292,7 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
   if(S.fb.gourd>0){S.gourdT-=dt;if(S.gourdT<=0){const L=S.fb.gourd;S.gourdT=6-.5*L;S.gourdN=(S.gourdN||0)+1;
     const zs=S.objs.filter(z=>z.k==='z'&&!z.dead&&!z.boss&&z.y>0&&(z.type!=='elite'||L>=3)).sort((a,b)=>b.y-a.y);
     const all=L>=5&&S.gourdN%4===0,n=all?zs.filter(z=>z.type!=='elite').length:Math.min(zs.length,L+Math.floor(zs.length*.05*L));
-    let k=0;const pts=[];for(const z of zs){if(k>=n)break;if(all&&z.type==='elite')continue;pts.push([z.x,z.y]);z.dead=true;killZ(z);k++}
+    let k=0;const pts=[];for(const z of zs){if(k>=n)break;if(all&&z.type==='elite')continue;pts.push([z.x,z.y]);dNote('gourd',z.hp);z.dead=true;killZ(z);k++}
     if(k){S.fxGourd={pts,t:.9,k};sfx(700,.2,'sine',.05,.4);if(all){ftext(mid+roadW/4,H*.35,'紫金葫芦 · 吞天！',C.gold,24);S.fxBomb=.4}else ftext(S.x,squadY-150,'紫金葫芦 · 收 '+k+' 只',C.gold,18)}}}
   if(S.fb.bell>0){S.bellT-=dt;S.bellGuard=Math.max(0,(S.bellGuard||0)-dt);if(S.bellT<=0){const L=S.fb.bell;S.bellT=12-L;const push=H*(.05+.025*L);
     for(const z of S.objs)if(z.k==='z'&&!z.dead)z.y=Math.max(-40,z.y-push*(z.boss?.4:1));if(L>=3)S.freezeT=Math.max(S.freezeT,.6+.2*L);S.fxBell=.9;{let n=0;for(const z of S.objs)if(z.k==='z'&&!z.dead&&z.y>0)n++;ftext(S.x,squadY-150,'镇魂钟 · 震退 '+n+' 只'+(L>=3?' · 震晕':''),C.gold,18)}sfx(300,.5,'sine',.06,.8)}}
@@ -1317,9 +1322,9 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
           const dx=b.x-o.x,dy=b.y-o.y;
           if(dx*dx+dy*dy<(o.r+3)*(o.r+3)){
             if(b.shell){const R=46+4*S.mech;
-              for(const z of S.objs){if(z.k!=='z'||z.dead)continue;const ex=z.x-b.x,ey=z.y-b.y;if(ex*ex+ey*ey<(R+z.r)*(R+z.r)){z.hp-=b.dmg*dmgMul(z);z.hit=.08;if(z.hp<=0){z.dead=true;killZ(z)}}}
+              for(const z of S.objs){if(z.k!=='z'||z.dead)continue;const ex=z.x-b.x,ey=z.y-b.y;if(ex*ex+ey*ey<(R+z.r)*(R+z.r)){const dd=b.dmg*dmgMul(z);dNote('pet',Math.min(z.hp,dd));z.hp-=dd;z.hit=.08;if(z.hp<=0){z.dead=true;killZ(z)}}}
               burst(b.x,b.y,'#ffb347',26,260,4);burst(b.x,b.y,'#fff3c4',10,140,3);S.shake=Math.min(10,S.shake+2);dead=true;break}
-            o.hp-=b.dmg*dmgMul(o);o.hit=.06;
+            {const dd=b.dmg*dmgMul(o);dNote('atk',Math.min(o.hp,dd));o.hp-=dd}o.hit=.06;
             if(o.hp<=0){o.dead=true;if(!o.boss)kdNote(o.y/cLine());killZ(o)}
             if(b.p>0){b.p--;b.dmg*=.8}else dead=true;
             break;
@@ -1367,9 +1372,10 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}S.fxBomb=Math.max(0,S
    if(S.bottle&&!S.bottleShown){S.bottleShown=true;if(S.maxR>=TOPR)toast('圣人九层圆满','下一波斩「天道」，即可证道通关');else toast('瓶颈：'+REALMS[S.maxR]+'九层圆满','斩本波 Boss（心魔）或吃破境丹才能破境')}}
   S.bankT-=dt;if(S.bankT<=0){S.bankT=8;bankCoins()}
   for(const k of ['fire','ice','sword'])S[k+'Cd']=Math.max(0,(S[k+'Cd']||0)-dt);S.slowT=Math.max(0,(S.slowT||0)-dt);
-  if(S.fxFire){const f=S.fxFire;f.t+=dt/.3;if(f.t>=1){fireHit(f);S.fxFire=null}}
-  if(S.swordT>0){S.swordT-=dt;S.swordTick-=dt;if(S.swordTick<=0){S.swordTick=.2;const zs=S.objs.filter(z=>z.k==='z'&&!z.dead&&z.y>0);
-    if(zs.length){const z=zs[ri(0,zs.length-1)],before=S.kills;skillPool(3*skPow()/15,q=>q===z,.01);S.swordKill+=S.kills-before;(S.fxSwords=S.fxSwords||[]).push({x:z.x,y:z.y,t:.25})}}
+  if(S.fxFires&&S.fxFires.length){for(const f of S.fxFires){f.t+=dt/(f.crow?.4:.3);if(f.t>=1)fireHit(f)}S.fxFires=S.fxFires.filter(f=>f.t<1)}
+  faTick(dt);if(S.kdEma!=null)S.kdEma+=(.2-S.kdEma)*Math.min(1,dt*.05);if(S.dsrc){const q=Math.exp(-dt/60);for(const k in S.dsrc)S.dsrc[k]*=q}
+  if(S.swordT>0){S.swordT-=dt;S.swordTick-=dt;if(S.swordTick<=0){S.swordTick=S.swordPer||.2;let zs=S.objs.filter(z=>z.k==='z'&&!z.dead&&z.y>0);if(faEvo('sword')){const big=zs.filter(z=>z.boss||z.type==='elite');if(big.length&&Math.random()<.6)zs=big}
+    if(zs.length){const z=zs[ri(0,zs.length-1)],before=S.kills;skillPool(S.swordHit||3*skPow()/15,q=>q===z,S.path==='fa'?.015:.01,'sword');S.swordKill+=S.kills-before;(S.fxSwords=S.fxSwords||[]).push({x:z.x,y:z.y,t:.25})}}
     if(S.swordT<=0&&S.swordKill)ftext(mid+roadW/4,H*.36,'万剑诀 · 斩 '+S.swordKill+' 只','#d8f4ff',18)}
   if(S.fxSwords){for(const f of S.fxSwords)f.t-=dt;S.fxSwords=S.fxSwords.filter(f=>f.t>0)}
   if(S.fxSpell){S.fxSpell.t-=dt;if(S.fxSpell.t<=0)S.fxSpell=null}
@@ -1907,7 +1913,7 @@ const TIPS={
   hex:{t:'咒怨妖',d:'头上会读条，读满后你的剑速 −25%，持续 4 秒。看到就先打掉它。'},
   guard:{t:'护法妖',d:'身边一圈里的妖受到的伤害减少 40%。先打护法妖，再清其他。'},
   cast:{t:'Boss 技能',d:'第三波起 Boss 会放技能：召唤小妖、冲锋、咒术（剑速 −25%）、封印（某个技能 6 秒不能用）。读条时打掉它 8% 的血就能打断。'},
-  path:{t:'体修 / 法修',d:'踏入筑基时二选一，选了就不能改。体修靠剑气硬推：剑气伤害 ×1.5、受伤 −30%、气血上限 ×1.3、剑雨和破甲上限各 +1，但技能冷却 +40%、威力 −30%。法修靠法术操作：四种法术立刻全部学会，威力 ×2.5、冷却减半、雷劫符最多存 5 张，还多一个「火符」按钮（4 秒一发，打离防线最近的一团），但剑气伤害 ×0.6。两条路的数值都跟着境界涨。'},
+  path:{t:'体修 / 法修',d:'踏入筑基时二选一，选了就不能改。体修靠剑气硬推：剑气伤害 ×1.5、受伤 −30%、气血上限 ×1.3、剑雨和破甲上限各 +1，但技能冷却 +40%、威力 −30%。法修靠法术：七种法术立刻全会，用「灵力」施法（灵力一直在回，法术间隔很短）；剑气前期 ×0.7，越往后越弱，到'+REALMS[10]+'只剩 ×0.1；三选一会出现法术升级和被动法术（火鸦、护法飞剑、雷云，自动清怪）；'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时各进化一种法术。两条路的数值都跟着境界涨。'},
   save:{t:'存档与长线修炼',d:'这是一场长线修炼：前几个大境界十几分钟，越往后越久，修到圣人要几十个小时。随时点暂停 →「存档退出」，下次从原地接着打；平时每 30 秒也会自动存。只有气血耗尽，这一局才结束。'},
   hp:{t:'气血',d:'左上角的红条。小妖冲线扣 1.2%，石甲妖 2.5%，噬元魔 6%，Boss 20%～40%（境界越高越多），同时少掉一点修为。气血不会自己回，只有破境（+30%）、斩 Boss 后整顿（+15%）、选「淬体精进」（+30%）才回。气血归零，这局就结束。'},
   mech:{t:'灵宠',d:'踏入炼体就有灵宠跟着你，每个大境界换一只更神异的（灵猫 → 白狐 → … → 祖龙）。到了筑基，灵宠开始定时轰击妖魔，境界越高轰得越狠。'}
@@ -2102,7 +2108,7 @@ function stageLesson(k){   // 刻意制造场景: a wave built so the skill is o
   else if(k==='shield'){for(let i=0;i<10;i++)add(rand(x0+20,x1-20),-30-i*20);S.goodRow=true;S.spawnL=.1}
   S.stage={k,t0:S.t};S.stageGap=S.t+40;toast({bomb:'一大波妖来了！',bolt:'一列妖堆上来了！',freeze:'疾风妖冲过来了！',shield:'妖来了，左边也有好门'}[k],'看看这时候该用什么');
 }
-function skReady(k){return has(k)&&(k==='bomb'?S.bombs>0:k==='bolt'?S.boltCd<=0:k==='shield'?S.shieldCd<=0:S.freezeCd<=0)}
+function skReady(k){if(S.path==='fa'&&k!=='bomb')return (S.mp||0)>=FA_SP[k].c&&!(S[k+'Cd']>0);return has(k)&&(k==='bomb'?S.bombs>0:k==='bolt'?S.boltCd<=0:k==='shield'?S.shieldCd<=0:S.freezeCd<=0)}
 function skUseful(k){
   const line=cLine(),zs=S.objs.filter(z=>z.k==='z'&&!z.dead&&z.y>0),crowd=zs.filter(z=>z.y>line*.45).length;
   const boss=zs.find(z=>z.boss),bossNear=boss&&boss.y>line*.55,eliteNear=zs.some(z=>z.type==='elite'&&z.y>line*.55);
@@ -2326,72 +2332,147 @@ function drawDemo(key,t){
 /* ================= SKILLS ================= */
 function canSkill(k){return running&&!paused&&S&&!tip&&has(k)&&!(S.seal&&S.seal[k]>0)}
 function useShield(){
-  if(!canSkill('shield')||S.shieldCd>0)return;S.shieldT=6;S.shieldCd=45*Math.pow(.85,S.cdUp||0)*skCd();skillUsed('shield');sfx(392,.4,'sine',.06,1.5);skillUI();
+  if(S&&S.path==='fa'){if(!faCast('shield'))return;S.shieldT=6}else{if(!canSkill('shield')||S.shieldCd>0)return;S.shieldT=6;S.shieldCd=45*Math.pow(.85,S.cdUp||0)*skCd()}skillUsed('shield');sfx(392,.4,'sine',.06,1.5);skillUI();
 }
 function useFreeze(){
-  if(!canSkill('freeze')||S.freezeCd>0)return;S.freezeT=3.5;S.freezeCd=35*Math.pow(.85,S.cdUp||0)*skCd();skillUsed('freeze');sfx(1200,.3,'sine',.05,.3);skillUI();
+  if(S&&S.path==='fa'){if(!faCast('freeze'))return;S.freezeT=3.5}else{if(!canSkill('freeze')||S.freezeCd>0)return;S.freezeT=3.5;S.freezeCd=35*Math.pow(.85,S.cdUp||0)*skCd()}skillUsed('freeze');sfx(1200,.3,'sine',.05,.3);skillUI();
 }
 const BOMB_S=10,BOLT_S=4;
-function skillPool(sec,inArea,bossCap){   // damage pool = sec seconds of your full DPS; nearest-to-line first; bosses take at most bossCap of max HP
+function skillPool(sec,inArea,bossCap,src){src=src||'sys';   // damage pool = sec seconds of your full DPS; nearest-to-line first; bosses take at most bossCap of max HP
   let pool=dps()/pathAtk()*sec,n=0;const zs=S.objs.filter(z=>z.k==='z'&&!z.dead&&inArea(z)).sort((a,b)=>b.y-a.y);
   for(const z of zs){if(pool<=0)break;const m=Math.max(1e-6,dmgMul(z));
-    if(z.boss){const d=Math.min(pool*m,z.hp0*bossCap);z.hp-=d;pool-=d/m;z.hit=.15;if(z.hp<=0){z.dead=true;killZ(z)}continue}
-    const need=z.hp/m;if(need<=pool){pool-=need;z.hp=0;z.dead=true;killZ(z);n++}else{z.hp-=pool*m;z.hit=.15;pool=0}}
+    if(z.boss){const d=Math.min(pool*m,z.hp0*bossCap);dNote(src,Math.min(z.hp,d));z.hp-=d;pool-=d/m;z.hit=.15;if(z.hp<=0){z.dead=true;killZ(z)}continue}
+    const need=z.hp/m;if(need<=pool){pool-=need;dNote(src,z.hp);z.hp=0;z.dead=true;if(src!=='sys'&&src!=='bomb')kdNote(z.y/cLine());killZ(z);n++}else{dNote(src,pool*m);z.hp-=pool*m;z.hit=.15;pool=0}}
   return n;
 }
-const FA_CD={fire:3,ice:14,sword:15};
-function faOk(k){return running&&!paused&&S&&S.path==='fa'&&!(S[k+'Cd']>0)}
+/* ===== 法修体系（11-01 22:01）：灵力施法 + 法术升级 + 被动法术 + 大境界进化 ===== */
+const FA_SP={   // 法修法术：灵力消耗、最短间隔
+  fire:{c:12,cd:.6,n:'火符'},bolt:{c:25,cd:2,n:'掌心雷'},sword:{c:35,cd:6,n:'万剑诀'},ice:{c:30,cd:10,n:'寒冰诀'},freeze:{c:30,cd:15,n:'定身符'},shield:{c:40,cd:25,n:'金钟罩'}};
+const FA_CD={fire:FA_SP.fire.cd,ice:FA_SP.ice.cd,sword:FA_SP.sword.cd};
+const FA_E=.09;   // 每点灵力 ≈ 多少秒基础火力
+const faLv=k=>(S&&S.fa&&S.fa[k])||0;
+const faUp=k=>1+.12*faLv(k);   // 法术升级：每级 +12%
+const faG=()=>1+.03*Math.max(0,S.maxR-3);   // 境界越高法术越强
+const psG=()=>1+.3*Math.max(0,S.maxR-3);   // 被动法术随境界变强
+const mpMax=()=>100+10*Math.max(0,S.maxR-3)+20*faLv('mp');
+const mpReg=()=>(10+.4*Math.max(0,S.maxR-3))*(1+.12*faLv('mp'));
+const FA_EVO={fire:{r:4,n:'三昧真火',e:'🔥',d:'火符落地留下一片火海，3 秒内持续灼烧'},sword:{r:5,n:'万剑归宗',e:'🗡',d:'万剑诀飞剑翻倍，优先斩噬元魔和 Boss'},
+  ice:{r:6,n:'冰封千里',e:'❄️',d:'寒冰诀先冻住全场 2 秒，减速期间妖受伤更多'},bolt:{r:7,n:'五雷正法',e:'⚡',d:'掌心雷同时劈两列'},xiang:{r:8,n:'法相天地',e:'🌀',d:'每放 3 个法术，自动追加一发火符并回 15 灵力'}};
+const faEvo=k=>!!S&&S.path==='fa'&&!!FA_EVO[k]&&S.maxR>=FA_EVO[k].r;
+const spName=k=>faEvo(k)?FA_EVO[k].n:FA_SP[k].n;
+const spPool=k=>FA_SP[k].c*FA_E*faUp(k)*faG();   // 这一发的威力（秒火力）
+const faBuild=()=>!S||S.path!=='fa'?1:(1+.03*(faLv('fire')+faLv('sword')+faLv('ice')+faLv('bolt')))*(1+.12*faLv('mp'))*(1+.06*(faLv('crow')+faLv('orb')+faLv('cloud')));
+const faPsum=()=>S&&S.fa?Object.values(S.fa).reduce((a,b)=>a+b,0):0;
+const crowP=L=>5-.5*L,cloudP=L=>9-L;
+const FA_PS={   // 被动法术：像法宝一样自己放，后期能替你清掉大部分小妖
+  crow:{n:'火鸦',e:'🐦',d:L=>'每 '+crowP(L).toFixed(1)+' 秒放出火鸦，自动轰炸离防线最近的一团'+(L>=4?'，一次两只':'')},
+  orb:{n:'护法飞剑',e:'🗡',d:L=>L+' 把飞剑绕身，不停斩离防线最近的妖'},
+  cloud:{n:'雷云',e:'⛈',d:L=>'每 '+cloudP(L)+' 秒落雷，劈妖最多的一列'+(L>=5?'（满级：两列一起劈）':'')}};
+const FA_UPD={fire:'火符威力 +12%',sword:'万剑诀威力 +12%',ice:'寒冰诀：减速更久，减速期间妖受伤 +6%',bolt:'掌心雷威力 +12%',mp:'灵力上限 +20、回复 +12%'};
+function faCast(k){   // 法修施法：够灵力、过了最短间隔才放；返回 false 表示没放
+  if(!running||paused||!S||S.path!=='fa'||tip)return false;const sp=FA_SP[k];
+  if(S[k+'Cd']>0)return false;
+  if(S.seal&&S.seal[k]>0)return false;
+  if((S.mp||0)<sp.c){if(!(S.mpWarn>0)){S.mpWarn=1.2;ftext(S.x,squadY-120,'灵力不足（'+Math.floor(S.mp||0)+' / '+sp.c+'）','#9fd0ff',17);sfx(200,.08,'square',.03)}return false}
+  S.mp-=sp.c;S[k+'Cd']=sp.cd;S.faCasts=(S.faCasts||0)+1;
+  if(faEvo('xiang')&&S.faCasts%3===0){S.mp=Math.min(mpMax(),S.mp+15);S.xiangT=.3}
+  return true}
+function fireTargets(n,R){const zs=S.objs.filter(z=>z.k==='z'&&!z.dead&&z.y>0).sort((a,b)=>b.y-a.y),out=[];
+  for(const z of zs){if(out.length>=n)break;if(out.every(o=>(o.x-z.x)**2+(o.y-z.y)**2>(R*1.4)**2))out.push(z)}return out}
+function launchFire(z,pool,src,crow){(S.fxFires=S.fxFires||[]).push({x0:S.x,y0:squadY-30,x:z.x,y:z.y,t:0,pool,src,crow,R:crow?70:85*(1+.06*faLv('fire'))})}
 function useFire(){   // 法修 · 火符：一颗火球砸向离防线最近的一团，范围爆炸
-  if(!faOk('fire'))return;const z=S.objs.filter(z=>z.k==='z'&&!z.dead&&z.y>0).sort((a,b)=>b.y-a.y)[0];if(!z){ftext(mid+roadW/4,H*.35,'火符：右道还没有妖','#ffb070',18);return}
-  S.fireCd=FA_CD.fire;S.fxFire={x0:S.x,y0:squadY-30,x:z.x,y:z.y,t:0};skillUsed('fire');skillUI();sfx(380,.15,'sawtooth',.04,1.6);
+  if(!S||S.path!=='fa')return;
+  if(!S.objs.some(z=>z.k==='z'&&!z.dead&&z.y>0)){if(running&&!paused)ftext(mid+roadW/4,H*.35,'火符：右道还没有妖','#ffb070',18);return}
+  if(!faCast('fire'))return;const two=faLv('fire')>=3,tg=fireTargets(two?2:1,85),pool=spPool('fire')/(two?1.6:1);
+  for(const z of tg)launchFire(z,pool,'fire',false);skillUsed('fire');skillUI();sfx(380,.15,'sawtooth',.04,1.6);
 }
-function fireHit(f){const n=skillPool(1.0*skPow(),q=>{const dx=q.x-f.x,dy=q.y-f.y;return dx*dx+dy*dy<85*85},.04);
-  burst(f.x,f.y,'#ff9a3a',30,280,5);burst(f.x,f.y,'#ffe08a',14,160,4);S.shake=Math.min(12,S.shake+4);sfx(140,.3,'sawtooth',.06,.4);ftext(f.x,f.y-34,n?'火符 · 烧掉 '+n+' 只':'火符 · 重创','#ffb070',18)}
-function useIce(){   // 法修 · 寒冰诀：全场妖魔减速一半，5 秒
-  if(!faOk('ice'))return;S.iceCd=FA_CD.ice*Math.pow(.85,S.cdUp||0);S.slowT=5;skillUsed('ice');skillUI();sfx(1400,.4,'sine',.05,.4);
-  ftext(mid+roadW/4,H*.3,'寒冰诀 · 全场减速 5 秒','#bfe8ff',22);
+function fireHit(f){const R=f.R||85,n=skillPool(f.pool,q=>{const dx=q.x-f.x,dy=q.y-f.y;return dx*dx+dy*dy<R*R},f.crow?.03:.06,f.src);
+  burst(f.x,f.y,f.crow?'#ff7a2a':'#ff9a3a',f.crow?16:30,f.crow?200:280,f.crow?4:5);burst(f.x,f.y,'#ffe08a',f.crow?6:14,160,4);
+  if(!f.crow){S.shake=Math.min(12,S.shake+4);sfx(140,.3,'sawtooth',.06,.4);ftext(f.x,f.y-34,n?spName('fire')+' · 烧掉 '+n+' 只':spName('fire')+' · 重创','#ffb070',18);
+    if(faEvo('fire'))(S.fields=S.fields||[]).push({x:f.x,y:f.y,r:R,t:3,tick:0,pool:f.pool*.5/6})}
+  else if(n)ftext(f.x,f.y-26,'火鸦 · '+n+' 只','#ff9a5a',14)}
+function useIce(){   // 法修 · 寒冰诀：全场妖魔减速一半
+  if(!faCast('ice'))return;const L=faLv('ice'),d=5*(1+.1*L);S.slowT=d;S.iceAmp=1+.06*L+(faEvo('ice')?.3:0);
+  if(faEvo('ice'))S.freezeT=Math.max(S.freezeT,2);skillUsed('ice');skillUI();sfx(1400,.4,'sine',.05,.4);
+  ftext(mid+roadW/4,H*.3,spName('ice')+(faEvo('ice')?' · 冻住 2 秒':'')+' · 减速 '+d.toFixed(1)+' 秒','#bfe8ff',22);
 }
 function useSword(){   // 法修 · 万剑诀：3 秒内飞剑不停斩向右道的妖
-  if(!faOk('sword'))return;S.swordCd=FA_CD.sword*Math.pow(.85,S.cdUp||0);S.swordT=3;S.swordTick=0;S.swordKill=0;skillUsed('sword');skillUI();sfx(900,.2,'square',.04,1.4);
-  ftext(mid+roadW/4,H*.3,'万剑诀！','#d8f4ff',24);
+  if(!faCast('sword'))return;S.swordT=3;S.swordTick=0;S.swordKill=0;S.swordPer=faEvo('sword')?.1:.2;S.swordHit=spPool('sword')*S.swordPer/3*(faEvo('sword')?1.3:1);
+  skillUsed('sword');skillUI();sfx(900,.2,'square',.04,1.4);ftext(mid+roadW/4,H*.3,spName('sword')+'！','#d8f4ff',24);
+}
+function faTick(dt){   // 每帧：灵力回复、火海、被动法术
+  if(S.path!=='fa')return;
+  if(S.mp==null)S.mp=mpMax();S.mp=Math.min(mpMax(),S.mp+mpReg()*dt);S.mpWarn=Math.max(0,(S.mpWarn||0)-dt);
+  if(S.xiangT>0){S.xiangT-=dt;if(S.xiangT<=0){const tg=fireTargets(1,85);if(tg.length){launchFire(tg[0],spPool('fire'),'fire',false);ftext(S.x,squadY-150,'法相 · 追加火符','#ffd27a',16)}}}
+  if(S.fields&&S.fields.length){for(const f of S.fields){f.t-=dt;f.tick-=dt;if(f.tick<=0){f.tick=.5;skillPool(f.pool,q=>(q.x-f.x)**2+(q.y-f.y)**2<f.r*f.r,.01,'fire')}}S.fields=S.fields.filter(f=>f.t>0)}
+  const pg=psG();
+  {const L=faLv('crow');if(L){S.crowT=(S.crowT==null?crowP(L):S.crowT)-dt;if(S.crowT<=0){S.crowT=crowP(L);const n=L>=4?2:1,tg=fireTargets(n,70);
+    for(const z of tg)launchFire(z,.1*L*pg*crowP(L)/n,'crow',true);if(tg.length)sfx(520,.1,'triangle',.03,1.4)}}}
+  {const L=faLv('orb');if(L){S.orbT=(S.orbT||0)-dt;if(S.orbT<=0){S.orbT=.5;const z=S.objs.filter(z=>z.k==='z'&&!z.dead&&z.y>H*.15).sort((a,b)=>b.y-a.y)[0];
+    if(z){skillPool(.07*L*pg*.5,q=>q===z,.008,'orb');(S.fxOrb=S.fxOrb||[]).push({x:z.x,y:z.y,t:.2})}}}}
+  {const L=faLv('cloud');if(L){S.cloudT=(S.cloudT==null?cloudP(L):S.cloudT)-dt;if(S.cloudT<=0){S.cloudT=cloudP(L);
+    const rm=mid+roadW/4,cols=[[mid+4,rm],[rm,roadX+roadW-4]],hp=[0,0];for(const z of S.objs)if(z.k==='z'&&!z.dead&&z.y>0)hp[z.x<rm?0:1]+=z.hp;
+    if(hp[0]+hp[1]>0){const use=L>=5?[0,1]:[hp[1]>hp[0]?1:0];let n=0;for(const c of use){const [x0,x1]=cols[c];n+=skillPool(.12*L*pg*cloudP(L)/use.length,z=>z.boss?(z.x+z.r>x0&&z.x-z.r<x1):(z.x>=x0&&z.x<=x1),.03,'cloud');(S.fxClouds=S.fxClouds||[]).push({x0,x1,t:.45})}
+      ftext(mid+roadW/4,H*.22,'雷云 · 劈 '+n+' 只','#c9d8ff',15);sfx(700,.2,'sawtooth',.04,.3)}}}}
+  if(S.fxOrb){for(const f of S.fxOrb)f.t-=dt;S.fxOrb=S.fxOrb.filter(f=>f.t>0)}
+  if(S.fxClouds){for(const f of S.fxClouds)f.t-=dt;S.fxClouds=S.fxClouds.filter(f=>f.t>0)}
+}
+function faEvoPop(){   // 刚到某个大境界：法术进化提示
+  if(S.path!=='fa')return;for(const k in FA_EVO){const v=FA_EVO[k];if(v.r===S.maxR){effectPop('evo_'+k,'法术进化 · '+v.n,v.d,{e:v.e});toast('法术进化：'+v.n,v.d)}}
 }
 function useBomb(){
   if(!canSkill('bomb')||S.bombs<=0)return;S.bombs--;skillUsed('bomb');
   // not a screen wipe: a pool worth BOMB_S seconds of your full fire, spent on the monsters nearest the line first
-  const k=skillPool(BOMB_S*skPow(),()=>true,.2);ftext(S.x,squadY-110,k>0?'净化 '+k+' 只':'',C.gold,20);
+  const k=skillPool(BOMB_S*skPow(),()=>true,.2,'bomb');ftext(S.x,squadY-110,k>0?'净化 '+k+' 只':'',C.gold,20);
   S.fxBomb=.7;S.shake=14;burst(W*.7,H*.4,'#fff3c4',40,420,4);
   sfx(60,.6,'sawtooth',.09,.4);sfx(220,.3,'square',.05,.3);skillUI();
 }
 function useBolt(){
-  if(!canSkill('bolt')||S.boltCd>0)return;skillUsed('bolt');
+  if(S&&S.path==='fa'){if(!S.objs.some(z=>z.k==='z'&&!z.dead&&z.y>0)||!faCast('bolt'))return}else if(!canSkill('bolt')||S.boltCd>0)return;skillUsed('bolt');
   const rm=mid+roadW/4,cols=[[mid+4,rm],[rm,roadX+roadW-4]];let c;
   if(S.x>=mid)c=S.x<rm?0:1;
   else{let n0=0,n1=0;for(const z of S.objs)if(z.k==='z'&&!z.dead){if(z.x<rm)n0++;else n1++}c=n1>n0?1:0}
   const [x0,x1]=cols[c];
-  skillPool(BOLT_S*skPow(),z=>z.boss?(z.x+z.r>x0&&z.x-z.r<x1):(z.x>=x0&&z.x<=x1),.06);
-  S.boltCd=20*skCd();S.fxBolt={x0,x1,t:.45};S.shake=Math.min(14,S.shake+6);sfx(900,.25,'sawtooth',.06,.2);skillUI();
+  const fa=S.path==='fa',both=fa&&faEvo('bolt'),pl=fa?spPool('bolt'):BOLT_S*skPow();
+  for(const [y0,y1] of both?cols:[[x0,x1]])skillPool(pl/(both?1.4:1),z=>z.boss?(z.x+z.r>y0&&z.x-z.r<y1):(z.x>=y0&&z.x<=y1),fa?.1:.06,'bolt');
+  if(!fa)S.boltCd=20*skCd();S.fxBolt=both?{x0:mid+4,x1:roadX+roadW-4,t:.45}:{x0,x1,t:.45};S.shake=Math.min(14,S.shake+6);sfx(900,.25,'sawtooth',.06,.2);skillUI();
 }
 function skillUI(){
   if(!S)return;
-  $('faRow').hidden=S.path!=='fa';$('skills').classList.toggle('fa',S.path==='fa');if(S.path==='fa')for(const [k,id] of [['fire','Fire'],['ice','Ice'],['sword','Sword']]){const f=$('sk'+id),cd=S[k+'Cd']||0;$('sk'+id+'T').textContent=cd>0?Math.ceil(cd):'';f.style.setProperty('--p',(cd/FA_CD[k]).toFixed(3));f.classList.toggle('off',cd>0)}
+  const isFa=S.path==='fa';$('faRow').hidden=!isFa;$('skills').classList.toggle('fa',isFa);$('mpOrb').hidden=!isFa;
+  if(isFa){const mp=S.mp||0,mm=mpMax();$('mpFill').style.height=(mp/mm*100).toFixed(1)+'%';$('mpT').textContent=Math.floor(mp);
+    for(const [k,id] of [['fire','Fire'],['ice','Ice'],['sword','Sword'],['bolt','Bolt'],['shield','Shield'],['freeze','Freeze']]){const f=$('sk'+id),sp=FA_SP[k],cd=S[k+'Cd']||0,lack=mp<sp.c;f.hidden=false;
+      $('sk'+id+'T').textContent=cd>=1?Math.ceil(cd):lack?sp.c:'';f.style.setProperty('--p',(cd>0?cd/sp.cd:lack?1-mp/sp.c:0).toFixed(3));f.classList.toggle('off',cd>0||lack);
+      const sm=f.querySelector('small'),nm=spName(k);if(sm.textContent!==nm)sm.textContent=nm}}
   const b=$('skBomb');b.hidden=!has('bomb');
   $('skBombN').textContent=S.bombs;b.classList.toggle('off',S.bombs<=0);
-  for(const [id,cd,full] of [['Bolt',S.boltCd,20],['Shield',S.shieldCd,45],['Freeze',S.freezeCd,35]]){
+  if(!isFa)for(const [id,cd,full] of [['Bolt',S.boltCd,20],['Shield',S.shieldCd,45],['Freeze',S.freezeCd,35]]){
     const el=$('sk'+id),k=id.toLowerCase();el.hidden=!has(k);
     $('sk'+id+'T').textContent=cd>0?Math.ceil(cd):'';el.style.setProperty('--p',(cd/full).toFixed(3));el.classList.toggle('off',cd>0)}
   for(const k of ['bomb','bolt','shield','freeze']){const el=$('sk'+SKN[k]);el.classList.toggle('sealed',!!(S.seal&&S.seal[k]>0))}
 }
 function fabaoBar(){   // 法宝状态：左下角小图标 + 冷却圈，触发前 1 秒发光
-  const ks=['gourd','bell','mirror'].filter(k=>S.fb[k]>0);if(!ks.length)return;let x=roadX+20;const y=squadY+sw()*.3+64;
+  const ks=['gourd','bell','mirror'].filter(k=>S.fb[k]>0),ps=S.path==='fa'?['crow','orb','cloud'].filter(k=>faLv(k)):[];if(!ks.length&&!ps.length)return;let x=roadX+20;const y=squadY+sw()*.3+64;
+  {let px=roadX+20;const py=y+(ks.length?48:0);for(const k of ps){const L=faLv(k),per=k==='crow'?crowP(L):k==='cloud'?cloudP(L):0,left=k==='crow'?S.crowT:k==='cloud'?S.cloudT:0;
+    ctx.fillStyle='rgba(10,12,30,.65)';ctx.beginPath();ctx.arc(px,py,16,0,6.283);ctx.fill();ctx.font='17px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(FA_PS[k].e,px,py+1);
+    if(per&&left!=null){ctx.strokeStyle='rgba(150,200,255,.9)';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(px,py,16,-Math.PI/2,-Math.PI/2+6.283*(1-clamp(left/per,0,1)));ctx.stroke()}
+    outlined('Lv'+L,px,py+21,10,'#cfe6ff',CN);px+=40}}
   for(const k of ks){const L=S.fb[k],per=k==='gourd'?6-.5*L:k==='bell'?12-L:0,left=k==='gourd'?S.gourdT:k==='bell'?S.bellT:0,ready=per&&left<1;
     ctx.fillStyle='rgba(10,12,20,.6)';ctx.beginPath();ctx.arc(x,y,17,0,6.283);ctx.fill();gateIcon('fb',{fbk:k},x,y,.8,S.t,false);
     if(per){ctx.strokeStyle=ready?'#fff3a0':'rgba(255,214,119,.85)';ctx.lineWidth=ready?3.5:2.5;ctx.beginPath();ctx.arc(x,y,17,-Math.PI/2,-Math.PI/2+6.283*(1-clamp(left/per,0,1)));ctx.stroke()}
     outlined('Lv'+L,x,y+22,10,'#ffe6a0',CN);x+=42}
 }
 function drawSkillFx(){
-  if(S.fxFire){const f=S.fxFire,u=Math.min(1,f.t),x=f.x0+(f.x-f.x0)*u,y=f.y0+(f.y-f.y0)*u-Math.sin(u*Math.PI)*60;
-    ctx.fillStyle='rgba(255,160,60,.35)';ctx.beginPath();ctx.arc(x,y,18,0,6.283);ctx.fill();ctx.fillStyle='#ffd27a';ctx.beginPath();ctx.arc(x,y,9,0,6.283);ctx.fill();
-    ctx.strokeStyle='rgba(255,120,40,.5)';ctx.lineWidth=2;ctx.setLineDash([4,4]);ctx.beginPath();ctx.arc(f.x,f.y,85,0,6.283);ctx.stroke();ctx.setLineDash([])}
+  if(S.fxFires)for(const f of S.fxFires){const u=Math.min(1,f.t),x=f.x0+(f.x-f.x0)*u,y=f.y0+(f.y-f.y0)*u-Math.sin(u*Math.PI)*(f.crow?90:60),sc=f.crow?.7:1;
+    ctx.fillStyle=f.crow?'rgba(255,110,40,.4)':'rgba(255,160,60,.35)';ctx.beginPath();ctx.arc(x,y,18*sc,0,6.283);ctx.fill();
+    if(f.crow){ctx.font='18px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🐦',x,y)}else{ctx.fillStyle='#ffd27a';ctx.beginPath();ctx.arc(x,y,9,0,6.283);ctx.fill()}
+    ctx.strokeStyle='rgba(255,120,40,.5)';ctx.lineWidth=2;ctx.setLineDash([4,4]);ctx.beginPath();ctx.arc(f.x,f.y,f.R||85,0,6.283);ctx.stroke();ctx.setLineDash([])}
+  if(S.fields)for(const f of S.fields){const a=Math.min(1,f.t/3);ctx.fillStyle='rgba(255,90,30,'+(.18+.08*Math.sin(S.t*9))*a+')';ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,6.283);ctx.fill();
+    for(let i=0;i<3;i++){const ax=f.x+rand(-f.r*.7,f.r*.7),ay=f.y+rand(-f.r*.5,f.r*.5);ctx.fillStyle='rgba(255,200,90,'+a*.7+')';ctx.beginPath();ctx.arc(ax,ay,3,0,6.283);ctx.fill()}}
+  if(S.fxOrb)for(const f of S.fxOrb){const a=f.t/.2;ctx.strokeStyle='rgba(200,240,255,'+a+')';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(S.x,squadY-40);ctx.lineTo(f.x,f.y);ctx.stroke()}
+  if(S.path==='fa'&&faLv('orb')){const L=faLv('orb');for(let i=0;i<L;i++){const an=S.t*2.4+i*6.283/L,ox=S.x+Math.cos(an)*(sw()*.55+16),oy=squadY-14+Math.sin(an)*14;ctx.save();ctx.translate(ox,oy);ctx.rotate(an+1.57);ctx.fillStyle='#dff4ff';ctx.fillRect(-1.5,-9,3,18);ctx.fillStyle='#ffd677';ctx.fillRect(-4,5,8,2.5);ctx.restore()}}
+  if(S.fxClouds)for(const f of S.fxClouds){const a=f.t/.45,cx=(f.x0+f.x1)/2;ctx.fillStyle='rgba(150,170,255,'+(.25*a)+')';ctx.fillRect(f.x0,0,f.x1-f.x0,H);ctx.font='34px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.globalAlpha=a;ctx.fillText('⛈',cx,H*.12);ctx.globalAlpha=1;
+    ctx.strokeStyle='rgba(220,230,255,'+a+')';ctx.lineWidth=3;ctx.beginPath();let x=cx;ctx.moveTo(x,H*.14);for(let y=H*.14;y<squadY;y+=30){x=cx+rand(-(f.x1-f.x0)*.25,(f.x1-f.x0)*.25);ctx.lineTo(x,y)}ctx.stroke()}
   if(S.fxSwords)for(const f of S.fxSwords){const a=f.t/.25;ctx.strokeStyle='rgba(220,245,255,'+a+')';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(f.x-14,f.y-60*a-10);ctx.lineTo(f.x,f.y);ctx.stroke()}
   if(S.slowT>0){ctx.fillStyle='rgba(160,220,255,'+(.10+.05*Math.sin(S.t*6))+')';ctx.fillRect(mid,0,roadX+roadW-mid,H);outlined('寒冰 '+Math.ceil(S.slowT)+'s',mid+roadW/4,H*.16,14,'#cfefff',CN)}
   if(S.fxSpell){const f=S.fxSpell,a=f.t/.35;ctx.strokeStyle='rgba(255,170,80,'+a+')';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(S.x,squadY-20);ctx.lineTo(f.x,f.y);ctx.stroke();ctx.fillStyle='rgba(255,220,140,'+a+')';ctx.beginPath();ctx.arc(f.x,f.y,22*(1.2-a),0,6.283);ctx.fill()}
@@ -2452,7 +2533,7 @@ addEventListener('keydown',e=>{if(e.key==='q')useBomb();if(e.key==='e')useBolt()
 addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='a')keys.l=false;if(e.key==='ArrowRight'||e.key==='d')keys.r=false});
 
 async function lockWake(){try{if(navigator.wakeLock)await navigator.wakeLock.request('screen')}catch(e){}}
-const RUN_SKIP=new Set(['objs','bullets','parts','texts','cfx','tipObj','comboGate','guards','fxGourd','fxBolt','stage']);
+const RUN_SKIP=new Set(['objs','bullets','parts','texts','cfx','tipObj','comboGate','guards','fxGourd','fxBolt','stage','fxFires','fields','fxOrb','fxClouds']);
 function saveRun(){   // 存档：把这一局原样存进存档（每 30 秒、切后台、存档退出时都会存）
   if(!S||S.tut||!running&&!paused)return;const s=slot();if(!s)return;
   bankCoins();const snap={};for(const k in S)if(!RUN_SKIP.has(k))snap[k]=S[k];snap.rowDone=[...(S.rowDone||[])];
@@ -2465,7 +2546,7 @@ function resumeRun(snap){
   Object.assign(S,{objs:[],bullets:[],parts:[],texts:[],cfx:[],guards:[],stage:null,comboGate:null,tipObj:null,fxGourd:null,fxBolt:null,fxBomb:0,
     surgeOn:false,bossAlive:false,shieldT:0,freezeT:0,hexT:0,zouT:0,pickQ:0,brkPend:0,regroup:0,tut:false,x:lmid,shake:0,flash:0,leakAcc:0,leakRate:0,lastHp:null});
   if(S.path&&!S.pathV2){if(S.path==='fa'){S.dmg*=.75;S.fireCd=0}else{S.dmg*=1.5/1.4;S.armor*=.7/.8}}S.pathV2=true;
-  if(S.path&&!S.pathV3){S.dmg/=S.path==='fa'?.6:1.5;S.pathV3=true}   // 流派倍率改成单独计算（敌人不再跟着变）   // 11-01 21:10 路线数值加强，旧存档补齐
+  if(S.path&&!S.pathV3){S.dmg/=S.path==='fa'?.6:1.5;S.pathV3=true}if(S.path==='fa'&&!S.pathV4){S.fa=S.fa||{};S.mp=mpMax();S.pathV4=true;setTimeout(()=>effectPop('fa_mana','法修改版 · 灵力施法','右下角蓝色圆球是灵力：法术耗灵力、间隔很短，想放就放。剑气越往后越弱；三选一会出现法术升级和被动法术（火鸦、护法飞剑、雷云）；大境界法术会进化。',{e:'💧'}),1500)}   // 11-01 22:10 法修灵力体系   // 流派倍率改成单独计算（敌人不再跟着变）   // 11-01 21:10 路线数值加强，旧存档补齐
   S.t=PRE+CYC*(Math.floor(Math.max(0,S.t-PRE)/CYC)+1)+.01;S.dirPh=undefined;S.Dref=refDps();renderUps();
   toast('继续修炼',rName(realmOf(S.count))+' · 气血 '+Math.round(S.hpF*100)+'%');
 }
@@ -2488,7 +2569,12 @@ function renderPause(){   // 暂停页：当前阶段 + 每项数值 / 本境界
     +(lv!=null?'<span class="bar"><u style="width:'+Math.min(100,capN/mxN*100)+'%"></u><i style="width:'+Math.min(100,lv/mxN*100)+'%"></i></span>':'')+(note?'<span class="n">'+note+'</span>':'')+'</div>'};
   const capNext=k=>S.maxR<TOPR&&upCap(k,S.maxR+1)>upCap(k)?'下一大境界上限升到 Lv'+upCap(k,S.maxR+1):'';
   const gap=(lv,cap)=>lv>=cap?'本境界已满':'还能升 '+(cap-lv)+' 级';
-  let h='<h4>基础数值</h4>';
+  let h='';
+  {const d=S.dsrc||{},tot=Object.values(d).reduce((a,b)=>a+b,0);if(tot>0){const fa=S.path==='fa',pc=v=>Math.round((v||0)/tot*100)+'%',sum=a=>a.reduce((x,k)=>x+(d[k]||0),0);
+    const nm={atk:'剑气（普攻）',pet:'灵宠',fire:fa?spName('fire'):'火符',sword:fa?spName('sword'):'万剑诀',bolt:fa?spName('bolt'):'掌心雷',bomb:'雷劫符',gourd:'紫金葫芦',crow:'火鸦',orb:'护法飞剑',cloud:'雷云',sys:'破境天雷 / 整顿'};
+    h+='<h4>输出构成（近 1 分钟）</h4><div class="r"><b>概览</b><span class="v">普攻 '+pc(d.atk)+' · 主动法术 '+pc(sum(['fire','sword','bolt','bomb']))+' · 自动（法宝/被动/灵宠） '+pc(sum(['pet','gourd','crow','orb','cloud']))+'</span></div>';
+    for(const [k,v] of Object.entries(d).sort((a,b)=>b[1]-a[1]))if(v/tot>=.005)h+='<div class="r"><b>'+(nm[k]||k)+'</b><span class="v">'+pc(v)+'</span><span class="bar"><i style="width:'+(v/tot*100).toFixed(1)+'%"></i></span></div>'}}
+  h+='<h4>基础数值</h4>';
   h+=row('剑意',S.lv.dmg,upCap('dmg'),UPG.dmg.max+(0),'伤害 '+mx(S.dmg),gap(S.lv.dmg,upCap('dmg'))+(capNext('dmg')?' · '+capNext('dmg'):''));
   h+=row('剑速',S.lv.rate,upCap('rate'),UPG.rate.max,'剑速 '+mx(S.rate),gap(S.lv.rate,upCap('rate'))+(capNext('rate')?' · '+capNext('rate'):''));
   h+=row('剑雨',S.lv.spread,upCap('spread'),UPG.spread.max+(S.path==='ti'?1:0),'+'+S.spread*2+' 道剑气',gap(S.lv.spread,upCap('spread')));
@@ -2501,9 +2587,14 @@ function renderPause(){   // 暂停页：当前阶段 + 每项数值 / 本境界
   h+='<h4>技能</h4>';
   const cdm=Math.pow(.85,S.cdUp||0)*skCd(),SK=[['bomb','雷劫符','威力 '+(BOMB_S*skPow()).toFixed(0)+' 秒火力，Boss 最多 −20% · 存 '+S.bombs+' / '+bombCap()+' 张'],
     ['bolt','掌心雷','威力 '+(BOLT_S*skPow()).toFixed(0)+' 秒火力打一列 · 冷却 '+Math.round(20*skCd())+' 秒'],['shield','金钟罩','6 秒内冲线不伤你 · 冷却 '+Math.round(45*cdm)+' 秒'],['freeze','定身符','全场定住 3.5 秒 · 冷却 '+Math.round(35*cdm)+' 秒']];
-  if(S.path==='fa')SK.push(['fire','火符','火球砸最近一团（范围），威力 '+(1*skPow()).toFixed(1)+' 秒火力 · 冷却 '+FA_CD.fire+' 秒'],['ice','寒冰诀','全场妖魔减速一半 5 秒 · 冷却 '+Math.round(FA_CD.ice*Math.pow(.85,S.cdUp||0))+' 秒'],['sword','万剑诀','3 秒内飞剑乱斩，共 '+(3*skPow()).toFixed(1)+' 秒火力 · 冷却 '+Math.round(FA_CD.sword*Math.pow(.85,S.cdUp||0))+' 秒']);
+  if(S.path==='fa'){SK.length=1;for(const k of ['fire','bolt','sword','ice','freeze','shield']){const sp=FA_SP[k],d={fire:'砸最近一团，威力 '+spPool('fire').toFixed(1)+' 秒火力'+(faLv('fire')>=3?'（两颗）':'')+(faEvo('fire')?'，留火海':''),bolt:'劈'+(faEvo('bolt')?'两列':'一列')+'，威力 '+spPool('bolt').toFixed(1)+' 秒火力',sword:'3 秒飞剑乱斩，共 '+(spPool('sword')*(faEvo('sword')?1.3:1)).toFixed(1)+' 秒火力',ice:'全场减速 '+(5*(1+.1*faLv('ice'))).toFixed(1)+' 秒'+(faEvo('ice')?'（先冻住 2 秒）':''),freeze:'全场定住 3.5 秒',shield:'6 秒内冲线不伤你'}[k];SK.push([k,spName(k),d+' · 耗灵力 '+sp.c+' · 间隔 '+sp.cd+' 秒'])}}
+  if(false)SK.push(['fire','火符','火球砸最近一团（范围），威力 '+(1*skPow()).toFixed(1)+' 秒火力 · 冷却 '+FA_CD.fire+' 秒'],['ice','寒冰诀','全场妖魔减速一半 5 秒 · 冷却 '+Math.round(FA_CD.ice*Math.pow(.85,S.cdUp||0))+' 秒'],['sword','万剑诀','3 秒内飞剑乱斩，共 '+(3*skPow()).toFixed(1)+' 秒火力 · 冷却 '+Math.round(FA_CD.sword*Math.pow(.85,S.cdUp||0))+' 秒']);
   for(const [k,n,d] of SK){const on=['fire','ice','sword'].includes(k)||has(k);h+='<div class="r'+(on?'':' off')+'"><b>'+n+'</b><span class="v">'+(on?d:'未解锁 · 约 '+Math.max(1,Math.ceil(((FEAT[k]||0)-S.t)/60))+' 分钟后')+'</span></div>'}
-  if(S.path)h+='<div class="r"><b>'+(S.path==='ti'?'体修':'法修')+'</b><span class="v">'+(S.path==='ti'?'剑气 ×1.5、受伤 −30%、气血 ×1.3；技能冷却 +40%、威力 −30%':'法术全开、威力 ×2.5、冷却减半、雷劫符 5 张、火符/寒冰诀/万剑诀；剑气 ×0.5')+'</span></div>';
+  if(S.path==='fa'){h+='<h4>法修 · 灵力与被动法术</h4>';h+=row('灵力',faLv('mp'),fbCap(),5,'上限 '+mpMax()+' · 每秒回 '+mpReg().toFixed(1),gap(faLv('mp'),fbCap()));
+    for(const k of ['fire','sword','ice','bolt'])h+=row(FA_SP[k].n+'升级',faLv(k),fbCap(),5,'威力 ×'+faUp(k).toFixed(1),gap(faLv(k),fbCap()));
+    for(const k of ['crow','orb','cloud']){const L=faLv(k);h+=row(FA_PS[k].n,L,fbCap(),5,L?FA_PS[k].d(L):'还没有（三选一里出现）',L<5?'下一级：'+FA_PS[k].d(L+1):'')}
+    h+='<div class="r"><b>法术进化</b><span class="v">'+Object.values(FA_EVO).map(v=>(S.maxR>=v.r?'✓ ':'')+v.n+'（'+REALMS[v.r]+'）').join(' · ')+'</span></div>'}
+  if(S.path)h+='<div class="r"><b>'+(S.path==='ti'?'体修':'法修')+'</b><span class="v">'+(S.path==='ti'?'剑气 ×1.5、受伤 −30%、气血 ×1.3；技能冷却 +40%、威力 −30%':'剑气 ×'+faAtk()+'（越往后越弱，'+REALMS[10]+'后 ×0.1）；法术耗灵力、间隔短，威力随境界涨；雷劫符最多 5 张')+'</span></div>';
   else h+='<div class="r off"><b>修炼路线</b><span class="v">踏入筑基时选择体修或法修</span></div>';
   $('pauseBuild').innerHTML=h;
 }
