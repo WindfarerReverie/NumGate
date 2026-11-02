@@ -138,8 +138,9 @@ drawSquad=function(){
   ctx.fillStyle=inL?'rgba(255,158,199,.18)':'rgba(180,154,255,.18)';
   ctx.beginPath();ctx.ellipse(S.x,squadY+rows*cell*.35,w*.62,rows*cell*.5+12,0,0,6.28);ctx.fill();
   if(S.lv.rate>=3)drawSwordRing(S.x,squadY-6,S.t,S.lv.rate>=6?8:4,w*.55+10);
-  const R=Math.min(OUT.length-1,S.rR),O=OUT[R];let i=0;
-  for(let rI=0;rI<rows;rI++){const inRow=Math.min(cols,n-i);
+  const R=Math.min(OUT.length-1,S.rR),O=OUT[R];let i=0;const SQI=aI(S.path==='fa'?'sq_fa':'sq_ti');
+  if(SQI){for(let rI=0;rI<rows;rI++){const inRow=Math.min(cols,n-i);for(let c=0;c<inRow;c++,i++){const x=S.x+(c-(inRow-1)/2)*cell+(rI%2?cell*.25:0),y=squadY+10+rI*cell*.8+Math.sin(S.t*6+i)*1.4;sprH(ctx,SQI,x,y+5,18,0,1)}}i=n}   /* 11-02 23:08：小精灵用手绘背影 */
+  for(let rI=0;rI<rows&&i<n;rI++){const inRow=Math.min(cols,n-i);
     for(let c=0;c<inRow;c++,i++){
       const x=S.x+(c-(inRow-1)/2)*cell+(rI%2?cell*.25:0),y=squadY+10+rI*cell*.8+Math.sin(S.t*6+i)*1.4;
       const fl=Math.abs(Math.sin(S.t*18+i))*.9+.3;
@@ -160,7 +161,7 @@ drawSquad=function(){
   drawLayerBar(by,tw,PX);
 };
 const girlTop=r=>(r>=14?82:r>=11?74:r>=8?62:r>=6?58:r>=2?52:46)*(1+.02*r);
-drawSwordRing=function(x,y,t,n,rad){for(let i=0;i<n;i++){const a=t*2.4+i*6.283/n,sx=x+Math.cos(a)*rad,sy=y+Math.sin(a)*rad*.45;
+drawSwordRing=function(x,y,t,n,rad){if(swRingArt(x,y,t,n,rad))return;for(let i=0;i<n;i++){const a=t*2.4+i*6.283/n,sx=x+Math.cos(a)*rad,sy=y+Math.sin(a)*rad*.45;
   ctx.fillStyle=i%2?'#fff8c0':'#ffb3d9';ctx.beginPath();for(let k=0;k<10;k++){const b=-Math.PI/2+k*Math.PI/5+t,r2=k%2?2:4.6;ctx.lineTo(sx+Math.cos(b)*r2,sy+Math.sin(b)*r2)}ctx.fill()}};
 
 /* ---------- pets (replace 法相) ---------- */

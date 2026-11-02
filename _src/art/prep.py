@@ -81,6 +81,24 @@ for k in ['ti','fa']:
     MAP['PJ_' + k] = ('pj_' + k, 128)
     MAP['GPJ_' + k] = ('g_pj_' + k, 128)
 MAP['XF_pillar'] = ('fx_pillar', 300)
+# 11-02 23:08 全面美术自查：小兵、门框、锁、飞剑坐骑、光屑、冲击波、灵珠、阶数印记、树叶、剑罡/护盾光罩、战意/勇气火焰
+for pre, gp in [('', ''), ('G', 'g_')]:
+    for k in ['ti', 'fa']:
+        MAP[pre + 'SQ_' + k] = (gp + 'sq_' + k, 64)
+    MAP[pre + 'GATEF_good'] = (gp + 'gatef_good', 320)
+    MAP[pre + 'GATEF_bad'] = (gp + 'gatef_bad', 320)
+    MAP[pre + 'LOCK'] = (gp + 'lock', 64)
+    MAP[pre + 'SPARK'] = (gp + 'spark', 64)
+    MAP[pre + 'WAVE'] = (gp + 'wave', 320)
+    MAP[pre + 'PORB'] = (gp + 'porb', 64)
+    MAP[pre + 'PIP'] = (gp + 'pip', 48)
+    for n in range(1, 5):
+        MAP[pre + 'GANG_%d' % n] = (gp + 'gang_%d' % n, 300)
+        MAP[pre + 'ZHAN_%d' % n] = (gp + 'zhan_%d' % n, 300)
+MAP['XPLAT'] = ('xplat', 160)
+MAP['DIV'] = ('div', 900)
+MAP['GDIV'] = ('g_div', 900)
+MAP['LEAF'] = ('leaf', 64)
 
 def find(code):
     for c in (code + 'r', code + 'q', code):
