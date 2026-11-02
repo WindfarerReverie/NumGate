@@ -357,25 +357,24 @@ draw=function(){
     for(const o of S.objs)if(o.k==='z'){drawZ(o);drawZFx(o)}
     if(S.hexT>0)outlined('星速 −25% '+Math.ceil(S.hexT)+'s',S.x,squadY+sw()*.3+40,13,C.minus,CN);
     if(S.temp&&tempOn(S.temp.k))outlined(TEMPS[S.temp.k].n+' 生效中',S.x,squadY+sw()*.3+56,13,'#ffb347',CN);
-    drawBullets();drawSquad();
+    drawBullets();drawSquadT();
     if(tip&&S.tipObj)drawRing(S.tipObj);
     for(const p of S.parts){ctx.globalAlpha=clamp(p.life/p.l0,0,1);ctx.fillStyle=p.col;const z=p.size;ctx.beginPath();ctx.moveTo(p.x,p.y+z*.6);ctx.bezierCurveTo(p.x-z,p.y,p.x-z*.5,p.y-z*.8,p.x,p.y-z*.25);ctx.bezierCurveTo(p.x+z*.5,p.y-z*.8,p.x+z,p.y,p.x,p.y+z*.6);ctx.fill()}
     ctx.globalAlpha=1;
     {const ci=ART_ON&&artImg('fx_12');if(ci)for(const c of S.cfx)fxImg(ctx,12,c.x,c.y,18,0)}   /* 11-02 15:25：女生版也用手绘星钻 */
     if(!(ART_ON&&artImg('fx_12')))for(const c of S.cfx){ctx.fillStyle='#bff4ff';ctx.beginPath();ctx.moveTo(c.x,c.y-6);ctx.lineTo(c.x+5,c.y);ctx.lineTo(c.x,c.y+6);ctx.lineTo(c.x-5,c.y);ctx.closePath();ctx.fill();ctx.strokeStyle='#5aa8d8';ctx.lineWidth=1.2;ctx.stroke()}
-    for(const t of S.texts){ctx.globalAlpha=clamp(t.life*1.5,0,1);outlined(t.text,t.x,t.y,t.size*(1+.45*Math.max(0,(t.life-.86)/.14)),t.col)}
-    ctx.globalAlpha=1;drawBossIntro();ctx.globalAlpha=1;
+    ctx.globalAlpha=1;
   }
   const g=ctx.createLinearGradient(0,0,0,H*.2);g.addColorStop(0,'rgba(26,20,48,.95)');g.addColorStop(1,'rgba(26,20,48,0)');
   ctx.fillStyle=g;ctx.fillRect(0,0,W,H*.2);
-  if(S){drawSkillFx();drawSprFx()}   /* 11-02 15:25：女生版之前漏了手绘特效（g_fx_*）的绘制 */
+  if(S){drawSkillFx();drawSprFx();drawTexts()}   /* 11-02 15:25：女生版之前漏了手绘特效（g_fx_*）的绘制 */
   if(S&&S.flash>0){ctx.fillStyle='rgba(255,90,140,'+(S.flash*.4)+')';ctx.fillRect(0,0,W,H)}
   ctx.restore();
 };
 
 /* ---------- tutorial text, rewritten for this theme ---------- */
 Object.assign(TIPS,{
-  intro:{t:'怎么玩',d:'按住屏幕左右拖动，带着小精灵们换道。小精灵会自动往前发射星光。'},
+  intro:{t:'怎么玩',d:'按住屏幕左右拖动，带着小精灵们换道。小精灵会自动往前发射星光。手指按下的地方会出现一个小摇杆，圆钮跟着手指，告诉你正往哪边走；不用划很远就能横跨两边。'},
   qi:{t:'星光糖',d:'撞上去，魔力涨几颗星。门上的数字可以用星光打涨。两扇都是星光糖时，挑数字大的。'},
   n:{t:'烦恼球',d:'坏情绪小怪从右边往下走，冲过红线会吸走你一点魔力。去右边用星光把它净化成小花，还能涨魔力。'},
   xin:{t:'负能量',d:'撞上去会掉魔力。用星光打它能把损失打掉一半。能避开就别撞。'},
@@ -394,11 +393,11 @@ Object.assign(TIPS,{
   elite:{t:'内耗怪',d:'冲线会吸走你的魔力（最多一整颗星）。头上写着它的称号，称号比你高时，你打它很吃力。'},
   zou:{t:'熬夜',d:'撞上去，星速变慢一段时间。打它能缩短时间。'},
   shield:{t:'泡泡护盾',d:'右下角新魔法：六秒内小怪冲线不会伤你，大噩梦也不例外。用完要等四十五秒。'},
-  vein:{t:'愿望水晶（带锁）',d:'收益约是星光糖的 6 倍，但必须先把锁打开才能吃，锁没开撞上去没用。打锁要花火力，这时右边的小怪会压上来——吃眼前的星光糖，还是冒险破锁吃水晶，看场面决定。'},
+  vein:{t:'愿望水晶（带锁）',d:'愿望水晶是左边最赚的门：一扇顶约 6 颗星光糖（门上写着能涨多少魔力），想快点变身全靠它。代价是必须先把锁打开才能吃——锁没开撞上去没用，而打锁的这几秒没人管右边，小怪会压过来。怎么选：右边没什么小怪、危险度低，就开锁吃水晶；右边吃紧、危险度高，先吃眼前的星光糖保平安，下一颗水晶再说。'},
   trap:{t:'右边的负能量',d:'右边也会飘来负能量，只占半条道。打小怪时侧身让开就行。'},
   freeze:{t:'噩梦暂停',d:'右下角新魔法：给整场噩梦按下暂停键，全场小怪定住三秒半，趁机净化。用完要等三十五秒。'},
   fu:{t:'魔法卡（带锁）',d:'撞上去：多一次星光爆发，或者让某个魔法马上能再用。'},
-  jie:{t:'流星考验',d:'从见习魔法生起，每个称号里大约每 7 分钟，左边会来一次流星考验（来之前约 10 秒，左边上方会亮紫光倒计时预告）：走得很慢、锁很厚（要你全力打约 4.5 秒，右边的小怪这时会压上来）。打开后冲过去＝通过考验：魔力直接 +1.2 星（后期相当于攒很久）、星力永久 ×1.08、回 10% 元气；没打开就撞上去，扣 15% 元气、掉魔力。不想冒险就躲到右边——但不去考验，变身会慢很多。'},
+  jie:{t:'流星考验',d:'从见习魔法生起，每个称号里大约每 7 分钟，左边会来一次流星考验（来之前约 6 秒，左边上方会亮紫光倒计时预告）：走得很慢、锁很厚（要你全力打约 3 秒，右边的小怪这时会压上来）。打开后冲过去＝通过考验：魔力直接 +1.2 星（后期相当于攒很久）、星力永久 ×1.08、回 10% 元气；没打开就撞上去，扣 15% 元气、掉魔力。不想冒险就躲到右边——但不去考验，变身会慢很多。'},
   hex:{t:'瞌睡精',d:'头上会读条，读满后你的星速 −25%，持续 4 秒。看到就先净化它。'},
   guard:{t:'黏人怪',d:'身边一圈里的小怪受到的伤害减少 40%。先打黏人怪，再清其他。'},
   cast:{t:'大噩梦的技能',d:'第三波起大噩梦会放技能：召唤小怪、冲刺、瞌睡咒（星速 −25%）、封印（某个魔法 6 秒不能用）。读条时打掉它 8% 的血就能打断。'},
@@ -486,9 +485,9 @@ Object.assign(MON_V,{n:['烦恼球','带刺烦恼球','双生烦恼球','雷云�
   const hh=heroTop(r)*1.25*scl,br=Math.sin(t*2.4),fl=r>=8?-5+Math.sin(t*2.2)*1.5:0;g.save();g.translate(x,y);
   g.globalAlpha=.25;g.fillStyle='#6a3a8a';g.beginPath();g.ellipse(0,2,13*scl,3.5*scl,0,0,6.283);g.fill();g.globalAlpha=1;
   if(r>=4){const k=.5+.5*Math.sin(t*3);g.globalAlpha=.25+.15*k;g.fillStyle='#ffd6ea';g.beginPath();g.ellipse(0,fl-hh*.45,hh*.42,hh*.55,0,0,6.283);g.fill();g.globalAlpha=1}
-  const yb=fl+3;g.translate(0,yb);g.scale(1-.008*br,1+.018*br);artDraw(g,im,0,0,hh);g.restore()}}
+  const yb=fl+3;g.translate(0,yb);g.scale(1-.008*br,1+.018*br);artDraw(g,im,0,0,hh,null,OL_F(g));g.restore()}}
 {const _f=drawFaxiang;drawFaxiang=function(g,x,y,sc,t,lvl){lvl=clamp(lvl|0,1,PETS.length);const im=artImg('pet_'+(lvl-1));if(!im)return _f(g,x,y,sc,t,lvl);
   const P=PETS[lvl-1],bob=Math.sin(t*3)*2,go=S&&S.pet&&S.pet.st==='go',yb=y+2+bob*.5,hh=(P.bird||P.whale?44:38)*sc*(P.big?1.15:1);
   if(P.glow){g.globalAlpha=.22+.1*Math.sin(t*4);g.fillStyle=P.glow;g.beginPath();g.ellipse(x,y-16*sc,26*sc,20*sc,0,0,6.283);g.fill();g.globalAlpha=1}
-  g.save();g.translate(x,yb);g.scale(go?1.16:1,go?.9:1);g.translate(-x,-yb);artDraw(g,im,x,yb,hh);g.restore()}}
+  g.save();g.translate(x,yb);g.scale(go?1.16:1,go?.9:1);g.translate(-x,-yb);artDraw(g,im,x,yb,hh,null,OL_F(g));g.restore()}}
 {const _gi=gateIcon;gateIcon=function(g,o,cx,cy,s,t,dim,cc){const ik=g==='fb'&&o&&o.fbk?'ic_'+o.fbk:g==='fu'&&o&&o.fu&&artImg('ic_'+o.fu)?'ic_'+o.fu:'ic_'+g;if(artImg(ik))return _xGI(g,o,cx,cy,s,t,dim,cc);return _gi(g,o,cx,cy,s,t,dim,cc)}}
