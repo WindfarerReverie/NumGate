@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "xian", "sbjs": "supabase.js"};if(/(^|\.)youfeng\.app$|\.pages\.dev$/.test(location.hostname))window.NG_CFG.url=location.origin+'/sb';</script>
-<script>(function(){var B="20261102082203";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261102091353";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>御剑斩妖录</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -150,6 +150,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .pstat h4{margin:8px 0 0;font-size:13px;color:var(--gold);letter-spacing:.05em}
 .pstat .r{display:grid;grid-template-columns:72px 1fr;gap:2px 8px;align-items:center;background:rgba(255,255,255,.05);border-radius:9px;padding:6px 9px;font-size:12.5px}
 .pstat .r b{font-size:13.5px}.pstat .r .v{color:var(--ink)}.pstat .r .n{grid-column:2;color:var(--muted);font-size:11.5px;line-height:1.4}
+.r .n .sb{display:inline-block;margin:5px 4px 0 0;padding:6px 10px;line-height:1.2}   /* 11-02：暂停页灵宠按钮换行时不再叠在一起 */
 .pstat .bar{grid-column:2;height:5px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden;position:relative}
 .pstat .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--gold)}.pstat .bar u{position:absolute;top:0;bottom:0;background:rgba(255,214,119,.28)}
 .pstat .off{opacity:.5}
@@ -169,7 +170,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .bt{background:rgba(255,255,255,.05);border-radius:10px;padding:4px 2px 6px;display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--ink)}
 .bt canvas{width:72px;height:84px}.bt.lk{color:var(--muted)}
 .bchip{display:flex;flex-wrap:wrap;gap:6px}.bchip span{background:rgba(255,255,255,.06);border-radius:8px;padding:5px 8px;font-size:12px}.bchip span.lk{color:var(--muted)}
-.coachskip{position:absolute;top:calc(64px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:9;display:flex;gap:8px}
+.coachskip{position:absolute;top:calc(134px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:9;display:flex;gap:8px}
 .coachskip button{border:1px solid rgba(255,255,255,.3);background:rgba(10,12,20,.75);color:#fff;border-radius:16px;padding:5px 12px;font-size:12px;cursor:pointer;white-space:nowrap}
 .coachskip[hidden]{display:none}
 .skhint{position:absolute;z-index:3;max-width:210px;background:#fff7e0;color:#3a2400;font-size:12px;font-weight:700;line-height:1.35;padding:7px 10px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.4);pointer-events:none;animation:hintbob 1s ease-in-out infinite;white-space:normal}
@@ -721,7 +722,7 @@ function renderBook(){
     const tb=document.createElement('button');tb.dataset.f=k;tb.onclick=()=>monTab(k);MT.appendChild(tb);
     for(let b=0;b<6;b++){const on=b?!!(iq[k+'_'+b]||maxR>=3*b):!!(iq[k]||sn[k]||sn['cx_'+k]||maxR>=3);if(on){nm++;fn++}const key=b?'mon_'+k+'_'+b:'mon_'+k;
     tile(F,g=>{const im=artImg(key);if(im){const q=Math.min(66/im.naturalWidth,70/im.naturalHeight);g.drawImage(im,36-im.naturalWidth*q/2,78-im.naturalHeight*q,im.naturalWidth*q,im.naturalHeight*q)}else{g.font='40px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(I.e,36,44)}},on,monName(k,b),
-      '出没：'+(b?REALMS[3*b]+' ～ '+REALMS[Math.min(17,3*b+2)]+'（'+PLACES[3*b][0]+'一带）':'凡人 ～ '+REALMS[2])+'\n本事：'+I.a+(b?'\n进阶本事：'+monUpText(k,b):'')+'\n'+T.d+'\n打法 · 体修：'+I.c.ti+'\n打法 · 法修：'+I.c.fa+'\n法修应对：'+FA_CTR[k])}
+      '出没：'+(b?REALMS[3*b]+' ～ '+REALMS[Math.min(17,3*b+2)]+'（'+PLACES[3*b][0]+'一带）':'凡人 ～ '+REALMS[2])+'\n本事：'+I.a+(b?'\n进阶本事：'+monUpText(k,b):'')+'\n'+T.d+'\n打法 · 体修：'+I.c.ti+'\n打法 · 法修：'+I.c.fa+'\n法修克制：'+FA_CTR[k])}
     tb.innerHTML=monName(k,0)+'一族<small>'+fn+'/6</small>'}
   monTab(monTabCur);
   $('bookSum').textContent='已收集：形象 '+nh+'/'+REALMS.length+' · 灵宠 '+np+'/'+petCount()+' · 妖怪 '+nm+'/36 ·大妖 '+nb+'/'+BOSSES.length;
@@ -2218,7 +2219,7 @@ function openIntel(key,o){intelOn=key;paused=true;drag=null;const boss=key[0]===
   $('intelStep').textContent=boss?'新大妖 · '+REALMS[o.look.bi]+'境':vb?'新妖怪 · '+monName(o.type,0)+'一族的进阶':'新妖怪';$('intelTitle').textContent=nm;
   $('intelAbil').textContent=boss?'这个大境界的大妖：血很厚、走得慢；第 3 波起会放技能（召唤小妖、冲锋、咒术、封印），读条时打掉它 8% 的血就能打断。':(vb?'这一方天地的'+monName(o.type,0)+'，本事更强——'+monUpText(o.type,vb)+'。\n基本本事：':'')+I.a;
   $('intelThreat').innerHTML='以你现在的火力：'+(boss?'约 <b>'+sec+'</b> 秒能打死它 · 冲线扣 <b>'+Math.round(bossHpF()*100)+'%</b> 气血、跌 3 层修为':'单只约 <b>'+sec+'</b> 秒打死')+' · 威胁 <b style="color:'+th.lv[1]+'">'+th.lv[0]+'</b>';
-  $('intelTip').textContent=spText('打法：'+(!boss&&S.path==='fa'&&FA_CTR[o.type]?'法修应对：'+FA_CTR[o.type]+'\n':'')+(boss?'妖潮开始就提前到右道等它；它读条时集火打断；快冲线时开金钟罩、放雷劫符。':(I.c[S.path]||I.c.x)));
+  $('intelTip').textContent=spText((!boss&&S.path==='fa'&&FA_CTR[o.type]?'法修克制：'+FA_CTR[o.type]+'\n':'')+'打法：'+(boss?'妖潮开始就提前到右道等它；它读条时集火打断；快冲线时开金钟罩、放雷劫符。':(I.c[S.path]||I.c.x)));
   const cv2=$('intelCv'),g=cv2.getContext('2d');g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,cv2.width,cv2.height);const im=artImg(boss?'boss_'+o.look.bi:'mon_'+o.type+(vb?'_'+vb:''));
   if(im){const k=Math.min(cv2.width*.92/im.naturalWidth,cv2.height*.92/im.naturalHeight);g.drawImage(im,(cv2.width-im.naturalWidth*k)/2,(cv2.height-im.naturalHeight*k)/2,im.naturalWidth*k,im.naturalHeight*k)}
   else{g.font=(cv2.height*.6)+'px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(boss?'👑':I.e,cv2.width/2,cv2.height/2+6)}
@@ -2934,7 +2935,7 @@ function drawSkillFx(){
   if(S.fxSwords)for(const f of S.fxSwords){const a=f.t/.25;ctx.strokeStyle='rgba(220,245,255,'+a+')';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(f.x-14,f.y-60*a-10);ctx.lineTo(f.x,f.y);ctx.stroke()}
   if(S.slowT>0){ctx.fillStyle='rgba(160,220,255,'+(.10+.05*Math.sin(S.t*6))+')';ctx.fillRect(mid,0,roadX+roadW-mid,H);outlined('寒冰 '+Math.ceil(S.slowT)+'s',mid+roadW/4,H*.16,14,'#cfefff',CN)}
   if(S.fxSpell){const f=S.fxSpell,a=f.t/.35;ctx.strokeStyle='rgba(255,170,80,'+a+')';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(S.x,squadY-20);ctx.lineTo(f.x,f.y);ctx.stroke();ctx.fillStyle='rgba(255,220,140,'+a+')';ctx.beginPath();ctx.arc(f.x,f.y,22*(1.2-a),0,6.283);ctx.fill()}
-  if(S.regroup>0){const a=Math.min(1,S.regroup);ctx.globalAlpha=a;outlined('整顿 · '+Math.ceil(S.regroup)+' 秒',W*.5,H*.24,22,'#7dffa8',CN);outlined('不刷妖 · 去左边吃门',W*.5,H*.24+24,13,'#d8ffe4',CN);ctx.globalAlpha=1}
+  if(S.regroup>0){const a=Math.min(1,S.regroup);ctx.globalAlpha=a;outlined('整顿 · '+Math.ceil(S.regroup)+' 秒',W*.5,H*.34,22,'#7dffa8',CN);outlined('不刷妖 · 去左边吃门',W*.5,H*.34+24,13,'#d8ffe4',CN);ctx.globalAlpha=1}
   if(S.fxBolt){const f=S.fxBolt,a=f.t/.45,cx=(f.x0+f.x1)/2;
     ctx.fillStyle='rgba(180,220,255,'+(.35*a)+')';ctx.fillRect(f.x0,0,f.x1-f.x0,H);
     ctx.strokeStyle='rgba(255,255,255,'+a+')';ctx.lineWidth=4;ctx.beginPath();let x=cx;ctx.moveTo(x,0);

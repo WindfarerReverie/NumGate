@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl", "sbjs": "supabase.js"};if(/(^|\.)youfeng\.app$|\.pages\.dev$/.test(location.hostname))window.NG_CFG.url=location.origin+'/sb';</script>
-<script>(function(){var B="20261102082203";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261102091353";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" media="print" onload="this.media='all'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -151,6 +151,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .pstat h4{margin:8px 0 0;font-size:13px;color:var(--gold);letter-spacing:.05em}
 .pstat .r{display:grid;grid-template-columns:72px 1fr;gap:2px 8px;align-items:center;background:rgba(255,255,255,.05);border-radius:9px;padding:6px 9px;font-size:12.5px}
 .pstat .r b{font-size:13.5px}.pstat .r .v{color:var(--ink)}.pstat .r .n{grid-column:2;color:var(--muted);font-size:11.5px;line-height:1.4}
+.r .n .sb{display:inline-block;margin:5px 4px 0 0;padding:6px 10px;line-height:1.2}   /* 11-02：暂停页萌宠按钮换行时不再叠在一起 */
 .pstat .bar{grid-column:2;height:5px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden;position:relative}
 .pstat .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--gold)}.pstat .bar u{position:absolute;top:0;bottom:0;background:rgba(255,214,119,.28)}
 .pstat .off{opacity:.5}
@@ -170,7 +171,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .bt{background:rgba(255,255,255,.05);border-radius:10px;padding:4px 2px 6px;display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--ink)}
 .bt canvas{width:72px;height:84px}.bt.lk{color:var(--muted)}
 .bchip{display:flex;flex-wrap:wrap;gap:6px}.bchip span{background:rgba(255,255,255,.06);border-radius:8px;padding:5px 8px;font-size:12px}.bchip span.lk{color:var(--muted)}
-.coachskip{position:absolute;top:calc(64px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:9;display:flex;gap:8px}
+.coachskip{position:absolute;top:calc(134px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:9;display:flex;gap:8px}
 .coachskip button{border:1px solid rgba(255,255,255,.3);background:rgba(10,12,20,.75);color:#fff;border-radius:16px;padding:5px 12px;font-size:12px;cursor:pointer;white-space:nowrap}
 .coachskip[hidden]{display:none}
 .skhint{position:absolute;z-index:3;max-width:210px;background:#fff7e0;color:#3a2400;font-size:12px;font-weight:700;line-height:1.35;padding:7px 10px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.4);pointer-events:none;animation:hintbob 1s ease-in-out infinite;white-space:normal}
@@ -678,7 +679,7 @@ function petCount(){return 17}
 const PET_LINES={beast:{n:'毛绒线',role:'claw',forms:[0,4,2,6,8,12,9,14,16],d:'近身扑扑：冲上去咬离防线最近的怪，优先内耗怪和大噩梦；20 级起扑击带冲击，伤到周围'},
   spirit:{n:'飞羽线',role:'orb',forms:[1,5,3,7,11,10,13,15],d:'远程魔法泡泡：守在身边连发追踪魔法泡泡；每 12 级多一颗（最多 5 颗）'}};
 const PET_KEYS=['beast','spirit'],PET_EVO=5;
-const PET_RD={claw:{n:'扑扑',p:1.2},orb:{n:'魔法泡泡',p:1.5}};
+const PET_RD={claw:{n:'贴身扑扑',p:1.2},orb:{n:'魔法泡泡',p:1.5}};
 const petPow=l=>1+.12*l;
 const petLvCost=l=>Math.round(12000*Math.pow(1.22,l));   // 11-02 00:09 涨价：Lv5（第一次进化）约 9 万，Lv10 约 34 万，Lv20 约 290 万，Lv30 约 2100 万，Lv40（终极形态）约 1.5 亿
 const PET_BASE=.1;   // 0 级 ≈ 每秒 0.1 秒基础星力；每级 +12%
@@ -739,7 +740,7 @@ function renderBook(){
     const tb=document.createElement('button');tb.dataset.f=k;tb.onclick=()=>monTab(k);MT.appendChild(tb);
     for(let b=0;b<6;b++){const on=b?!!(iq[k+'_'+b]||maxR>=3*b):!!(iq[k]||sn[k]||sn['cx_'+k]||maxR>=3);if(on){nm++;fn++}const key=b?'mon_'+k+'_'+b:'mon_'+k;
     tile(F,g=>{const im=artImg(key);if(im){const q=Math.min(66/im.naturalWidth,70/im.naturalHeight);g.drawImage(im,36-im.naturalWidth*q/2,78-im.naturalHeight*q,im.naturalWidth*q,im.naturalHeight*q)}else{g.font='40px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(I.e,36,44)}},on,monName(k,b),
-      '出没：'+(b?REALMS[3*b]+' ～ '+REALMS[Math.min(17,3*b+2)]+'（'+PLACES[3*b][0]+'一带）':'平凡少女 ～ '+REALMS[2])+'\n本事：'+I.a+(b?'\n进阶本事：'+monUpText(k,b):'')+'\n'+T.d+'\n打法 · 星弓系：'+I.c.ti+'\n打法 · 咒语系：'+I.c.fa+'\n咒语系应对：'+FA_CTR[k])}
+      '出没：'+(b?REALMS[3*b]+' ～ '+REALMS[Math.min(17,3*b+2)]+'（'+PLACES[3*b][0]+'一带）':'平凡少女 ～ '+REALMS[2])+'\n本事：'+I.a+(b?'\n进阶本事：'+monUpText(k,b):'')+'\n'+T.d+'\n打法 · 星弓系：'+I.c.ti+'\n打法 · 咒语系：'+I.c.fa+'\n咒语系克制：'+FA_CTR[k])}
     tb.innerHTML=monName(k,0)+'一族<small>'+fn+'/6</small>'}
   monTab(monTabCur);
   $('bookSum').textContent='已收集：衣装 '+nh+'/'+REALMS.length+' · 萌宠 '+np+'/'+petCount()+' · 怪怪 '+nm+'/36 ·大噩梦 '+nb+'/'+BOSSES.length;
@@ -1347,7 +1348,7 @@ function brkScan(){
   const r=S.brkPend;paused=true;
   $('brkTitle').textContent='华丽变身！晋升 '+REALMS[r];
   {const P=PLACES[r],Q=PLACES[r-1]||P,nb=monBand(r)>monBand(r-1)&&monBand(r)>0;$('brkPlace').innerHTML=P[0]!==Q[0]?'新战场 · <b>'+P[0]+'</b><br>'+P[1]+(nb?'<br>此地怪物换了一批：'+['n','run','brute','elite','hex','guard'].map(t=>monName(t,monBand(r))).join('、'):''):'';$('brkPlace').hidden=P[0]===Q[0]}
-  $('brkInfo').innerHTML='第 <b>'+r+'</b> / '+TOPR+' 境'+(r<TOPR?' · 下一称号：<b>'+REALMS[r+1]+'</b>（攒满九星，净化负能量）':' · <b>最后一个称号</b>：九星圆满后净化「永夜」即通关')+(r<3&&!S.path?'<br><span class="pathTease">到「'+REALMS[3]+'」就能选流派：<b>星弓系</b>（星光硬推、更抗打）或 <b>咒语系</b>（七种魔法，称号越高魔法越强）</span>':'');
+  $('brkInfo').innerHTML='第 <b>'+r+'</b> / '+TOPR+' 个称号'+(r<TOPR?' · 下一称号：<b>'+REALMS[r+1]+'</b>（攒满九星，净化负能量）':' · <b>最后一个称号</b>：攒满九星后净化「永夜」即通关')+(r<3&&!S.path?'<br><span class="pathTease">到「'+REALMS[3]+'」就能选流派：<b>星弓系</b>（星光硬推、更抗打）或 <b>咒语系</b>（七种魔法，称号越高魔法越强）</span>':'');
   const u=$('brkUnl');u.innerHTML='';for(const t of unlockList(r)){const sp=document.createElement('span');sp.textContent=t;if(/流派/.test(t))sp.className='hot';u.appendChild(sp)}
   {const sp=document.createElement('span');sp.textContent='星力 +15% · 星光爆发 +1';u.appendChild(sp)}
   $('brkBar').style.width=(r/TOPR*100)+'%';
@@ -1439,7 +1440,7 @@ function choosePick(k){
   pickOpts=null;$('pickBox').hidden=true;paused=false;sfx(660,.08,'square',.05);setTimeout(()=>sfx(990,.12,'square',.05),70);
 }
 function unlockList(r){   // what reaching realm r unlocks
-  const L=r===3&&!(S&&S.path)?['选流派：星弓系 / 咒语系','新衣装']:r>=4&&r<=8&&S&&S.path?['流派进化','新衣装']:['新衣装'];const nm={dmg:'星力',rate:'星速',spread:'流星雨',pierce:'贯穿'};   // 11-02：筑基选流派要提前告诉玩家，给个盼头
+  const L=r===3&&!(S&&S.path)?['选流派：星弓系 / 咒语系','新衣装']:r>=4&&r<=8&&S&&S.path?['技能进化','新衣装']:['新衣装'];const nm={dmg:'星力',rate:'星速',spread:'流星雨',pierce:'贯穿'};   // 11-02：筑基选流派要提前告诉玩家，给个盼头
   for(const k of ['dmg','rate','spread','pierce'])if(upCap(k,r)>upCap(k,r-1))L.push(nm[k]+'上限 Lv'+upCap(k,r));
   if(lvCap(r)>lvCap(r-1))L.push('长期项上限 Lv'+lvCap(r));
   return L;
@@ -1447,13 +1448,13 @@ function unlockList(r){   // what reaching realm r unlocks
 function goalText(){
   if(S&&S.rwF<1)return '重来中：敌人约为倒下时的 <b>'+Math.round(S.rwF*100)+'%</b>，正在慢慢追回 · 趁现在多吃门、攒星钻';
   if(!S)return '';const rr=realmOf(S.count),cur=Math.max(1,rr.r);
-  if(S.maxR>=TOPR&&S.bottle)return '创世女神 9星圆满 · <b>下一波净化「永夜」即可通关</b>';
-  if(S.bottle)return '九星圆满 · <b>净化下一个大噩梦（负能量）变身</b> → '+REALMS[S.maxR+1]+'：'+unlockList(S.maxR+1).slice(0,3).join('、');
+  if(S.maxR>=TOPR&&S.bottle)return '创世女神 · 九星攒满 · <b>下一波净化「永夜」即可通关</b>';
+  if(S.bottle)return '九星攒满 · <b>净化下一个大噩梦（负能量）变身</b> → '+REALMS[S.maxR+1]+'：'+unlockList(S.maxR+1).slice(0,3).join('、');
   if(rr.r===0)return '魔力攒到 100 → 进入 <b>'+REALMS[1]+'</b>';
   if(rr.r<S.peakR)return '跌落中 · 先回到 '+REALMS[S.peakR];
   const nt=!inSurge()&&S.t>PRE-12?nextTrait():null;if(nt&&wph()>MOW-12)return '下一波：<b>'+TRAITS[nt].n+'</b> · 克制：'+TRAITS[nt].c.map(x=>PNAME[x]).join('、');
   const left=Math.max(0,9-((rr.layer-1)+rr.frac));
-  return '下一称号 <b>'+(REALMS[cur+1]||'')+'</b>：还差 '+left.toFixed(1)+' 星到九星圆满 · 解锁 '+unlockList(cur+1).slice(0,3).join('、');
+  return '下一称号 <b>'+(REALMS[cur+1]||'')+'</b>：还差 '+left.toFixed(1)+' 星攒满九星 · 解锁 '+unlockList(cur+1).slice(0,3).join('、');
 }
 function regroup(){   // 净化大噩梦后休整：冲击波重创烦恼球、6 秒不刷怪、回 15% 元气、左道马上来一排好门
   S.regroup=6;const n=skillPool(8,z=>!z.boss,0);heal(.15,'休整');S.goodRow=true;S.spawnL=Math.min(S.spawnL,.4);
@@ -1606,7 +1607,7 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}sprFxTick(dt);S.fxBom
     if(S.hpF<=0&&!S.won&&tiEvo('immortal')&&S.immR!==S.maxR){S.immR=S.maxR;S.hpF=.3;S.lastHp=.3;toast('不灭星光','元气归零时保住 30%（每个称号一次）');S.fxBreak=Math.max(S.fxBreak||0,.8);S.flash=.3;heal(0,'不灭星光')}
     if(S.hpF<=0&&!S.won){S.hpF=0;deathOffer();return}
     if(S.hpF<.5&&!S.hpTold){S.hpTold=true;toast('元气过半','元气不会自己回：变身、净化大噩梦后休整、选「元气精进」才回')}}
-   if(S.bottle&&!S.bottleShown){S.bottleShown=true;if(S.maxR>=TOPR)toast('创世女神 9星圆满','下一波净化「永夜」，即可点亮星空、通关');else toast('变身前夕：'+REALMS[S.maxR]+'九星圆满','净化本波大噩梦（负能量）或吃变身星冠才能变身')}}
+   if(S.bottle&&!S.bottleShown){S.bottleShown=true;if(S.maxR>=TOPR)toast('创世女神 · 九星攒满','下一波净化「永夜」，即可点亮星空、通关');else toast('变身前夕：'+REALMS[S.maxR]+'九星攒满','净化本波大噩梦（负能量）或吃变身星冠才能变身')}}
   S.bankT-=dt;if(S.bankT<=0){S.bankT=8;bankCoins()}
   for(const k of ['fire','ice','sword'])S[k+'Cd']=Math.max(0,(S[k+'Cd']||0)-dt);S.slowT=Math.max(0,(S.slowT||0)-dt);
   if(S.fxFires&&S.fxFires.length){for(const f of S.fxFires){f.t+=dt/(f.crow?.4:.3);if(f.t>=1)fireHit(f)}S.fxFires=S.fxFires.filter(f=>f.t<1)}
@@ -2234,9 +2235,9 @@ function intelScan(){if(!S||S.tut||intelOn||tip||pickOpts||S.deathOpen||S.pathAn
 function openIntel(key,o){intelOn=key;paused=true;drag=null;const boss=key[0]==='b'&&o.boss,vb=boss?0:bandOf(o),I=boss?null:INTEL[o.type],th=intelThreat(o),sec=th.sec<.1?'不到 0.1':th.sec<10?th.sec.toFixed(1):String(Math.round(th.sec));
   const nm=boss?(BOSSES[o.look.bi]||{}).n||'大噩梦':monName(o.type,vb);
   $('intelStep').textContent=boss?'新大噩梦 · '+REALMS[o.look.bi]:vb?'新怪怪 · '+monName(o.type,0)+'一族的进阶':'新怪怪';$('intelTitle').textContent=nm;
-  $('intelAbil').textContent=boss?'这个称号的大噩梦：体力很厚、走得慢；第 3 波起会放技能（召唤烦恼球、冲锋、瞌睡咒、封印），读条时打掉它 8% 的体力就能打断。':(vb?'这一方天地的'+monName(o.type,0)+'，本事更强——'+monUpText(o.type,vb)+'。\n基本本事：':'')+I.a;
+  $('intelAbil').textContent=boss?'这个称号的大噩梦：体力很厚、走得慢；第 3 波起会放技能（召唤烦恼球、冲锋、瞌睡咒、封印），读条时打掉它 8% 的体力就能打断。':(vb?'这里的'+monName(o.type,0)+'更难缠了——'+monUpText(o.type,vb)+'。\n基本本事：':'')+I.a;
   $('intelThreat').innerHTML='以你现在的星力：'+(boss?'约 <b>'+sec+'</b> 秒能净化它 · 冲线扣 <b>'+Math.round(bossHpF()*100)+'%</b> 元气、跌 3 星魔力':'单只约 <b>'+sec+'</b> 秒净化')+' · 威胁 <b style="color:'+th.lv[1]+'">'+th.lv[0]+'</b>';
-  $('intelTip').textContent=spText('打法：'+(!boss&&S.path==='fa'&&FA_CTR[o.type]?'咒语系应对：'+FA_CTR[o.type]+'\n':'')+(boss?'噩梦潮开始就提前到右道等它；它读条时集火打断；快冲线时开泡泡护盾、放星光爆发。':(I.c[S.path]||I.c.x)));
+  $('intelTip').textContent=spText((!boss&&S.path==='fa'&&FA_CTR[o.type]?'咒语系克制：'+FA_CTR[o.type]+'\n':'')+'打法：'+(boss?'噩梦潮开始就提前到右道等它；它读条时集火打断；快冲线时开泡泡护盾、放星光爆发。':(I.c[S.path]||I.c.x)));
   const cv2=$('intelCv'),g=cv2.getContext('2d');g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,cv2.width,cv2.height);const im=artImg(boss?'boss_'+o.look.bi:'mon_'+o.type+(vb?'_'+vb:''));
   if(im){const k=Math.min(cv2.width*.92/im.naturalWidth,cv2.height*.92/im.naturalHeight);g.drawImage(im,(cv2.width-im.naturalWidth*k)/2,(cv2.height-im.naturalHeight*k)/2,im.naturalWidth*k,im.naturalHeight*k)}
   else{g.font=(cv2.height*.6)+'px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(boss?'👑':I.e,cv2.width/2,cv2.height/2+6)}
@@ -2952,7 +2953,7 @@ function drawSkillFx(){
   if(S.fxSwords)for(const f of S.fxSwords){const a=f.t/.25;ctx.strokeStyle='rgba(220,245,255,'+a+')';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(f.x-14,f.y-60*a-10);ctx.lineTo(f.x,f.y);ctx.stroke()}
   if(S.slowT>0){ctx.fillStyle='rgba(160,220,255,'+(.10+.05*Math.sin(S.t*6))+')';ctx.fillRect(mid,0,roadX+roadW-mid,H);outlined('冰晶 '+Math.ceil(S.slowT)+'s',mid+roadW/4,H*.16,14,'#cfefff',CN)}
   if(S.fxSpell){const f=S.fxSpell,a=f.t/.35;ctx.strokeStyle='rgba(255,170,80,'+a+')';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(S.x,squadY-20);ctx.lineTo(f.x,f.y);ctx.stroke();ctx.fillStyle='rgba(255,220,140,'+a+')';ctx.beginPath();ctx.arc(f.x,f.y,22*(1.2-a),0,6.283);ctx.fill()}
-  if(S.regroup>0){const a=Math.min(1,S.regroup);ctx.globalAlpha=a;outlined('休整 · '+Math.ceil(S.regroup)+' 秒',W*.5,H*.24,22,'#7dffa8',CN);outlined('不刷怪 · 去左边吃门',W*.5,H*.24+24,13,'#d8ffe4',CN);ctx.globalAlpha=1}
+  if(S.regroup>0){const a=Math.min(1,S.regroup);ctx.globalAlpha=a;outlined('休整 · '+Math.ceil(S.regroup)+' 秒',W*.5,H*.34,22,'#7dffa8',CN);outlined('不刷怪 · 去左边吃门',W*.5,H*.34+24,13,'#d8ffe4',CN);ctx.globalAlpha=1}
   if(S.fxBolt){const f=S.fxBolt,a=f.t/.45,cx=(f.x0+f.x1)/2;
     ctx.fillStyle='rgba(180,220,255,'+(.35*a)+')';ctx.fillRect(f.x0,0,f.x1-f.x0,H);
     ctx.strokeStyle='rgba(255,255,255,'+a+')';ctx.lineWidth=4;ctx.beginPath();let x=cx;ctx.moveTo(x,0);
@@ -3041,10 +3042,10 @@ function renderPause(){   // 暂停页：当前阶段 + 每项数值 / 本称号
   const rr=realmOf(S.count),L=layersOf(S.count),toTop=TOPR-S.maxR,mx=x=>'×'+(x>=10?Math.round(x):x.toFixed(2).replace(/\.?0+$/,''));
   const nextR=S.maxR<TOPR?REALMS[S.maxR+1]:null,hpc=hpCap();
   $('pauseHead').innerHTML='<div class="big">'+rName(rr)+(S.path?' · '+(S.path==='ti'?'星弓系':'咒语系'):'')+'</div>'
-    +(S.bottle?'九星圆满，<b>净化下一个大噩梦（负能量）</b>或吃变身星冠 → '+nextR:nextR?'离「'+nextR+'」还差 <b>'+Math.max(0,9*S.maxR-L).toFixed(1)+'</b> 星':'已到最高称号')
+    +(S.bottle?'九星攒满，<b>净化下一个大噩梦（负能量）</b>或吃变身星冠 → '+nextR:nextR?'离「'+nextR+'」还差 <b>'+Math.max(0,9*S.maxR-L).toFixed(1)+'</b> 星':'已到最高称号')
     +(toTop>0?' · 离「'+REALMS[TOPR]+'」还差 '+toTop+' 个称号':'')
     +'<br>元气 <b>'+Math.ceil(S.hpF*hpc)+'</b> / '+hpc+' · 受伤 '+mx(S.armor)+' · 第 '+(S.maxWave||0)+' 波 · 已玩 '+hhmm(S.t)
-    +'<br>流星考验：已通过 <b>'+(S.jieWin||0)+'</b> 次'+(S.jieFail?'、失败 '+S.jieFail+' 次':'')+(S.jieCD>0&&S.rR>=2&&!S.bottle?' · 约 '+Math.ceil(S.jieCD/60)+' 分钟后再降':'');
+    +'<br>流星考验：已通过 <b>'+(S.jieWin||0)+'</b> 次'+(S.jieFail?'、失败 '+S.jieFail+' 次':'')+(S.jieCD>0&&S.rR>=2&&!S.bottle?' · 约 '+Math.ceil(S.jieCD/60)+' 分钟后再来':'');
   const row=(name,lv,cap,max,val,note)=>{const capN=cap,mxN=max||cap;return '<div class="r"><b>'+name+'</b><span class="v">'+(lv!=null?'Lv'+lv+' / 本称号上限 '+capN+(mxN>capN?'（最终 '+mxN+'）':''):'')+(val?(lv!=null?' · ':'')+val:'')+'</span>'
     +(lv!=null?'<span class="bar"><u style="width:'+Math.min(100,capN/mxN*100)+'%"></u><i style="width:'+Math.min(100,lv/mxN*100)+'%"></i></span>':'')+(note?'<span class="n">'+note+'</span>':'')+'</div>'};
   const capNext=k=>S.maxR<TOPR&&upCap(k,S.maxR+1)>upCap(k)?'下一称号上限升到 Lv'+upCap(k,S.maxR+1):'';
