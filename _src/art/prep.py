@@ -59,6 +59,14 @@ for i in range(1, 18):
 for k in ['qi', 'vein', 'brk', 'xin', 'zou', 'art', 'fb', 'fu', 'jie', 'bomb', 'bolt', 'shield', 'freeze', 'fire', 'sword', 'ice', 'gourd', 'bell', 'mirror', 'crow', 'orb', 'cloud', 'mp', 'coin', 'gang', 'zhan', 'jj', 'heavy', 'lian', 'pojun', 'body', 'dmg', 'rate', 'spread', 'pierce', 'armor', 'cd', 'hp', 'sp', 't_armor', 't_guard', 't_swarm', 't_fast', 't_elite', 't_hex', 't_power']:
     MAP['IC_' + k] = ('ic_' + k, 128)
 
+# 11-02 17:58：被动小伙伴（每个 4 个形态）+ 聚灵瓶 / 星光瓶
+for k in ['crow', 'cloud', 'jj']:
+    for n in range(1, 5):
+        MAP['CMP_%s_%d' % (k, n)] = ('cmp_%s_%d' % (k, n), 260)
+        MAP['GCMP_%s_%d' % (k, n)] = ('g_cmp_%s_%d' % (k, n), 260)
+MAP['JAR'] = ('jar', 160)
+MAP['GJAR'] = ('g_jar', 160)
+
 def find(code):
     for c in (code + 'r', code + 'q', code):
         p = os.path.join(SRC, 'numgate_%s.png' % c)

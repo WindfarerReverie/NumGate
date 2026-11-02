@@ -493,3 +493,8 @@ Object.assign(MON_V,{n:['烦恼球','带刺烦恼球','双生烦恼球','雷云�
   if(P.glow){g.globalAlpha=.22+.1*Math.sin(t*4);g.fillStyle=P.glow;g.beginPath();g.ellipse(x,y-16*sc,26*sc,20*sc,0,0,6.283);g.fill();g.globalAlpha=1}
   g.save();g.translate(x,yb);g.scale(go?1.16:1,go?.9:1);g.translate(-x,-yb);artDraw(g,im,x,yb,hh,null,OL_F(g));g.restore()}}
 {const _gi=gateIcon;gateIcon=function(g,o,cx,cy,s,t,dim,cc){const ik=g==='fb'&&o&&o.fbk?'ic_'+o.fbk:g==='fu'&&o&&o.fu&&artImg('ic_'+o.fu)?'ic_'+o.fu:'ic_'+g;if(artImg(ik))return _xGI(g,o,cx,cy,s,t,dim,cc);return _gi(g,o,cx,cy,s,t,dim,cc)}}
+
+/* 11-02 17:55：被动的四个形态（女生版名字） */
+PS_NAMES={crow:['星星小鸟','彩虹小鸟','星光青鸟','月光凤凰'],orb:['守护星','星座守护','星环守护','银河守护'],cloud:['彩虹云','七彩云','棉花糖云宫','梦幻天穹'],
+  gang:['星光护盾','水晶护盾','钻石护盾','银河护盾'],zhan:['勇气','闪亮勇气','勇者之心','传说之心'],jj:['星光纵横','流光纵横','彗星纵横','银河之箭']};
+TIPS.psform={t:'被动进化',d:'被动魔法（星星小鸟、守护星、彩虹云）和星弓系被动（星光护盾、勇气、星光纵横）在 Lv8、Lv14、Lv20 各进化一次：改名字、换样子、威力也变强。星星小鸟、彩虹云、星光纵横的巨箭会跟在你身边，小鸟从身边飞出去；守护星绕身，形态越高越大越亮；星光护盾是身上的光罩，勇气是脚下的火焰（元气越低越旺）。魔法按钮右上角是等级，Lv8 银框、Lv14 金框、Lv20 彩虹框。'};
