@@ -82,6 +82,9 @@ man = {}
 for code, (name, M) in MAP.items():
     p = find(code)
     if not p:
+        _o = os.path.join(OUT, name + '.webp')   # 11-02 18:12：源目录里没有这张时，保留已处理好的成品（否则换个源目录跑一次会把其他图全丢掉）
+        if os.path.exists(_o):
+            with Image.open(_o) as _w: man[name] = [_w.width, _w.height]
         continue
     _o = os.path.join(OUT, name + '.webp')
     if os.path.exists(_o) and os.path.getmtime(_o) > os.path.getmtime(p):   # 已处理过且源图没变：跳过（省时间）
