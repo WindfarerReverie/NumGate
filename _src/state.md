@@ -7,9 +7,9 @@
 仿《向末日开炮》数字门玩法的竖屏网页小游戏：左道吃门成长，右道打怪守线。John 自己和朋友玩，不商用；只公开给国内玩家，限量名额。
 同一套玩法两个皮肤：修仙版「御剑斩妖录」、女生版「星愿魔法少女」（只换美术和文案）。
 
-## 二、线上版本与入口（版本号 20261103010748；01:07 平衡大修、新难度曲线、物防法防、数值一览、妖潮/大妖分开、大妖新技能、体修爆发技、BGM 与音量中枢）
+## 二、线上版本与入口（版本号 20261103011131；01:11 平衡大修、新难度曲线、物防法防、数值一览、妖潮/大妖分开、大妖新技能、体修爆发技、BGM 与音量中枢）
 - 网站：修仙版 https://xian.youfeng.app/ 　女生版 https://xingyuan.youfeng.app/ （备用 numgate-caz.pages.dev、windfarerreverie.github.io/NumGate/）
-- Claude 页面：修仙版 v97 https://claude.ai/artifact/JbZX3XP6zGkVbZ1LzsiDYL 　女生版 v70 https://claude.ai/artifact/9QAvX69ndTQyH2pPFdoBzC
+- Claude 页面：修仙版 v98 https://claude.ai/artifact/JbZX3XP6zGkVbZ1LzsiDYL 　女生版 v71 https://claude.ai/artifact/9QAvX69ndTQyH2pPFdoBzC
 - 托管：GitHub 仓库 WindfarerReverie/NumGate → Cloudflare Pages 项目 numgate 自动部署；_middleware.js 按子域名分流；Supabase 账号 / 存档 / 排行榜，自有域名下走 /sb/ 转发口（只放行 auth、rest）。不同网址本地存档不互通，登录后从云端拉。
 
 ## 三、恢复工作（工作区是临时的）
