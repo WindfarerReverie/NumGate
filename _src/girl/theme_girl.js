@@ -151,7 +151,7 @@ drawSquad=function(){
     }}
   {const pl=Math.min(petCount(),S.rR||0);if(pl>=1)drawFaxiang(ctx,mechX(),squadY-2,.9+.03*pl,S.t,pl)}
   drawHero(ctx,S.x,squadY+2,S.rR,S.t,1.35);
-  const by=squadY-girlTop(S.rR)*1.35-8,txt=(S.life>1?'第'+CNN(S.life)+'季 · ':'')+rName(realmOf(S.count));
+  const by=squadY-heroHH()-32,txt=(S.life>1?'第'+CNN(S.life)+'季 · ':'')+rName(realmOf(S.count));
   ctx.font='bold 15px '+CN;const tw=ctx.measureText(txt).width+20;
   const PX=clamp(S.x,tw/2+6,W-tw/2-6);   /* 名牌不出屏 */
   ctx.fillStyle='rgba(30,20,48,.88)';rr(PX-tw/2,by-14,tw,28,14);ctx.fill();
@@ -486,7 +486,7 @@ Object.assign(MON_V,{n:['烦恼球','带刺烦恼球','双生烦恼球','雷云�
 {const _h=drawHero;drawHero=function(g,x,y,r,t,scl=1){r=clamp(r|0,0,REALMS.length-1);const im=artImg(heroArtKey(r));if(!im)return _h(g,x,y,r,t,scl);
   const hh=heroTop(r)*1.25*scl,br=Math.sin(t*2.4),fl=r>=8?-5+Math.sin(t*2.2)*1.5:0;g.save();g.translate(x,y);
   g.globalAlpha=.25;g.fillStyle='#6a3a8a';g.beginPath();g.ellipse(0,2,13*scl,3.5*scl,0,0,6.283);g.fill();g.globalAlpha=1;
-  if(r>=4){const k=.5+.5*Math.sin(t*3);g.globalAlpha=.25+.15*k;g.fillStyle='#ffd6ea';g.beginPath();g.ellipse(0,fl-hh*.45,hh*.42,hh*.55,0,0,6.283);g.fill();g.globalAlpha=1}
+  {const k=.5+.5*Math.sin(t*3),cy=fl-hh*.45,R=hh*.62,gr=g.createRadialGradient(0,cy,R*.1,0,cy,R);gr.addColorStop(0,'rgba(48,18,80,'+(.62+.06*k)+')');gr.addColorStop(.72,'rgba(48,18,80,.38)');gr.addColorStop(1,'rgba(70,28,110,0)');g.fillStyle=gr;g.beginPath();g.ellipse(0,cy,R*.78,R,0,0,6.283);g.fill()}   /* 11-02 19:45：人物身后一圈深紫底光，浅色衣服在粉背景上也看得清 */
   const yb=fl+3;g.translate(0,yb);g.scale(1-.008*br,1+.018*br);artDraw(g,im,0,0,hh,null,OL_F(g));g.restore()}}
 {const _f=drawFaxiang;drawFaxiang=function(g,x,y,sc,t,lvl){lvl=clamp(lvl|0,1,PETS.length);const im=artImg('pet_'+(lvl-1));if(!im)return _f(g,x,y,sc,t,lvl);
   const P=PETS[lvl-1],bob=Math.sin(t*3)*2,go=S&&S.pet&&S.pet.st==='go',yb=y+2+bob*.5,hh=(P.bird||P.whale?44:38)*sc*(P.big?1.15:1);

@@ -17,3 +17,6 @@
 /* 11-02 15:25 John：封面标题挡住人物脸 → 改成一行放在顶部星空处 */
 .cover h1.ttl{top:10px;bottom:auto;font-size:clamp(32px,9.6vw,42px);line-height:1.1;white-space:nowrap}
 .cover h1.ttl br{display:none}
+
+.backbar{background:rgba(30,20,52,.97);border-bottom-color:rgba(255,158,199,.3)}
+.rk.t10{background:rgba(255,158,199,.1);outline-color:rgba(255,158,199,.4)}.rk.t10 b.no{background:rgba(255,158,199,.25)}
