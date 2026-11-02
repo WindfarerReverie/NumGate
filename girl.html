@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl", "sbjs": "supabase.js"};if(/(^|\.)youfeng\.app$|\.pages\.dev$/.test(location.hostname))window.NG_CFG.url=location.origin+'/sb';</script>
-<script>(function(){var B="20261102080342";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261102081640";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" media="print" onload="this.media='all'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -318,11 +318,11 @@ body.ink #petList .item.on{border-color:rgba(201,71,61,.7);box-shadow:0 0 0 1px 
     <div class="card book">
       <h2>衣橱图鉴</h2>
       <p class="sync" id="bookSum"></p>
-      <div class="btabs" id="bookTabs"><button data-t="0">衣装<small id="bookN0"></small></button><button data-t="1">萌宠<small id="bookN1"></small></button><button data-t="3">怪怪<small id="bookN3"></small></button><button data-t="2">Boss<small id="bookN2"></small></button></div>
+      <div class="btabs" id="bookTabs"><button data-t="0">衣装<small id="bookN0"></small></button><button data-t="1">萌宠<small id="bookN1"></small></button><button data-t="3">怪怪<small id="bookN3"></small></button><button data-t="2">大噩梦<small id="bookN2"></small></button></div>
       <div class="bsec" data-s="0"><h3 id="bookH1">衣装</h3><div class="bgrid" id="bookHero"></div></div>
       <div class="bsec" data-s="1" hidden><h3 id="bookH2">萌宠</h3><div id="bookPet"></div></div>
       <div class="bsec" data-s="3" hidden><h3>怪怪</h3><div class="btabs mtabs" id="monTabs"></div><p class="mfdesc" id="monDesc"></p><div id="bookMon"></div></div>
-      <div class="bsec" data-s="2" hidden><h3>Boss · 星光勋章</h3><div class="bgrid" id="bookBoss"></div></div>
+      <div class="bsec" data-s="2" hidden><h3>大噩梦 · 星光勋章</h3><div class="bgrid" id="bookBoss"></div></div>
       <button class="go alt" id="bBookBack">返 回</button>
     </div>
   </div>
@@ -393,7 +393,7 @@ body.ink #petList .item.on{border-color:rgba(201,71,61,.7);box-shadow:0 0 0 1px 
     <div class="rprog"><i id="brkBar"></i></div><p class="pnext" id="brkLeft"></p>
     <button class="go" id="brkOk">继续 → 选强化</button></div></div>
   <div class="pickbox" id="pickBox" hidden><div class="pickcard">
-    <span class="tipstep" id="pickWhy">BOSS 净化</span><h3>选一个强化</h3><p class="pnext" id="pickNext"></p>
+    <span class="tipstep" id="pickWhy">大噩梦被净化啦</span><h3>选一个强化</h3><p class="pnext" id="pickNext"></p>
     <div class="plist" id="pickList"></div></div></div>
   <div class="coachskip" id="coachSkip" hidden><button id="cSkipOne">跳过这项 ›</button><button id="cSkipAll">跳过全部引导</button></div>
   <div class="bigview" id="bigView" hidden><div class="bigcard"><canvas id="bigCv"></canvas><h3 id="bigName"></h3><p id="bigInfo"></p><small>点任意处关闭 · 详情可上下滑</small></div></div>
@@ -675,7 +675,7 @@ async function doAuth(signup){
 function petName(l){return (XPETS[l-1]||XPETS[0]).n}
 function petCount(){return 17}
 /* ===== 萌宠（11-02 00:05 改为路线制）：两条进化路线，花总星钻沿路线喂养，每 5 级进化一次；上场带一条；任何流派都能带；战力不算进敌人强度 ===== */
-const PET_LINES={beast:{n:'毛绒线',role:'claw',forms:[0,4,2,6,8,12,9,14,16],d:'近身扑扑：冲上去咬离防线最近的怪，优先内耗怪和 Boss；20 级起扑击带冲击，伤到周围'},
+const PET_LINES={beast:{n:'毛绒线',role:'claw',forms:[0,4,2,6,8,12,9,14,16],d:'近身扑扑：冲上去咬离防线最近的怪，优先内耗怪和大噩梦；20 级起扑击带冲击，伤到周围'},
   spirit:{n:'飞羽线',role:'orb',forms:[1,5,3,7,11,10,13,15],d:'远程魔法泡泡：守在身边连发追踪魔法泡泡；每 12 级多一颗（最多 5 颗）'}};
 const PET_KEYS=['beast','spirit'],PET_EVO=5;
 const PET_RD={claw:{n:'扑扑',p:1.2},orb:{n:'魔法泡泡',p:1.5}};
@@ -715,7 +715,7 @@ function bigView(draw,label,info){   /* 11-02：衣橱图鉴点一下看大图 *
   const g=c.getContext('2d');g.setTransform(c.width/72,0,0,c.height/84,0,0);g.clearRect(0,0,72,84);draw(g);
   $('bigName').textContent=label||'';$('bigInfo').textContent=info||'';$('bigView').hidden=false}
 let monTabCur='n';function monTab(k){monTabCur=k;for(const b of document.querySelectorAll('#monTabs button'))b.classList.toggle('on',b.dataset.f===k);for(const d of document.querySelectorAll('#bookMon .mfam')){d.hidden=d.dataset.f!==k;if(!d.hidden)$('monDesc').textContent=d.dataset.d}}
-let bookTabCur=0;   // 11-02：衣橱图鉴分三个按钮（衣装 / 萌宠 / Boss），不用一直往下滑
+let bookTabCur=0;   // 11-02：衣橱图鉴分三个按钮（衣装 / 萌宠 / 大噩梦），不用一直往下滑
 function bookTab(t){bookTabCur=t;for(const b of document.querySelectorAll('#bookTabs button'))b.classList.toggle('on',+b.dataset.t===t);for(const d of document.querySelectorAll('#ovBook .bsec'))d.hidden=+d.dataset.s!==t;const c=document.querySelector('#ovBook .card');if(c)c.scrollTop=0}
 const BOSS_LORE=['浑身血色煞气的魁梧屠夫，抡着巨大砍刀横冲直撞。','白骨堆成的骷髅怪尊，眼眶里燃着幽绿鬼火。','八腿毒蛛之母，背上毒囊发光，满地毒液。','黑铁色魔牛，铁颚弯角、鼻喷黑烟，身缠锁链。','袍上长满诡异眼睛的魔君，手持骨杖、紫焰缠身。','熔岩与黑石铸成的巨像，裂缝里流淌岩浆。','冰封千年的尸王，寒雾与冰晶环绕。','背生雷翼的怪兽，全身缠绕紫白闪电。','头戴鬼冕的鬼帝，身后幽魂与鬼火缠绕。','九个头的青黑蛟龙，盘踞在浪涛之上。','头顶彩虹云、手握雷锤的魔神，全身雷纹。','堕落的仙人，一翼洁白一翼漆黑，手持断剑。','金翅黑焰的巨大魔鹏，利爪撕天。','身带星云纹路的混沌魔猿，一拳崩山。','来自星空之外的多臂天魔，身躯如深紫星空。','九幽冥界之皇，骨甲冥火，暗红如血。','灭季魔祖，黑金魔铠，身后一轮漆黑魔日。','天魔之心：被锁链与符文缠绕、仍在跳动的魔心——净化它，就是通关。'];
 function renderBook(){
@@ -729,7 +729,7 @@ function renderBook(){
   for(const lk0 of PET_KEYS){const LN0=PET_LINES[lk0],hd=document.createElement('h5');hd.className='bsub';hd.textContent=LN0.n+'（'+LN0.forms.filter(f=>PO[f]!=null).length+'/'+LN0.forms.length+'）· '+(LN0.role==='claw'?'近身扑扑':'远程魔法泡泡');P.appendChild(hd);const G=document.createElement('div');G.className='bgrid';P.appendChild(G);   /* 11-02：毛绒线 / 飞羽线分开，按进化顺序排 */
     for(const f of LN0.forms){const l=f+1,on=PO[l-1]!=null;if(on)np++;{const lk=lk0,LN=PET_LINES[lk],fi=LN.forms.indexOf(l-1);tile(G,g=>drawFaxiang(g,36,70,1.15,1.3,l),on,petName(l),LN.n+' · 第 '+(fi+1)+' / '+LN.forms.length+' 形态（路线 Lv'+(fi*PET_EVO)+' 起）\n打法：'+LN.d+'\n这条路线现在 Lv'+PP.lines[lk]+(petsOf(s).sel===lk?' · 出战中':''))}}}
   const B=$('bookBoss');B.innerHTML='';let nb=0;const seen=s.bossSeen||{};
-  BOSSES.forEach((b,i)=>{const on=!!seen[i];if(on)nb++;   // 11-02：Boss 衣橱图鉴做成战功墙——有图显示图，没净化过是剪影
+  BOSSES.forEach((b,i)=>{const on=!!seen[i];if(on)nb++;   // 11-02：大噩梦衣橱图鉴做成战功墙——有图显示图，没净化过是剪影
     tile(B,g=>{const im=artImg('boss_'+i);if(im){const k=Math.min(68/im.naturalWidth,72/im.naturalHeight);g.drawImage(im,36-im.naturalWidth*k/2,80-im.naturalHeight*k,im.naturalWidth*k,im.naturalHeight*k)}
       else{g.fillStyle='hsl('+b.h+',45%,38%)';g.beginPath();g.arc(36,48,24,0,6.283);g.fill();g.fillStyle='#ff3b3b';g.beginPath();g.arc(28,44,3.5,0,6.283);g.arc(44,44,3.5,0,6.283);g.fill();g.fillStyle='hsl('+b.h+',60%,18%)';for(const sd of [-1,1]){g.beginPath();g.moveTo(36+sd*10,28);g.lineTo(36+sd*20,12);g.lineTo(36+sd*18,32);g.fill()}}},on,on?b.n+' · 净化×'+seen[i]:'',REALMS[i]+' · 大噩梦 · 已净化 '+(seen[i]||0)+' 次'+(BOSS_LORE[i]?'\n'+BOSS_LORE[i]:'')+'\n本事：体力很厚、走得慢，同一称号再遇到会升阶更强；第 3 波起会放技能（召唤烦恼球、冲锋、瞌睡咒、封印），读条时打掉它 8% 的体力就能打断。\n冲线：扣一大截元气、跌 3 星魔力。'+(i>=3?'\n'+REALMS[3]+'起带防护泡泡光环。':''));
     if(on){const t=B.lastChild;t.title=REALMS[i]+' · 大噩梦'}});
@@ -742,7 +742,7 @@ function renderBook(){
       '出没：'+(b?REALMS[3*b]+' ～ '+REALMS[Math.min(17,3*b+2)]+'（'+PLACES[3*b][0]+'一带）':'平凡少女 ～ '+REALMS[2])+'\n本事：'+I.a+(b?'\n进阶本事：'+monUpText(k,b):'')+'\n'+T.d+'\n打法 · 星弓系：'+I.c.ti+'\n打法 · 咒语系：'+I.c.fa+'\n咒语系应对：'+FA_CTR[k])}
     tb.innerHTML=monName(k,0)+'一族<small>'+fn+'/6</small>'}
   monTab(monTabCur);
-  $('bookSum').textContent='已收集：衣装 '+nh+'/'+REALMS.length+' · 萌宠 '+np+'/'+petCount()+' · 怪怪 '+nm+'/36 · Boss '+nb+'/'+BOSSES.length;
+  $('bookSum').textContent='已收集：衣装 '+nh+'/'+REALMS.length+' · 萌宠 '+np+'/'+petCount()+' · 怪怪 '+nm+'/36 ·大噩梦 '+nb+'/'+BOSSES.length;
   $('bookN3').textContent=nm+'/36';
   $('bookN0').textContent=nh+'/'+REALMS.length;$('bookN1').textContent=np+'/'+petCount();$('bookN2').textContent=nb+'/'+BOSSES.length;bookTab(bookTabCur);
 }
@@ -984,11 +984,11 @@ const GT={
   zou:{n:'熬夜',col:'#ff8a3a',fill:'255,138,58',bad:1,lock:.35},
   jie:{n:'流星考验',col:'#c04bd8',fill:'192,75,216',bad:1,lock:.7}
 };
-const FABAO={gourd:{n:'招财猫',d:'定时吸走怪，怪越多收得越多'},mirror:{n:'许愿镜',d:'专克内耗怪和 Boss'},bell:{n:'安眠音乐盒',d:'定时震退、震晕坏情绪，满级替你挡 Boss'}};
+const FABAO={gourd:{n:'招财猫',d:'定时吸走怪，怪越多收得越多'},mirror:{n:'许愿镜',d:'专克内耗怪和大噩梦'},bell:{n:'安眠音乐盒',d:'定时震退、震晕坏情绪，满级替你挡大噩梦'}};
 const FBROAD={   // what each level does — shown on the pick card so players can plan ahead
   gourd:['','每 5.5 秒收走 1 只怪 + 场上 5%','每 5 秒收走 2 只 + 场上 10%','每 4.5 秒收走 3 只 + 场上 15%，能收内耗怪','每 4 秒收走 4 只 + 场上 20%','满级「招财大爆发」：每 4 秒收 5 只 + 25%，每第 4 次直接收光全屏烦恼球'],
-  mirror:['','打内耗怪和 Boss +30%','打内耗怪和 Boss +60%','+90%，内耗怪现形、走得慢 30%','+120%','满级「看穿」：+150%，Boss 的瞌睡咒和封印一律读条失败'],
-  bell:['','每 11 秒震退坏情绪一小段','每 10 秒震退更远','每 9 秒震退，并把坏情绪震晕 1.2 秒','每 8 秒震退，震晕 1.4 秒','满级「好梦」：每 25 秒替你挡住一次冲线的 Boss 或内耗怪']};
+  mirror:['','打内耗怪和大噩梦 +30%','打内耗怪和大噩梦 +60%','+90%，内耗怪现形、走得慢 30%','+120%','满级「看穿」：+150%，大噩梦的瞌睡咒和封印一律读条失败'],
+  bell:['','每 11 秒震退坏情绪一小段','每 10 秒震退更远','每 9 秒震退，并把坏情绪震晕 1.2 秒','每 8 秒震退，震晕 1.4 秒','满级「好梦」：每 25 秒替你挡住一次冲线的大噩梦或内耗怪']};
 const FUS={bomb:'星光爆发 +1',bolt:'彩虹光束刷新',shield:'泡泡护盾刷新',freeze:'噩梦暂停刷新'};
 const ROWS=[ // weight, gate A, gate B, (unused), g=good b=bad m=mixed
   [16,'qi','qi',0,'g'],[10,'qi','vein',0,'g'],[8,'fu','qi',0,'g'],[5,'vein','fu',0,'g'],
@@ -1223,8 +1223,8 @@ function monsterSkills(dt){
         else if(o.cast.t>=2&&S.fb.mirror>=5){o.cast=null;ftext(o.x,o.y-o.r-50,'许愿镜：看穿！',C.gold,20)}
         else if(o.cast.t>=2){const kd=o.cast.kind;o.cast=null;
           if(S.shieldT>0)ftext(o.x,o.y-o.r-50,'被泡泡护盾挡下',C.gold,16);
-          else if(kd==='slow'){S.hexT=5;ftext(S.x,squadY-90,'Boss 瞌睡咒：星速 −25%',C.minus,18)}
-          else{const ks=['bomb','bolt','shield','freeze'].filter(has);if(ks.length){const kk=ks[ri(0,ks.length-1)];S.seal[kk]=6;ftext(S.x,squadY-90,'Boss 封印了'+TIPS[kk].t,C.minus,18)}}}}
+          else if(kd==='slow'){S.hexT=5;ftext(S.x,squadY-90,'大噩梦瞌睡咒：星速 −25%',C.minus,18)}
+          else{const ks=['bomb','bolt','shield','freeze'].filter(has);if(ks.length){const kk=ks[ri(0,ks.length-1)];S.seal[kk]=6;ftext(S.x,squadY-90,'大噩梦封印了'+TIPS[kk].t,C.minus,18)}}}}
       else if(o.sks.length){o.skT-=dt;if(o.skT<=0){const kd=o.sks[ri(0,o.sks.length-1)];o.skT=kd==='summon'?7:kd==='charge'?9:10;
         if(kd==='summon')minions(o,3,.5);else if(kd==='charge'){o.dash=1.1;ftext(o.x,o.y-o.r-50,'冲锋！',C.minus,18)}else o.cast={kind:kd,t:0,hp:o.hp}}}}}
 }
@@ -1305,7 +1305,7 @@ function dmgMul(o){
 function leakHit(o){if(!o.boss)kdNote(1.15);
   if(S.shieldT>0){ftext(o.x,squadY-50,'泡泡护盾挡下',C.gold,18);return}
   if(o.boss){
-    const before=S.count,bf=bossHpF();loseHp(bf*S.armor,o.x,'Boss');addLayers(-3*slowF(S.rR));
+    const before=S.count,bf=bossHpF();loseHp(bf*S.armor,o.x,'大噩梦');addLayers(-3*slowF(S.rR));
     S.loss.boss=(S.loss.boss||0)+(before-S.count);
     toast('元气 −'+Math.round(bf*S.armor*100)+'%',(o.heart?'负能量':'大噩梦')+'冲破了防线，魔力也跌了一些');S.shake=16;S.flash=.5;sfx(70,.8,'sawtooth',.09,.4);
   } else if(o.type==='elite'){
@@ -1448,16 +1448,16 @@ function goalText(){
   if(S&&S.rwF<1)return '重来中：敌人约为倒下时的 <b>'+Math.round(S.rwF*100)+'%</b>，正在慢慢追回 · 趁现在多吃门、攒星钻';
   if(!S)return '';const rr=realmOf(S.count),cur=Math.max(1,rr.r);
   if(S.maxR>=TOPR&&S.bottle)return '创世女神 9星圆满 · <b>下一波净化「永夜」即可通关</b>';
-  if(S.bottle)return '九星圆满 · <b>净化下一个 Boss（负能量）变身</b> → '+REALMS[S.maxR+1]+'：'+unlockList(S.maxR+1).slice(0,3).join('、');
+  if(S.bottle)return '九星圆满 · <b>净化下一个大噩梦（负能量）变身</b> → '+REALMS[S.maxR+1]+'：'+unlockList(S.maxR+1).slice(0,3).join('、');
   if(rr.r===0)return '魔力攒到 100 → 进入 <b>'+REALMS[1]+'</b>';
   if(rr.r<S.peakR)return '跌落中 · 先回到 '+REALMS[S.peakR];
   const nt=!inSurge()&&S.t>PRE-12?nextTrait():null;if(nt&&wph()>MOW-12)return '下一波：<b>'+TRAITS[nt].n+'</b> · 克制：'+TRAITS[nt].c.map(x=>PNAME[x]).join('、');
   const left=Math.max(0,9-((rr.layer-1)+rr.frac));
   return '下一称号 <b>'+(REALMS[cur+1]||'')+'</b>：还差 '+left.toFixed(1)+' 星到九星圆满 · 解锁 '+unlockList(cur+1).slice(0,3).join('、');
 }
-function regroup(){   // 净化 Boss 后休整：冲击波重创烦恼球、6 秒不刷怪、回 15% 元气、左道马上来一排好门
+function regroup(){   // 净化大噩梦后休整：冲击波重创烦恼球、6 秒不刷怪、回 15% 元气、左道马上来一排好门
   S.regroup=6;const n=skillPool(8,z=>!z.boss,0);heal(.15,'休整');S.goodRow=true;S.spawnL=Math.min(S.spawnL,.4);
-  S.fxBomb=Math.max(S.fxBomb||0,.5);toast('打败大噩梦 · 休整 6 秒','星光冲击波净化了 '+n+' 只怪，元气 +15%，左边来了好门');
+  S.fxBomb=Math.max(S.fxBomb||0,.5);toast('净化大噩梦 · 休整 6 秒','星光冲击波净化了 '+n+' 只怪，元气 +15%，左边来了好门');
 }
 function breakthrough(){
   for(const z of S.objs)if(z.heart&&!z.dead){z.heart=false;if(z.look)z.look.name=z.look.name.replace('负能量 · ','')}   // leftover 负能量 become ordinary bosses
@@ -1487,7 +1487,7 @@ function killZ(o){
     if(o.fin){ftext(o.x,o.y,'点亮星空',C.gold,34);S.fxBreak=1.2;S.won=true;setTimeout(()=>endRun('clear'),900);return}
     if(S.maxR<TOPR&&((o.heart&&o.heartR===S.maxR)||S.count>=capOf(S.maxR)*.98)){   // only breaks through if you are still at the bottleneck (a 负能量 left over after a 变身星冠 no longer counts)
 ftext(o.x,o.y,'净化负能量',C.gold,30);for(let i=0;i<6;i++)dropCoins(o.x+rand(-30,30),o.y+rand(-30,30),o.coin/6);breakthrough();return}
-    ftext(o.x,o.y,'BOSS 净化',C.gold,30);toast('BOSS 净化','星钻翻倍');o.coin*=2;S.shake=12;
+    ftext(o.x,o.y,'大噩梦被净化啦',C.gold,30);toast('大噩梦被净化啦','星钻翻倍');o.coin*=2;S.shake=12;
     for(let i=0;i<6;i++)dropCoins(o.x+rand(-30,30),o.y+rand(-30,30),o.coin/6);
   }
 }
@@ -1605,8 +1605,8 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}sprFxTick(dt);S.fxBom
    {const L=layersOf(S.count);if(!(S.peakL>=L))S.peakL=L;
     if(S.hpF<=0&&!S.won&&tiEvo('immortal')&&S.immR!==S.maxR){S.immR=S.maxR;S.hpF=.3;S.lastHp=.3;toast('不灭星光','元气归零时保住 30%（每个称号一次）');S.fxBreak=Math.max(S.fxBreak||0,.8);S.flash=.3;heal(0,'不灭星光')}
     if(S.hpF<=0&&!S.won){S.hpF=0;deathOffer();return}
-    if(S.hpF<.5&&!S.hpTold){S.hpTold=true;toast('元气过半','元气不会自己回：变身、净化 Boss 后休整、选「元气精进」才回')}}
-   if(S.bottle&&!S.bottleShown){S.bottleShown=true;if(S.maxR>=TOPR)toast('创世女神 9星圆满','下一波净化「永夜」，即可点亮星空、通关');else toast('变身前夕：'+REALMS[S.maxR]+'九星圆满','净化本波 Boss（负能量）或吃变身星冠才能变身')}}
+    if(S.hpF<.5&&!S.hpTold){S.hpTold=true;toast('元气过半','元气不会自己回：变身、净化大噩梦后休整、选「元气精进」才回')}}
+   if(S.bottle&&!S.bottleShown){S.bottleShown=true;if(S.maxR>=TOPR)toast('创世女神 9星圆满','下一波净化「永夜」，即可点亮星空、通关');else toast('变身前夕：'+REALMS[S.maxR]+'九星圆满','净化本波大噩梦（负能量）或吃变身星冠才能变身')}}
   S.bankT-=dt;if(S.bankT<=0){S.bankT=8;bankCoins()}
   for(const k of ['fire','ice','sword'])S[k+'Cd']=Math.max(0,(S[k+'Cd']||0)-dt);S.slowT=Math.max(0,(S.slowT||0)-dt);
   if(S.fxFires&&S.fxFires.length){for(const f of S.fxFires){f.t+=dt/(f.crow?.4:.3);if(f.t>=1)fireHit(f)}S.fxFires=S.fxFires.filter(f=>f.t<1)}
@@ -1914,7 +1914,7 @@ function drawZ(o){
   if(o.boss){
     const w=r*3.2,p=clamp(o.hp/o.hp0,0,1);
     ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(o.x-w/2,o.y-r-12,w,7);ctx.fillStyle=C.minus;ctx.fillRect(o.x-w/2,o.y-r-12,w*p,7);
-    outlined('BOSS '+fmtD(Math.max(0,o.hp)),o.x,o.y-r-24,15,'#fff');outlined('冲线吃 35% 魔力',o.x,o.y+r+16,13,C.minus,CN);
+    outlined('大噩梦 '+fmtD(Math.max(0,o.hp)),o.x,o.y-r-24,15,'#fff');outlined('冲线吃 35% 魔力',o.x,o.y+r+16,13,C.minus,CN);
   } else if(o.type==='brute'||o.type==='elite'){
     const sec=Math.max(0,o.hp)/Math.max(1e-9,dps()*dmgMul(o));outlined((sec<10?sec.toFixed(1):Math.round(sec))+'秒',o.x,o.y-r-7,11,'#fff',CN);
     if(o.type==='elite')outlined(monName('elite',bandOf(o))+'·'+REALMS[o.realm||0],o.x,o.y-r-20,10,o.realm>S.rR?C.minus:'#e6d2ff',CN)}
@@ -2219,7 +2219,7 @@ function drawSquad(){
 
 /* ================= TUTORIAL ================= */
 let tip=null,tipQ=[],demoT=0;
-/* ===== 11-02 03:01 怪物情报：每种新怪怪 / 每个称号的新 Boss 第一次出场前暂停介绍——是什么、有什么本事、对你现在的威胁、怎么打 ===== */
+/* ===== 11-02 03:01 怪物情报：每种新怪怪 / 每个称号的新大噩梦第一次出场前暂停介绍——是什么、有什么本事、对你现在的威胁、怎么打 ===== */
 const INTEL={
   n:{e:'👾',a:'最普通的怪，从右道往下走，冲过红线会吸走一点魔力。',c:{ti:'站到右道普攻就能清，星光护盾还能顺带把它弹开。',fa:'普攻加星星魔弹就够；后期自动魔法会自动清。',x:'拖到右道把它净化，还能涨魔力。'}},
   run:{e:'💨',a:'跑得特别快，几秒就冲到防线。',c:{ti:'看到就先横移过去打；成群时放噩梦暂停。',fa:'星星魔弹点掉；成群时放噩梦暂停或冰晶咒。',x:'看到就先去打；成群时放噩梦暂停。'}},
@@ -2232,8 +2232,8 @@ function intelThreat(o){const d=Math.max(1e-9,dps()*dmgMul(o)),sec=Math.max(0,o.
 function intelScan(){if(!S||S.tut||intelOn||tip||pickOpts||S.deathOpen||S.pathAnim)return;const s=slot();if(!s||s.noIntel)return;s.intel=s.intel||{};
   for(const o of S.objs){if(o.k!=='z'||o.dead||o.intelChk)continue;o.intelChk=1;const vb=o.boss?0:bandOf(o),key=o.boss?(o.look?'b'+o.look.bi:null):o.type+(vb?'_'+vb:'');if(!key||s.intel[key])continue;if(!o.boss&&!INTEL[o.type])continue;openIntel(key,o);return}}
 function openIntel(key,o){intelOn=key;paused=true;drag=null;const boss=key[0]==='b'&&o.boss,vb=boss?0:bandOf(o),I=boss?null:INTEL[o.type],th=intelThreat(o),sec=th.sec<.1?'不到 0.1':th.sec<10?th.sec.toFixed(1):String(Math.round(th.sec));
-  const nm=boss?(BOSSES[o.look.bi]||{}).n||'Boss':monName(o.type,vb);
-  $('intelStep').textContent=boss?'新 Boss · '+REALMS[o.look.bi]+'境':vb?'新怪怪 · '+monName(o.type,0)+'一族的进阶':'新怪怪';$('intelTitle').textContent=nm;
+  const nm=boss?(BOSSES[o.look.bi]||{}).n||'大噩梦':monName(o.type,vb);
+  $('intelStep').textContent=boss?'新大噩梦 · '+REALMS[o.look.bi]:vb?'新怪怪 · '+monName(o.type,0)+'一族的进阶':'新怪怪';$('intelTitle').textContent=nm;
   $('intelAbil').textContent=boss?'这个称号的大噩梦：体力很厚、走得慢；第 3 波起会放技能（召唤烦恼球、冲锋、瞌睡咒、封印），读条时打掉它 8% 的体力就能打断。':(vb?'这一方天地的'+monName(o.type,0)+'，本事更强——'+monUpText(o.type,vb)+'。\n基本本事：':'')+I.a;
   $('intelThreat').innerHTML='以你现在的星力：'+(boss?'约 <b>'+sec+'</b> 秒能净化它 · 冲线扣 <b>'+Math.round(bossHpF()*100)+'%</b> 元气、跌 3 星魔力':'单只约 <b>'+sec+'</b> 秒净化')+' · 威胁 <b style="color:'+th.lv[1]+'">'+th.lv[0]+'</b>';
   $('intelTip').textContent=spText('打法：'+(!boss&&S.path==='fa'&&FA_CTR[o.type]?'咒语系应对：'+FA_CTR[o.type]+'\n':'')+(boss?'噩梦潮开始就提前到右道等它；它读条时集火打断；快冲线时开泡泡护盾、放星光爆发。':(I.c[S.path]||I.c.x)));
@@ -2247,21 +2247,21 @@ const TIPS={
   qi:{t:'星光糖',d:'撞上去，魔力涨几星（一星 = 十成）。门上的数字可以用星光打涨。两扇都是星光糖时，挑数字大的。'},
   n:{t:'烦恼球',d:'怪从右道往下走，冲过红线会吸走你一点魔力。拖到右道把它净化，还能涨魔力。'},
   xin:{t:'负能量',d:'撞上去会掉魔力。用星光打它能把惩罚打掉一半。能避开就别撞。'},
-  art:{t:'三选一强化',d:'净化掉 Boss 或变身时会暂停，给你 3 个强化选 1 个。选之前会告诉你下一波是什么，标着“克制下一波”的那个最划算。强化上限随称号提高。'},
+  art:{t:'三选一强化',d:'净化掉大噩梦或变身时会暂停，给你 3 个强化选 1 个。选之前会告诉你下一波是什么，标着“克制下一波”的那个最划算。强化上限随称号提高。'},
   surge:{t:'噩梦潮',d:'每隔一阵会来一波噩梦潮，二十秒内坏情绪又多又强。撑过去，就有一段轻松的时间攒魔力。你打得越轻松（坏情绪老是死在很远的地方），之后的噩梦潮就越凶；被压到防线附近或倒下后，会稍微缓一缓。'},
-  bomb:{t:'星光爆发',d:'右下角的星光爆发：星光炸开，威力等于你全力输出 10 秒，从离红线最近的小怪净化起，Boss 最多掉 20% 的体力。怪越多净化得越少，清不了场——在怪刚压上来时用最值。每撑过一波噩梦潮多一张，最多 3 张。'},
-  boss:{t:'Boss',d:'噩梦潮中途会来一个大噩梦。每个称号的大噩梦都不一样，称号越高越凶。体力很厚、走得慢，提前去右道打它。让它冲线，扣 20%～40% 元气（称号越高扣得越多）、跌 3 星魔力。'},
+  bomb:{t:'星光爆发',d:'右下角的星光爆发：星光炸开，威力等于你全力输出 10 秒，从离红线最近的小怪净化起，大噩梦最多掉 20% 的体力。怪越多净化得越少，清不了场——在怪刚压上来时用最值。每撑过一波噩梦潮多一张，最多 3 张。'},
+  boss:{t:'大噩梦',d:'噩梦潮中途会来一个大噩梦。每个称号的大噩梦都不一样，称号越高越凶。体力很厚、走得慢，提前去右道打它。让它冲线，扣 20%～40% 元气（称号越高扣得越多）、跌 3 星魔力。'},
   run:{t:'急躁鬼',d:'跑得特别快，留意右道上方，看到就去打。'},
-  bottle:{t:'变身前夕',d:'魔力到了九星就卡住了，再吃糖也不涨。净化掉这一波的 Boss（负能量）才能变身，进入下一个称号。'},
+  bottle:{t:'变身前夕',d:'魔力到了九星就卡住了，再吃糖也不涨。净化掉这一波的大噩梦（负能量）才能变身，进入下一个称号。'},
   brk:{t:'变身星冠',d:'卡在变身前夕时才会出现。打开锁撞上去，直接变身，不用打负能量。'},
   bolt:{t:'彩虹光束',d:'右下角新技能：一道彩虹扫过右边一整列，威力等于你全力输出 4 秒，离防线近的先挨。用完要等二十秒。'},
   four:{t:'四条道都是坏门',d:'这一排左右四条道都是坏门，躲不掉，挑最轻的那扇撞。'},
   brute:{t:'拖延懒懒',d:'皮厚，冲线吸走的魔力比烦恼球多。看到它优先打。'},
-  fb:{t:'魔法道具',d:'在三选一里可以选招财猫（定时吸走怪）、许愿镜（打精英和 Boss 更痛）、安眠音乐盒（定时震退坏情绪），自动帮你作战，等级上限随称号提高。'},
+  fb:{t:'魔法道具',d:'在三选一里可以选招财猫（定时吸走怪）、许愿镜（打精英和大噩梦更痛）、安眠音乐盒（定时震退坏情绪），自动帮你作战，等级上限随称号提高。'},
   dodge:{t:'坏门错开了：可以全躲',d:'左右两边的坏门没有同时到。先待在晚到的那一侧，等早到的一过线，立刻横移过去，一扇都不用撞。'},
   elite:{t:'内耗怪',d:'冲线会吸走你的魔力（最多一整星）。头上写着它的称号，称号比你高时，你打它很吃力。'},
   zou:{t:'熬夜',d:'撞上去，星速变慢一段时间。打它能缩短时间。'},
-  shield:{t:'泡泡护盾',d:'右下角新技能：六秒内坏情绪冲线不会伤你，Boss 也不例外。用完要等四十五秒。'},
+  shield:{t:'泡泡护盾',d:'右下角新技能：六秒内坏情绪冲线不会伤你，大噩梦也不例外。用完要等四十五秒。'},
   vein:{t:'愿望水晶（带锁）',d:'收益约是星光糖的 6 倍，但必须先把锁打开才能吃，锁没开撞上去没用。打锁要花星力，这时右边的怪会压上来——吃眼前的星光糖，还是冒险破锁吃愿望水晶，看场面决定。'},
   trap:{t:'右道陷阱',d:'右道上的负能量，只占半条道。在右道打怪时侧身让开就行。'},
   freeze:{t:'噩梦暂停',d:'右下角新技能：全场的怪定住三秒半，趁机清怪。用完要等三十五秒。'},
@@ -2270,16 +2270,16 @@ const TIPS={
   hex:{t:'瞌睡精',d:'头上会读条，读满后你的星速 −25%，持续 4 秒。看到就先打掉它。'},
   guard:{t:'黏人怪',d:'身边一圈里的怪受到的伤害减少 40%。先打黏人怪，再清其他。'},
   shop:{t:'星钻：商店与萌宠',d:'打怪、吃门攒的星钻，可以在主页或暂停页（最上面一栏）随时花：喂养萌宠，或进商店买永久强化。星力、星速、防护泡泡、道具效果、星钻收益买了立刻生效；初始魔力、开局魔法书、星光爆发储备从下一局开始。'},
-  intel:{t:'怪物情报',d:'每种新怪怪、每个称号的新 Boss 第一次出场前，游戏会暂停，介绍它的本事、以你现在的星力几秒能净化它、威胁高低和打法。不想看可以点「以后不再介绍」。'},
-  cast:{t:'Boss 技能',d:'第三波起 Boss 会放技能：召唤烦恼球、冲锋、瞌睡咒（星速 −25%）、封印（某个技能 6 秒不能用）。读条时打掉它 8% 的体力就能打断。'},
+  intel:{t:'怪物情报',d:'每种新怪怪、每个称号的新大噩梦第一次出场前，游戏会暂停，介绍它的本事、以你现在的星力几秒能净化它、威胁高低和打法。不想看可以点「以后不再介绍」。'},
+  cast:{t:'大噩梦技能',d:'第三波起大噩梦会放技能：召唤烦恼球、冲锋、瞌睡咒（星速 −25%）、封印（某个技能 6 秒不能用）。读条时打掉它 8% 的体力就能打断。'},
   path:{t:'星弓系 / 咒语系',d:'成为星光学徒时二选一，选了就不能改。星弓系靠星光硬推：星光伤害 ×1.5、受伤 −30%、元气上限 ×1.3、流星雨和贯穿上限各 +1，但技能冷却 +40%、威力 −30%。咒语系靠魔法：七种魔法立刻全会，用「魔法值」施法（魔法值一直在回，魔法间隔很短）；星光前期 ×0.7，越往后越弱，到'+REALMS[10]+'只剩 ×0.1；三选一会出现魔法升级和自动魔法（星星小鸟、守护星、彩虹云，自动清怪）；'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时各进化一种魔法。两条路的数值都跟着称号涨。'},
   save:{t:'存档与长线冒险',d:'这是一场长线冒险：前几个称号十几分钟，越往后越久，成为创世女神要几十个小时。随时点暂停 →「存档退出」，下次从原地接着打；平时每 30 秒也会自动存。元气耗尽也不清档：可以回到之前的波次重来，或者选择结束本局结算。'},
   factr:{t:'咒语系克制',d:'烦恼球进阶后各有新本事，咒语系有对应的魔法克它：被星星魔弹净化的烦恼球不分裂、炸中黏人怪破罩；冰晶咒让急躁鬼不能猛冲；彩虹光束给拖延懒懒贯穿并打断发脾气、打断瞌睡精读条；流星乱舞净化中的内耗怪 3 秒内不能偷吃回元气。场上出现被克制的怪时，对应的魔法按钮会发金光。星弓系不用管这些，靠数值硬推。对症的魔法打它伤害还 ×1.5。魔法值不够把所有魔法都放出去，要看场上是哪种怪、挑对症的那个放。'},
   tier:{t:'烦恼球进阶',d:'每过 3 个称号，六族烦恼球换一批更凶的样子（脚下金菱 = 第几次进阶）。每进一阶都走得快 6%、冲线伤害 +15%，各族还会长出新本事——烦恼球一族第 3 阶起被净化后分裂（第 5 阶分裂 2 只）；急躁鬼一族每阶再快 8%，第 4 阶起挨打后猛冲；拖延懒懒一族每阶受伤再少 6%，第 4 阶起半血发脾气；内耗怪一族吸魔力更狠，第 3 阶起身边有怪被净化就偷吃回元气；瞌睡精一族读条更快，第 4 阶起咒成时让身边的怪加速；黏人怪一族护罩更大更强，第 4 阶起护罩里的怪回元气。触发时头上会飘字，第一次遇到新的一阶会先暂停介绍。星弓系靠数值硬推；咒语系看「咒语系克制」，用对症的魔法打。'},
-  yq:{t:'坏心情',d:'左上角的「坏心情 ×1.6」：这一季撑得越久，坏心情越浓，所有怪怪和 Boss 的血量一起往上涨（每分钟再强 10%，越滚越快；你打得越轻松涨得越快；成为星光学徒前减半），不会因为你变强而停。迟早会顶不住倒下——倒下不清档，坏心情回落一半再继续涨。想撑得更久，就要靠三选一、商店、萌宠和技能时机把自己养得更强。'},
-  hp:{t:'元气',d:'左上角的红条。烦恼球冲线扣 1.2%，拖延懒懒 2.5%，内耗怪 6%，Boss 20%～40%（称号越高越多），同时少掉一点魔力。元气不会自己回，只有变身（+30%）、净化 Boss 后休整（+15%）、选「元气精进」（+30%）才回。元气精进、星弓系「星光护甲」能加元气上限。元气归零会弹出选项：回到之前的波次重来（数值全保留），或结束本局。'},
-  mana:{t:'咒语系 · 魔法值与自动魔法',d:'咒语系右下角的蓝色圆球是魔法值：每个魔法耗魔法值，魔法值一直在回（星星魔弹一发 30 魔法值、威力大、爆炸范围大，要挑怪最密的时候放），变身回满，补技能的门给咒语系改为魔法值 +40。星光前期 ×0.7，越往后越弱，到'+REALMS[10]+'只剩 ×0.1。三选一会出现魔法升级（星星魔弹、流星乱舞、彩虹光束、冰晶咒、魔法值）和自动魔法（星星小鸟、守护星、彩虹云），被动会自己放、后期能清掉大部分烦恼球；Boss 和大波还得你主动放。'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时魔法各进化一次（超新星魔弹、流星暴雨、冰雪王国、双彩虹光束、魔法少女变身）。暂停页「输出构成」能看到普攻、魔法、自动各占多少。'},
-  tibr:{t:'星弓系 · 被动与进化',d:'三选一会出现星弓系被动：星光护盾（冲到防线的怪先被重创并震退）、勇气（元气越低伤害越高）、星光纵横（定期射出穿透巨箭）；以及星弓系升级：重箭、连射、星光护甲（元气上限）、破防（打内耗怪和 Boss 更痛）。'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时星光各进化一次（金光星光、星爆溅射、钻石护甲、万星齐发、不灭星光：每个称号一次元气归零保住 30%）。'},
+  yq:{t:'坏心情',d:'左上角的「坏心情 ×1.6」：这一季撑得越久，坏心情越浓，所有怪怪和大噩梦的血量一起往上涨（每分钟再强 10%，越滚越快；你打得越轻松涨得越快；成为星光学徒前减半），不会因为你变强而停。迟早会顶不住倒下——倒下不清档，坏心情回落一半再继续涨。想撑得更久，就要靠三选一、商店、萌宠和技能时机把自己养得更强。'},
+  hp:{t:'元气',d:'左上角的红条。烦恼球冲线扣 1.2%，拖延懒懒 2.5%，内耗怪 6%，大噩梦 20%～40%（称号越高越多），同时少掉一点魔力。元气不会自己回，只有变身（+30%）、净化大噩梦后休整（+15%）、选「元气精进」（+30%）才回。元气精进、星弓系「星光护甲」能加元气上限。元气归零会弹出选项：回到之前的波次重来（数值全保留），或结束本局。'},
+  mana:{t:'咒语系 · 魔法值与自动魔法',d:'咒语系右下角的蓝色圆球是魔法值：每个魔法耗魔法值，魔法值一直在回（星星魔弹一发 30 魔法值、威力大、爆炸范围大，要挑怪最密的时候放），变身回满，补技能的门给咒语系改为魔法值 +40。星光前期 ×0.7，越往后越弱，到'+REALMS[10]+'只剩 ×0.1。三选一会出现魔法升级（星星魔弹、流星乱舞、彩虹光束、冰晶咒、魔法值）和自动魔法（星星小鸟、守护星、彩虹云），被动会自己放、后期能清掉大部分烦恼球；大噩梦和大波还得你主动放。'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时魔法各进化一次（超新星魔弹、流星暴雨、冰雪王国、双彩虹光束、魔法少女变身）。暂停页「输出构成」能看到普攻、魔法、自动各占多少。'},
+  tibr:{t:'星弓系 · 被动与进化',d:'三选一会出现星弓系被动：星光护盾（冲到防线的怪先被重创并震退）、勇气（元气越低伤害越高）、星光纵横（定期射出穿透巨箭）；以及星弓系升级：重箭、连射、星光护甲（元气上限）、破防（打内耗怪和大噩梦更痛）。'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时星光各进化一次（金光星光、星爆溅射、钻石护甲、万星齐发、不灭星光：每个称号一次元气归零保住 30%）。'},
   death:{t:'倒下与重来',d:'元气耗尽不会清档。可以选回到之前的某一波（大约 3、8、15、30 波前）：数值、称号、星钻全保留，元气回满，敌人按当时的强度出现，再慢慢追回（最后会比你倒下时弱一点），「坏心情」也回落一半——这段时间是最爽的割草期，多吃门、攒星钻和魔力。也可以直接结束本局结算。每次倒下都记在存档里，排行榜会显示。'},
   rank:{t:'排行榜',d:'先比最高称号，再比得分；每个存档单独上榜，冒险中的存档也会更新。名字后面显示「倒下 N 次」，一次都没倒过的显示「零失误」。'},
   mech:{t:'萌宠',d:'主页「萌宠」里有两条进化路线：毛绒线（灵猫 → 白虎 → … → 祖龙，近身扑扑，20 级起带冲击）和飞羽线（白狐 → 九尾狐 → … → 金乌，远程追踪魔法泡泡，越养魔法泡泡越多）。花总星钻沿路线喂养，每级战力 +12%，每 5 级进化成下一个形态，等级不封顶。上场只带一条，任何流派都能带；萌宠的战力不会让敌人变强。暂停页也能直接喂养。'},
@@ -2365,20 +2365,20 @@ const COACH={
   xin:{t:'躲开！',s:'撞上会掉魔力',bad:1,slow:.4,max:4},
   lock:{t:'先把锁打开',s:'对准它开火，锁没开撞上去没用',slow:.45,max:4},
   surge:{t:'噩梦潮来了！',s:'撑住 20 秒',banner:1,max:2.2},
-  boss:{t:'Boss：别让它冲线',s:'冲线扣 '+Math.round(bossHpF()*100)+'% 元气',slow:.45,max:3},
+  boss:{t:'大噩梦：别让它冲线',s:'冲线扣 '+Math.round(bossHpF()*100)+'% 元气',slow:.45,max:3},
   run:{t:'跑得快，先打它',slow:.5,max:2.2},brute:{t:'皮厚，漏了损失大',slow:.5,max:2.2},elite:{t:'内耗怪：漏了跌一星',slow:.5,max:2.4},
   four:{t:'全是坏门：挑最轻的',bad:1,slow:.45,max:2.6},dodge:{t:'错开了：等一下再横移',s:'可以一扇都不撞',slow:.45,max:2.8},
   trap:{t:'右道坏门：侧身躲开',bad:1,slow:.5,max:2.2},zou:{t:'熬夜：撞了会变慢',bad:1,slow:.5,max:2.2},
   jie:{t:'流星考验：集火打开它！',s:'打开冲过去＝魔力 +1.2 星；打不开就躲到右道',slow:.4,max:4},vein:{t:'愿望水晶：破锁才能吃，收益约 6 倍',slow:.5,max:2.4},art:{t:'魔法书：开锁，学一招',slow:.5,max:2.4},
   fb:{t:'魔法道具：开锁，自动帮你打',slow:.5,max:2.4},fu:{t:'魔法卡：技能多用一次',slow:.5,max:2.2},brk:{t:'变身星冠：直接变身！',slow:.5,max:2.4},
-  bottle:{t:'九星满了',s:'净化掉这波 Boss 才能变身',banner:1,max:2.6},mech:{t:'萌宠帮忙啦！',s:'它会自己找怪打',banner:1,max:2.2},
+  bottle:{t:'九星满了',s:'净化掉这波大噩梦才能变身',banner:1,max:2.6},mech:{t:'萌宠帮忙啦！',s:'它会自己找怪打',banner:1,max:2.2},
   sk_bomb:{t:'新技能：星光爆发',s:'先留着，该用时我会叫你',slow:.35,max:2.6},sk_bolt:{t:'新技能：彩虹光束',s:'先留着，该用时我会叫你',slow:.35,max:2.6},
   sk_shield:{t:'新技能：泡泡护盾',s:'先留着，该用时我会叫你',slow:.35,max:2.6},sk_freeze:{t:'新技能：噩梦暂停',s:'先留着，该用时我会叫你',slow:.35,max:2.6},
   hex:{t:'瞌睡精：先打它！',s:'读条满了，你的星速会变慢',slow:.45,max:3},guard:{t:'黏人怪：先打它',s:'圈里的怪受伤减少',slow:.45,max:3},
-  cast:{t:'Boss 在读条：集火打断！',s:'打掉它 8% 的体力就能打断',slow:.4,max:3},
+  cast:{t:'大噩梦在读条：集火打断！',s:'打掉它 8% 的体力就能打断',slow:.4,max:3},
   use_bomb:{t:'现在放星光爆发！',s:'一大波怪压上来时最划算',slow:.12,max:9},
   use_bolt:{t:'这一列堆满了：放彩虹光束！',s:'一列怪扎堆时最划算',slow:.12,max:9},
-  use_shield:{t:'Boss 要冲线：开泡泡护盾！',s:'6 秒内冲线不伤你',slow:.12,max:9},
+  use_shield:{t:'大噩梦要冲线：开泡泡护盾！',s:'6 秒内冲线不伤你',slow:.12,max:9},
   use_shieldg:{t:'开泡泡护盾，去左边吃门！',s:'6 秒冲线不伤你，趁机攒魔力',slow:.15,max:9},
   use_freeze:{t:'顶不住了：放噩梦暂停！',s:'定住 3.5 秒，先打最近的',slow:.12,max:9},
   combo_bomb:{t:'小技巧：先放星光爆发',s:'再吃魔法卡门补回来＝白用一次',slow:.2,max:7},
@@ -2738,7 +2738,7 @@ const faG=()=>(1+.03*Math.max(0,S.maxR-3))*(1+.1*((S.inf&&S.inf.sp)||0));   // �
 const psG=()=>(1+.3*Math.max(0,S.maxR-3))*(1+.1*((S.inf&&S.inf.sp)||0));   // 自动魔法随称号变强
 const mpMax=()=>100+10*Math.max(0,S.maxR-3)+20*faLv('mp')+10*((S.inf&&S.inf.mp)||0);
 const mpReg=()=>.7*(10+.4*Math.max(0,S.maxR-3))*(1+.12*faLv('mp'))*(1+.1*((S.inf&&S.inf.mp)||0));
-const FA_EVO={fire:{r:4,n:'超新星魔弹',e:'🔥',d:'星星魔弹落地留下一片星光海，3 秒内持续闪耀'},sword:{r:5,n:'流星暴雨',e:'🗡',d:'流星乱舞流星翻倍，优先砸内耗怪和 Boss'},
+const FA_EVO={fire:{r:4,n:'超新星魔弹',e:'🔥',d:'星星魔弹落地留下一片星光海，3 秒内持续闪耀'},sword:{r:5,n:'流星暴雨',e:'🗡',d:'流星乱舞流星翻倍，优先砸内耗怪和大噩梦'},
   ice:{r:6,n:'冰雪王国',e:'❄️',d:'冰晶咒先冻住全场 2 秒，减速期间怪受伤更多'},bolt:{r:7,n:'双彩虹光束',e:'⚡',d:'彩虹光束同时扫两列'},xiang:{r:8,n:'魔法少女变身',e:'🌀',d:'每放 3 个魔法，自动追加一发星星魔弹并回 15 魔法值'}};
 const faEvo=k=>!!S&&S.path==='fa'&&!!FA_EVO[k]&&S.maxR>=FA_EVO[k].r;
 const spName=k=>faEvo(k)?FA_EVO[k].n:FA_SP[k].n;
@@ -2837,10 +2837,10 @@ const tiBuild=()=>!S||S.path!=='ti'?1:(1+.04*(tiLv('heavy')+tiLv('lian')+tiLv('p
 const TI_EVO={jin:{r:4,n:'金光星光',e:'✨',d:'星光多穿一只怪，化作金光'},splash:{r:5,n:'星爆',e:'💥',d:'星光命中时，溅射周围的怪（30% 伤害）'},body:{r:6,n:'钻石护甲',e:'🛡',d:'冲线受伤再降 15%'},
   wan:{r:7,n:'万星齐发',e:'⚔️',d:'每 10 秒向前扇形齐射 12 道星光'},immortal:{r:8,n:'不灭星光',e:'🌟',d:'每个称号一次：元气归零时保住 30%'}};
 const tiEvo=k=>!!S&&S.path==='ti'&&!!TI_EVO[k]&&S.maxR>=TI_EVO[k].r;
-const TI_PS={gang:{n:'星光护盾',e:'🔰',d:L=>'冲到防线的怪先被星光重击（约 '+(.8+.5*L).toFixed(1)+' 秒星力）并震退，Boss 也会被弹开一段'},
+const TI_PS={gang:{n:'星光护盾',e:'🔰',d:L=>'冲到防线的怪先被星光重击（约 '+(.8+.5*L).toFixed(1)+' 秒星力）并震退，大噩梦也会被弹开一段'},
   zhan:{n:'勇气',e:'🔥',d:L=>'元气越低星光越狠：元气每少 10%，伤害 +'+(3*L)+'%（元气见底时 +'+(30*L)+'%）'},
   jj:{n:'星光纵横',e:'🗡',d:L=>'每 '+(8-L)+' 轮星光多射出一把穿透巨箭（约 3 倍伤害，穿透全部）'}};
-const TI_UPD={heavy:d=>'重箭：星光伤害 +'+pc(12,d)+'%',lian:d=>'连射：星速 +'+pc(10,d)+'%',body:d=>'星光护甲：元气上限 +'+pc(10,d)+'%',pojun:d=>'破防：对内耗怪和 Boss 伤害 +'+pc(20,d)+'%'};
+const TI_UPD={heavy:d=>'重箭：星光伤害 +'+pc(12,d)+'%',lian:d=>'连射：星速 +'+pc(10,d)+'%',body:d=>'星光护甲：元气上限 +'+pc(10,d)+'%',pojun:d=>'破防：对内耗怪和大噩梦伤害 +'+pc(20,d)+'%'};
 function tiTick(dt){
   if(S.path!=='ti')return;
   if(tiEvo('body')&&!S.tiBody){S.tiBody=true;S.armor*=.85}
@@ -2925,7 +2925,7 @@ function sprFxTick(dt){if(!S.sprFx)return;for(const f of S.sprFx){f.t+=dt;if(f.s
 function fxImg(g,n,x,y,sz,rot,anchor){const im=artImg('fx_'+n);if(!im)return false;const k=sz/Math.max(im.naturalWidth,im.naturalHeight);g.save();g.translate(x,y);if(rot)g.rotate(rot);g.drawImage(im,-im.naturalWidth*k/2,-im.naturalHeight*k*(anchor==null?.5:anchor),im.naturalWidth*k,im.naturalHeight*k);g.restore();return true}
 function drawBossIntro(){const B=S&&S.bossIntro;if(!B)return;const u=S.t-B.t0;if(u>1.8||u<0){S.bossIntro=null;return}
   const z=u<.25?2.2-1.2*u/.25:1+.04*(u-.25),a=u<.15?u/.15:u>1.4?Math.max(0,(1.8-u)/.4):1;ctx.save();ctx.globalAlpha=a*.55;ctx.fillStyle='#000';ctx.fillRect(0,H*.36,W,H*.12);ctx.globalAlpha=a;
-  ctx.translate(W/2,H*.42);ctx.scale(z,z);outlined(B.n,0,0,40,'#ff6a4a',BRUSH);outlined('大 怪 来 袭',0,30,13,'#ffe0a8',CN);ctx.restore()}   /* Boss 登场：书法大字砸下来 */
+  ctx.translate(W/2,H*.42);ctx.scale(z,z);outlined(B.n,0,0,40,'#ff6a4a',BRUSH);outlined('大 怪 来 袭',0,30,13,'#ffe0a8',CN);ctx.restore()}   /* 大噩梦登场：书法大字砸下来 */
 function drawSprFx(){if(!S||!ART_ON)return;const ga=ctx.globalAlpha,rc=mid+roadW/4;
   if(S.freezeT>0&&artImg('fx_8')){ctx.globalAlpha=.3*Math.min(1,S.freezeT/.5);fxImg(ctx,8,rc,H*.42,roadW*.6,S.t*.3)}
   if(S.shieldT>0&&artImg('fx_7')){ctx.globalAlpha=(.38+.1*Math.sin(S.t*6))*Math.min(1,S.shieldT/.6);fxImg(ctx,7,S.x,squadY+8,sw()*.85+40,0,.75)}
@@ -3041,7 +3041,7 @@ function renderPause(){   // 暂停页：当前阶段 + 每项数值 / 本称号
   const rr=realmOf(S.count),L=layersOf(S.count),toTop=TOPR-S.maxR,mx=x=>'×'+(x>=10?Math.round(x):x.toFixed(2).replace(/\.?0+$/,''));
   const nextR=S.maxR<TOPR?REALMS[S.maxR+1]:null,hpc=hpCap();
   $('pauseHead').innerHTML='<div class="big">'+rName(rr)+(S.path?' · '+(S.path==='ti'?'星弓系':'咒语系'):'')+'</div>'
-    +(S.bottle?'九星圆满，<b>净化下一个 Boss（负能量）</b>或吃变身星冠 → '+nextR:nextR?'离「'+nextR+'」还差 <b>'+Math.max(0,9*S.maxR-L).toFixed(1)+'</b> 星':'已到最高称号')
+    +(S.bottle?'九星圆满，<b>净化下一个大噩梦（负能量）</b>或吃变身星冠 → '+nextR:nextR?'离「'+nextR+'」还差 <b>'+Math.max(0,9*S.maxR-L).toFixed(1)+'</b> 星':'已到最高称号')
     +(toTop>0?' · 离「'+REALMS[TOPR]+'」还差 '+toTop+' 个称号':'')
     +'<br>元气 <b>'+Math.ceil(S.hpF*hpc)+'</b> / '+hpc+' · 受伤 '+mx(S.armor)+' · 第 '+(S.maxWave||0)+' 波 · 已玩 '+hhmm(S.t)
     +'<br>流星考验：已通过 <b>'+(S.jieWin||0)+'</b> 次'+(S.jieFail?'、失败 '+S.jieFail+' 次':'')+(S.jieCD>0&&S.rR>=2&&!S.bottle?' · 约 '+Math.ceil(S.jieCD/60)+' 分钟后再降':'');
@@ -3067,7 +3067,7 @@ function renderPause(){   // 暂停页：当前阶段 + 每项数值 / 本称号
   h+='<h4>魔法道具</h4>';
   for(const k of ['gourd','mirror','bell']){const lv=rawLv('fb',k),cap=lvCap(),st=stg(S.fb[k]||0);h+=row(FABAO[k].n,lv,cap,LVMAX,'',(st?'现在：'+FBROAD[k][Math.min(5,st)]:'')+(st<5?'　第 '+Math.ceil(stageL(st+1))+' 级起：'+FBROAD[k][st+1]:'')+(lv>=cap?'（本称号已满）':''))}
   h+='<h4>技能</h4>';
-  const cdm=Math.pow(.85,S.cdUp||0)*skCd(),SK=[['bomb','星光爆发','威力 '+(BOMB_S*skPow()).toFixed(0)+' 秒星力，Boss 最多 −20% · 存 '+S.bombs+' / '+bombCap()+' 张'],
+  const cdm=Math.pow(.85,S.cdUp||0)*skCd(),SK=[['bomb','星光爆发','威力 '+(BOMB_S*skPow()).toFixed(0)+' 秒星力，大噩梦最多 −20% · 存 '+S.bombs+' / '+bombCap()+' 张'],
     ['bolt','彩虹光束','威力 '+(BOLT_S*skPow()).toFixed(0)+' 秒星力打一列 · 冷却 '+Math.round(20*skCd())+' 秒'],['shield','泡泡护盾','6 秒内冲线不伤你 · 冷却 '+Math.round(45*cdm)+' 秒'],['freeze','噩梦暂停','全场定住 3.5 秒 · 冷却 '+Math.round(35*cdm)+' 秒']];
   if(S.path==='fa'){SK.length=1;for(const k of ['fire','bolt','sword','ice','freeze','shield']){const sp=FA_SP[k],d={fire:'砸最近一团，威力 '+spPool('fire').toFixed(1)+' 秒星力'+(faLv('fire')>=3?'（两颗）':'')+(faEvo('fire')?'，留星光海':''),bolt:'扫'+(faEvo('bolt')?'两列':'一列')+'，威力 '+spPool('bolt').toFixed(1)+' 秒星力',sword:'3 秒流星乱舞，共 '+(spPool('sword')*(faEvo('sword')?1.3:1)).toFixed(1)+' 秒星力',ice:'全场减速 '+(5*(1+.1*faLv('ice'))).toFixed(1)+' 秒'+(faEvo('ice')?'（先冻住 2 秒）':''),freeze:'全场定住 3.5 秒',shield:'6 秒内冲线不伤你'}[k];SK.push([k,spName(k),d+' · 耗魔法值 '+sp.c+' · 间隔 '+sp.cd+' 秒'])}}
   if(false)SK.push(['fire','星星魔弹','星星魔弹砸最近一团（范围），威力 '+(1*skPow()).toFixed(1)+' 秒星力 · 冷却 '+FA_CD.fire+' 秒'],['ice','冰晶咒','全场坏情绪减速一半 5 秒 · 冷却 '+Math.round(FA_CD.ice*Math.pow(.85,S.cdUp||0))+' 秒'],['sword','流星乱舞','3 秒内流星乱舞，共 '+(3*skPow()).toFixed(1)+' 秒星力 · 冷却 '+Math.round(FA_CD.sword*Math.pow(.85,S.cdUp||0))+' 秒']);
@@ -3118,7 +3118,7 @@ function endRun(dead){
   $('rDist').textContent=fmt(score);$('rKill').textContent=fmt(S.kills);$('rPeak').textContent=rName(rFromCode(S.peakCode));$('rCoin').textContent='+'+fmt(earned);
   {const L=S.loss,tot=(L.z||0)+(L.boss||0)+(L.gate||0)+(L.trap||0)+(L.elite||0);
    const part=(k,n)=>L[k]?n+' '+Math.round(L[k]/tot*100)+'%':null;
-   $('rLoss').textContent=tot?'魔力损失来源：'+[part('z','烦恼球'),part('elite','内耗怪'),part('boss','Boss'),part('gate','左道坏门'),part('trap','右道坏门')].filter(Boolean).join(' · '):''}
+   $('rLoss').textContent=tot?'魔力损失来源：'+[part('z','烦恼球'),part('elite','内耗怪'),part('boss','大噩梦'),part('gate','左道坏门'),part('trap','右道坏门')].filter(Boolean).join(' · '):''}
   $('rWave').textContent=clear?'第'+CNN(S.life)+'季 · 用时 '+mmss(S.t)+' · 共 '+S.maxWave+' 波'+(s.bestClear===S.t&&s.clears>1?'（最快纪录！）':''):'打到第 '+S.maxWave+' 波'+(wrec?'（新纪录！）':'　最高第 '+s.bestWave+' 波')+'　用时 '+mmss(S.t);
   {const pr=rFromCode(S.peakCode).r;$('rBest').textContent=(srec?'新纪录！':'最高分 '+fmt(s.bestScore))+' · '+(pr>=TOPR?'已到最高称号':'离「'+REALMS[TOPR]+'」还差 '+(TOPR-pr)+' 个称号')+' · 跑了 '+fmt(dist)+'m · 星钻余额 '+fmt(s.coins)}
   endRank();
@@ -3547,7 +3547,7 @@ Object.assign(TIPS,{
   xin:{t:'负能量',d:'撞上去会掉魔力。用星光打它能把损失打掉一半。能避开就别撞。'},
   art:{t:'三选一强化',d:'净化大噩梦或变身时会暂停，给你 3 个强化选 1 个。选之前会告诉你下一波是什么，标着“克制下一波”的那个最划算。强化上限随称号提高。'},
   surge:{t:'噩梦潮',d:'每隔一阵会来一波噩梦潮，二十秒内坏情绪又多又强。撑过去，就有一段轻松的时间攒魔力。你打得越轻松（坏情绪老是在很远的地方就被净化），之后的噩梦潮就越凶；被压到红线附近或倒下后，会稍微缓一缓。'},
-  bomb:{t:'星光爆发',d:'右下角的星光爆发：星光炸开，威力等于你全力输出 10 秒，从离红线最近的小怪净化起，Boss 最多掉 20% 的血。怪越多净化得越少，清不了场——在小怪刚压上来时用最值。每撑过一波噩梦潮多一次，最多 3 次。'},
+  bomb:{t:'星光爆发',d:'右下角的星光爆发：星光炸开，威力等于你全力输出 10 秒，从离红线最近的小怪净化起，大噩梦最多掉 20% 的血。怪越多净化得越少，清不了场——在小怪刚压上来时用最值。每撑过一波噩梦潮多一次，最多 3 次。'},
   boss:{t:'大噩梦',d:'噩梦潮中途会来一只大噩梦。每个称号遇到的大噩梦都不一样，称号越高越凶。血很厚、走得慢，提前去右边打它。让它冲线，扣 20%～40% 元气（称号越高扣得越多）、跌 3 星魔力。'},
   run:{t:'急躁鬼',d:'跑得特别快，留意右边上方，看到就去打。'},
   bottle:{t:'变身前夕',d:'星星攒满九颗就卡住了，再吃糖也不涨。净化这一波的大噩梦，就能华丽变身，换上下一套衣装。'},
@@ -3631,7 +3631,7 @@ BG_THEMES.splice(0,BG_THEMES.length,
  {sky:['#1d1830','#33285a'],ink:'10,8,24',mist:'210,180,250',lane:['40,34,70','64,40,90'],deco:'star',light:0},
  {sky:['#fffaf2','#f6e8f4'],ink:'150,120,140',mist:'255,252,250',lane:['150,120,140','130,100,160'],deco:'ray',light:1});
 ART_ON=true;ART_PRE='g_';   /* 11-02：女生版自己的一套手绘图 art/g_*.webp；没有的图继续用代码画 */
-BOSS_LORE.length=0;   // 女生版 Boss 设定另写，先不显示修仙版的描述
+BOSS_LORE.length=0;   // 女生版大噩梦设定另写，先不显示修仙版的描述
 
 /* 11-02：战场与小怪进阶（女生版名字） */
 PLACES.splice(0,PLACES.length,['樱花小镇','清晨的樱花街道，烦恼球在角落里冒出来'],['樱花小镇 · 放学路上','落满花瓣的放学路，烦恼球跟着书包一路滚'],['樱花小镇 · 黄昏河堤','晚霞照着河堤，第一批大噩梦从桥下冒出来'],
