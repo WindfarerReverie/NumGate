@@ -70,6 +70,17 @@ for k in ['gourd', 'mirror', 'bell']:   # 11-02 18:35：法宝 / 魔法道具 4 
         MAP['FB_%s_%d' % (k, n)] = ('cmp_fb_%s_%d' % (k, n), 220)
         MAP['GFB_%s_%d' % (k, n)] = ('g_cmp_fb_%s_%d' % (k, n), 220)
 MAP['GJAR'] = ('g_jar', 160)
+# 11-02 22:05 拖尾粒子、脚下光环、普通攻击弹道、三昧真火火柱
+for k in ['cloud','sword','ink','peach','fire','frost','thunder','dragon']:
+    MAP['TR_' + k] = ('tr_' + k, 96)
+    MAP['GTR_' + k] = ('g_tr_' + k, 96)
+for k in ['rune','taiji','lotus','sun']:
+    MAP['AU_' + k] = ('au_' + k, 256)
+    MAP['GAU_' + k] = ('g_au_' + k, 256)
+for k in ['ti','fa']:
+    MAP['PJ_' + k] = ('pj_' + k, 128)
+    MAP['GPJ_' + k] = ('g_pj_' + k, 128)
+MAP['XF_pillar'] = ('fx_pillar', 300)
 
 def find(code):
     for c in (code + 'r', code + 'q', code):
