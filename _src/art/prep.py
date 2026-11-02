@@ -65,6 +65,10 @@ for k in ['crow', 'cloud', 'jj']:
         MAP['CMP_%s_%d' % (k, n)] = ('cmp_%s_%d' % (k, n), 260)
         MAP['GCMP_%s_%d' % (k, n)] = ('g_cmp_%s_%d' % (k, n), 260)
 MAP['JAR'] = ('jar', 160)
+for k in ['gourd', 'mirror', 'bell']:   # 11-02 18:35：法宝 / 魔法道具 4 个形态
+    for n in range(1, 5):
+        MAP['FB_%s_%d' % (k, n)] = ('cmp_fb_%s_%d' % (k, n), 220)
+        MAP['GFB_%s_%d' % (k, n)] = ('g_cmp_fb_%s_%d' % (k, n), 220)
 MAP['GJAR'] = ('g_jar', 160)
 
 def find(code):
