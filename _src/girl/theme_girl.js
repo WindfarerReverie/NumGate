@@ -361,13 +361,14 @@ draw=function(){
     if(tip&&S.tipObj)drawRing(S.tipObj);
     for(const p of S.parts){ctx.globalAlpha=clamp(p.life/p.l0,0,1);ctx.fillStyle=p.col;const z=p.size;ctx.beginPath();ctx.moveTo(p.x,p.y+z*.6);ctx.bezierCurveTo(p.x-z,p.y,p.x-z*.5,p.y-z*.8,p.x,p.y-z*.25);ctx.bezierCurveTo(p.x+z*.5,p.y-z*.8,p.x+z,p.y,p.x,p.y+z*.6);ctx.fill()}
     ctx.globalAlpha=1;
-    for(const c of S.cfx){ctx.fillStyle='#bff4ff';ctx.beginPath();ctx.moveTo(c.x,c.y-6);ctx.lineTo(c.x+5,c.y);ctx.lineTo(c.x,c.y+6);ctx.lineTo(c.x-5,c.y);ctx.closePath();ctx.fill();ctx.strokeStyle='#5aa8d8';ctx.lineWidth=1.2;ctx.stroke()}
-    for(const t of S.texts){ctx.globalAlpha=clamp(t.life*1.5,0,1);outlined(t.text,t.x,t.y,t.size,t.col)}
-    ctx.globalAlpha=1;
+    {const ci=ART_ON&&artImg('fx_12');if(ci)for(const c of S.cfx)fxImg(ctx,12,c.x,c.y,18,0)}   /* 11-02 15:25：女生版也用手绘星钻 */
+    if(!(ART_ON&&artImg('fx_12')))for(const c of S.cfx){ctx.fillStyle='#bff4ff';ctx.beginPath();ctx.moveTo(c.x,c.y-6);ctx.lineTo(c.x+5,c.y);ctx.lineTo(c.x,c.y+6);ctx.lineTo(c.x-5,c.y);ctx.closePath();ctx.fill();ctx.strokeStyle='#5aa8d8';ctx.lineWidth=1.2;ctx.stroke()}
+    for(const t of S.texts){ctx.globalAlpha=clamp(t.life*1.5,0,1);outlined(t.text,t.x,t.y,t.size*(1+.45*Math.max(0,(t.life-.86)/.14)),t.col)}
+    ctx.globalAlpha=1;drawBossIntro();ctx.globalAlpha=1;
   }
   const g=ctx.createLinearGradient(0,0,0,H*.2);g.addColorStop(0,'rgba(26,20,48,.95)');g.addColorStop(1,'rgba(26,20,48,0)');
   ctx.fillStyle=g;ctx.fillRect(0,0,W,H*.2);
-  if(S)drawSkillFx();
+  if(S){drawSkillFx();drawSprFx()}   /* 11-02 15:25：女生版之前漏了手绘特效（g_fx_*）的绘制 */
   if(S&&S.flash>0){ctx.fillStyle='rgba(255,90,140,'+(S.flash*.4)+')';ctx.fillRect(0,0,W,H)}
   ctx.restore();
 };

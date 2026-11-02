@@ -14,3 +14,6 @@
 .cover h1.ttl{font-family:var(--display);font-size:clamp(42px,12.5vw,54px);background:linear-gradient(180deg,#ffffff 0%,#ffd6ec 45%,#ff8fc0 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
   filter:drop-shadow(0 3px 0 #8a2a5e) drop-shadow(0 0 14px rgba(255,158,199,.7))}
 .cover{box-shadow:0 10px 30px rgba(120,40,120,.45)}
+/* 11-02 15:25 John：封面标题挡住人物脸 → 改成一行放在顶部星空处 */
+.cover h1.ttl{top:10px;bottom:auto;font-size:clamp(32px,9.6vw,42px);line-height:1.1;white-space:nowrap}
+.cover h1.ttl br{display:none}
