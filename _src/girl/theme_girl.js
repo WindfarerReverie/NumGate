@@ -153,9 +153,11 @@ drawSquad=function(){
   drawHero(ctx,S.x,squadY+2,S.rR,S.t,1.35);
   const by=squadY-girlTop(S.rR)*1.35-8,txt=(S.life>1?'第'+CNN(S.life)+'季 · ':'')+rName(realmOf(S.count));
   ctx.font='bold 15px '+CN;const tw=ctx.measureText(txt).width+20;
-  ctx.fillStyle='rgba(30,20,48,.88)';rr(S.x-tw/2,by-14,tw,28,14);ctx.fill();
+  const PX=clamp(S.x,tw/2+6,W-tw/2-6);   /* 名牌不出屏 */
+  ctx.fillStyle='rgba(30,20,48,.88)';rr(PX-tw/2,by-14,tw,28,14);ctx.fill();
   ctx.strokeStyle=S.bottle?'#ffd36e':inL?'#ff9ec7':'#b49aff';ctx.lineWidth=2;ctx.stroke();
-  ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(txt,S.x,by+1);
+  ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(txt,PX,by+1);
+  drawLayerBar(by,tw,PX);
 };
 const girlTop=r=>(r>=14?82:r>=11?74:r>=8?62:r>=6?58:r>=2?52:46)*(1+.02*r);
 drawSwordRing=function(x,y,t,n,rad){for(let i=0;i<n;i++){const a=t*2.4+i*6.283/n,sx=x+Math.cos(a)*rad,sy=y+Math.sin(a)*rad*.45;
