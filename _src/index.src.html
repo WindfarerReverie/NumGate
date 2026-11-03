@@ -1847,7 +1847,7 @@ function regroup(){   // 斩大妖后整顿：冲击波重创小妖、6 秒不�
   S.regroup=6;const n=skillPool(8,z=>!z.boss,0);heal(.15,'整顿');S.goodRow=true;S.spawnL=Math.min(S.spawnL,.4);
   S.fxBomb=Math.max(S.fxBomb||0,.5);toast('斩大妖 · 整顿 6 秒','冲击波震散 '+n+' 只妖，气血 +15%，左边来了好门');
 }
-const vilG=()=>{const c=rCode(realmOf(S.count))+1,n=Math.pow(c,1.4);return 1/(1.9*n)};   /* 13:57 John：新手村到筑基要 20～30 分钟 → 第 c 层约 c^1.4 颗（打涨过的门）：炼体 1、2.6、4.7…22，炼气 25～57 */   /* 按“打涨过的门”算一颗（打满约 1.9 倍）；没打涨的门要多吃几颗 */   
+const vilG=()=>{const c=rCode(realmOf(S.count))+1,n=Math.pow(c,1.25);return 1/(1.9*n)};   /* 13:57/14:18 John：只吃聚气丹（含聚灵瓶）约 25 分钟到筑基，灵脉、打怪、大妖、天劫都是加速 → 第 c 层约 c^1.25 颗打涨过的门：炼体 1、2.4、3.9…15.6，炼气 18～37 */   /* 按“打涨过的门”算一颗（打满约 1.9 倍）；没打涨的门要多吃几颗 */   
 const vilRCap=()=>{const i=S.vil?S.vil.i:99;return i<4?1:i<10?2:3};
 function breakthrough(){
   if(vilOn()&&!S.path&&S.maxR>=vilRCap())return;   /* 新手村破境跟着任务走：前 8 个任务最多炼体、到第 15 个最多炼气、之后筑基；转职后再往上 */
