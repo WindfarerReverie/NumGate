@@ -1232,6 +1232,7 @@ const GW={w:[0,3,10,13,17,22,30,40,50,100,150,200,550],g:[.04,-.05,-.05,.1,.7,1.
 function gwAt(w){const W=GW.w,G=GW.g,n=W.length-1;if(w>=W[n])return G[n]+.02*(w-W[n]);let i=1;while(W[i]<w)i++;const u=(w-W[i-1])/(W[i]-W[i-1]);return G[i-1]+(G[i]-G[i-1])*u}
 function eScale(w){if(w==null)w=wPos();const vk=vilOn()?.6+.35*S.vil.i/(VIL.length-1):1-.05*vilFade();if(vk<1)w=Math.min(w,1.5+.7*S.vil.i);const D=Math.exp(calAt(WCAL.D,w));return vk*D*Math.exp(gwAt(w))*Math.pow(Math.max(1e-9,S.Dref)/D,WF)}   /* 新手村：本事还没学全，妖从六成血开始、随任务慢慢加到九成五（大妖五成→九成），强度也跟着任务进度走，卡在某一步不会越来越难；出村不会突然变难 */   // 第 w 波的怪物强度：平均水平的玩家打第 w 波时的强度 ×（你的火力 / 平均火力）^0.3
 const kMix=()=>WF*kEff()+(1-WF)*calAt(WCAL.K,wPos());   // 后期加压曲线也主要看波数
+function hpAt(sg){if(!S||S.t<PRE||vilNS()||S.tut)return hpUnit();const w0=S.wOff||0,s0=S.surgeOn,cur=wph(),tp=sg?MOW+10:Math.min(cur,MOW-5);S.wOff=w0+(cur-tp);S.surgeOn=!!sg;let r;try{r=hpUnit()}finally{S.wOff=w0;S.surgeOn=s0}return r}   /* 16:27 John：面板很猛、实际打不动——妖潮里刷的妖单只厚 3～4 倍，面板要把割草和妖潮分开写 */
 const hpUnit=()=>target()*eScale()*(S.surgeOn?(S.sb||1):.85)/(zps()*zMix());   /* 11-03：割草时小妖再薄 15%，割草感更足；压力放在妖潮和大妖 */
 const speed=()=>H*.098*(1+Math.min(S.t,300)/750);   /* 11-02 18:13：门和路面再慢 30%（.14→.098） */
 /*SPEED_.14*/   /* 11-02 17:05：门和路面再慢约 12% */
@@ -1425,15 +1426,26 @@ function stageHold(){const g=S.stage;if(!g)return false;
     const x0=mid+8,x1=roadX+roadW-8,cx=(x0+x1)/2,hpB=hpUnit(),o=mkZ(g.t,cx,-40,hpB,1);o.intelChk=1;o.stg=1;S.objs.push(o);g.o=o;g.mins=[];
     if(g.t==='guard')for(const dx of [-34,0,34]){const m=mkZ('n',clamp(cx+dx,x0+12,x1-12),-80-Math.abs(dx)*.3,hpB,1);m.intelChk=1;S.objs.push(m);g.mins.push(m)}
     g.ph='show';g.t1=S.t;return true}
-  if(g.ph==='show'){if(!g.o||g.o.dead||S.t-g.t1>(g.lite?8:30)){S.stage=null;return false}return !g.lite}
+  if(g.ph==='show'){if(!g.o||g.o.dead||S.t-g.t1>(g.lite?14:30)){stageRelease(g);S.stage=null;return false}return !g.lite}
   return false}
+function stageSpotY(){let y=H*.32;try{const cb=cv.getBoundingClientRect(),hb=$('hBtnRow').getBoundingClientRect();if(hb.height)y=hb.bottom-cb.top+78}catch(e){}return clamp(y,H*.18,H*.42)}
+function stageRelease(g){const o=g&&g.o;if(o){o.stgY=null;o.inv=0}for(const m of (g&&g.mins)||[])m.stgY=null;if(g)g.rel=1}
+/* 16:27 John：介绍哪只妖，背景里就得有它、圈亮它；太脆就先给它短时间无敌，让它走到台前来 → 选中后无敌，快步走到顶栏下面站住、圈亮，再弹情报卡（卡太高就把它挪到卡上面露出来），关卡 1.2 秒后才放开 */
 function stageTick(){const g=S.stage;if(!g)return;if(!running||paused)return;stageHold();if(!S.stage||g.ph!=='show'||!g.o||g.o.dead)return;const o=g.o;
-  if(!g.seen&&o.y>H*.16){g.seen=1;g.slowUntil=performance.now()+1100}
-  if(g.seen&&!g.shown&&performance.now()>g.slowUntil&&!intelOn&&!tip&&!pickOpts&&!S.deathOpen){g.shown=1;g.tClose=null;const s=slot(),vb=bandOf(o),key=o.type+(vb?'_'+vb:'');if(s&&!s.noIntel&&!(s.intel||{})[key])openIntel(key,o)}}
+  if(!g.inv){g.inv=1;o.inv=1;o.invHp=o.hp}
+  if(o.inv&&o.invHp)o.hp=o.invHp;
+  if(!g.rel){const sy=stageSpotY();o.stgY=sy;for(const m of g.mins||[])if(!m.dead)m.stgY=sy-28-Math.abs(m.x-o.x)*.2}
+  if(!g.seen&&o.y>4){g.seen=1}
+  if(g.seen&&!g.ready&&o.stgY!=null&&Math.abs(o.y-o.stgY)<6){g.ready=1;g.slowUntil=performance.now()+500}
+  if(g.ready&&!g.shown&&performance.now()>g.slowUntil&&!intelOn&&!tip&&!pickOpts&&!S.deathOpen){g.shown=1;g.tClose=null;const s=slot(),vb=o.boss?0:bandOf(o),key=o.boss?'b'+(o.look?o.look.bi:0):o.type+(vb?'_'+vb:'');
+    if(s&&!s.noIntel&&!(s.intel||{})[key]){openIntel(key,o);g.relAt=S.t+1.2;
+      try{const cb=cv.getBoundingClientRect(),ct=$('intelBox').querySelector('.tipcard').getBoundingClientRect().top-cb.top,hb=$('hBtnRow').getBoundingClientRect().bottom-cb.top+30,rr=o.r*(o.boss?1.6:2.4);if(ct>0&&o.y+rr>ct-6){o.y=Math.max(hb+rr,ct-rr-6);o.stgY=o.y}}catch(e){}}
+    else g.relAt=S.t+2}
+  if(g.shown&&!g.rel&&!intelOn&&S.t>=(g.relAt||0))stageRelease(g)}
 const STG_TIP={n:['小妖','撞破大阵会吸走修为','站到它那一列打'],run:['疾风妖','跑得特别快','看到就先横移过去打'],brute:['石甲妖','皮厚、物防高','集火它，别让它破阵'],elite:['噬元魔','破阵吸走一大截修为','看到就集火'],hex:['咒怨妖','读条读满你的剑速变慢','读条时先打它'],guard:['护法妖','罩着身边的妖更抗打','先打它，掌心雷伤害 ×2']};
-function stagePlan(){const g=S&&S.stage;if(!g||g.ph!=='show'||!g.o||g.o.dead||!g.seen||intelOn)return null;const o=g.o;if(o.y>squadY)return null;
-  const T=STG_TIP[o.type]||[monName(o.type,0),'',''],nm=monName(o.type,bandOf(o));let r=o.r*2.2+14;if(g.mins&&g.mins.length)for(const m of g.mins)if(!m.dead)r=Math.max(r,Math.hypot(m.x-o.x,m.y-o.y)+m.r*1.6);
-  return {tt:nm+'：'+T[1],s:g.shown?'打法：'+T[2]:'新妖怪来了',t:[{x:o.x,y:o.y,r:Math.min(r,roadW*.28),c:'red'}],k:'stage:'+o.type+(g.shown?':2':':1')}}
+function stagePlan(){const g=S&&S.stage;if(!g||g.ph!=='show'||!g.o||g.o.dead||!g.seen)return null;const o=g.o;if(o.y>squadY)return null;
+  const T=o.boss?['大妖','血很厚、走得慢','提前到右道集火，读条时打断']:STG_TIP[o.type]||[monName(o.type,0),'',''],nm=o.boss?((BOSSES[o.look&&o.look.bi]||{}).n||'大妖'):monName(o.type,bandOf(o));let r=o.r*2.2+14;if(g.mins&&g.mins.length)for(const m of g.mins)if(!m.dead)r=Math.max(r,Math.hypot(m.x-o.x,m.y-o.y)+m.r*1.6);
+  if(o.boss)r=o.r*1.5+10;if(intelOn)return {tt:'',s:'',t:[{x:o.x,y:o.y,r:Math.min(r,roadW*.3),c:'red'}],k:'stage:'+o.type+':i'};return {tt:nm+'：'+T[1],s:g.shown?'打法：'+T[2]:(o.boss?'新大妖来了':'新妖怪来了'),t:[{x:o.x,y:o.y,r:Math.min(r,roadW*(o.boss?.4:.28)),c:'red'}],k:'stage:'+o.type+(g.shown?':2':':1')}}
 function mkZ(type,x,y,hpB,atkB){
   const z={k:'z',x,y,ph:rand(0,6.28),hit:0,type,tier:Math.min(6,waveK()),band:monBand(S.maxR)};
   if(type==='elite')Object.assign(z,{r:15,hp:hpB*6,atk:0,pct:0,sp:24,coin:6,realm:S.peakR});
@@ -1918,7 +1930,7 @@ function dropCoins(x,y,base){
   const v=base*(1+Math.min(S.t,600)/60)*S.coinMul/CU;   // value per drop stops growing after 10 min, so long runs don't break the shop
   if(S.cfx.length<40)S.cfx.push({x,y,sx:x,sy:y,t:0,v});else S.coins+=v;
 }
-function killZ(o){
+function killZ(o){if(o.inv){o.dead=false;o.hp=o.invHp||Math.max(o.hp,1e-9);return}
   {const t=tierOf(o);
    if(o.type==='n'&&!o.mini&&t>=2&&!o.ash){const n=t>=4?2:1;for(let i=0;i<n&&S.objs.length<260;i++)S.objs.push({k:'z',type:'n',mini:1,band:t,x:clamp(o.x+(i?14:-14),mid+20,roadX+roadW-20),y:o.y-6,ph:rand(0,6),hit:0,tier:o.tier||0,r:8,hp:o.hp0*.35,hp0:o.hp0*.35,atk:1,pct:.01,sp:34,coin:0,intelChk:1});ftext(o.x,o.y-o.r-10,'分裂',C.minus,13)}
    if(!o.boss)for(const q of S.objs){if(q.type!=='elite'||q.dead||q===o||tierOf(q)<2||q.seal>0)continue;const dx=q.x-o.x,dy=q.y-o.y;if(dx*dx+dy*dy<4900){q.hp=Math.min(q.hp0,q.hp+q.hp0*.1);ftext(q.x,q.y-q.r-14,'吞噬 · 回血',C.minus,13);break}}}
@@ -1994,7 +2006,7 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}sprFxTick(dt);S.fxBom
   for(const o of S.objs){
     if(o.k==='z'){
       if(S.freezeT<=0){
-        o.y+=PACE*(o.boss?v*.3*(o.dash>0?2:1):(v*.5+o.sp)*(o.fast||1)*(o.fast&&tempOn('fast')?.5:1)*(S.surgeOn?1.1:1)*(o.type==='elite'&&S.fb.mirror>=3?.7:1)*monSpd(o))*dt*(S.slowT>0?.5:1);
+        o.y+=o.stgY!=null?clamp(o.stgY-o.y,-280*dt,280*dt):PACE*(o.boss?v*.3*(o.dash>0?2:1):(v*.5+o.sp)*(o.fast||1)*(o.fast&&tempOn('fast')?.5:1)*(S.surgeOn?1.1:1)*(o.type==='elite'&&S.fb.mirror>=3?.7:1)*monSpd(o))*dt*(S.slowT>0?.5:1);
         if(!o.boss){o.x+=Math.sin(S.t*2+o.ph)*10*dt;o.x=clamp(o.x,mid+8+o.r,roadX+roadW-8-o.r)}
       }
       if(o.hit>0)o.hit-=dt;
@@ -2009,6 +2021,7 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}sprFxTick(dt);S.fxBom
         if(o.dead)continue;
         if(b.shell&&o.k!=='z')continue;   // shells fly over gates
         if(o.k==='z'){
+          if(o.inv)continue;   /* 介绍中的妖暂时无敌，子弹穿过去 */
           const dx=b.x-o.x,dy=b.y-o.y;
           if(dx*dx+dy*dy<(o.r+3)*(o.r+3)){
             if(b.shell){const R=46+4*S.mech;
@@ -2949,7 +2962,7 @@ const INTEL={
 let intelOn=null;
 function intelThreat(o){const d=Math.max(1e-9,dps()*dmgMul(o)),sec=Math.max(0,o.hp)/d;return {sec,lv:sec<.6?['低','#4a9b5b']:sec<2.5?['中','#c98a2a']:['高','#c9473d']}}
 function intelScan(){if(!S||S.tut||vilOn()||intelOn||tip||pickOpts||S.deathOpen||S.pathAnim||(S.stage&&S.stage.ph==='show'))return;const s=slot();if(!s||s.noIntel)return;s.intel=s.intel||{};
-  for(const o of S.objs){if(o.k!=='z'||o.dead||o.intelChk)continue;o.intelChk=1;const vb=o.boss?0:bandOf(o),key=o.boss?(o.look?'b'+o.look.bi:null):o.type+(vb?'_'+vb:'');if(!key||s.intel[key])continue;if(!o.boss&&!INTEL[o.type])continue;if(!o.boss&&!S.stage&&o.y<squadY){S.stage={t:o.type,ph:'show',o,mins:[],lite:1,t1:S.t,seen:1,slowUntil:performance.now()+900};return}openIntel(key,o);return}}   /* 进阶妖：先放慢圈亮它，再弹卡，关卡后再圈几秒 */
+  for(const o of S.objs){if(o.k!=='z'||o.dead||o.intelChk)continue;o.intelChk=1;const vb=o.boss?0:bandOf(o),key=o.boss?(o.look?'b'+o.look.bi:null):o.type+(vb?'_'+vb:'');if(!key||s.intel[key])continue;if(!o.boss&&!INTEL[o.type])continue;if(!S.stage&&o.y<squadY){S.stage={t:o.boss?'boss':o.type,ph:'show',o,mins:[],lite:1,t1:S.t};return}if(!S.stage)openIntel(key,o);return}}   /* 进阶妖：先放慢圈亮它，再弹卡，关卡后再圈几秒 */
 function openIntel(key,o){intelOn=key;paused=true;drag=null;const boss=key[0]==='b'&&o.boss,vb=boss?0:bandOf(o),I=boss?null:INTEL[o.type],th=intelThreat(o),sec=th.sec<.1?'不到 0.1':th.sec<10?th.sec.toFixed(1):String(Math.round(th.sec));
   const nm=boss?(BOSSES[o.look.bi]||{}).n||'大妖':monName(o.type,vb);
   $('intelStep').textContent=boss?'新大妖 · '+REALMS[o.look.bi]+'境':vb?'新妖怪 · '+monName(o.type,0)+'一族的进阶':'新妖怪';$('intelTitle').textContent=nm;
@@ -3225,8 +3238,9 @@ function vgDraw(dt){
   vgX.setTransform(dpr,0,0,dpr,0,0);vgX.clearRect(0,0,W2,H2);
   vgSlowT=Math.max(0,vgSlowT-dt);   /* 12:45 John：没引导时也莫名变慢——原来只有画出引导时才倒计时，引导一消失慢动作就卡住不走 */
   const pauseOK=vilOn()&&VIL[S.vil.i]&&VIL[S.vil.i].id==='pet'&&(!$('ovPause').hidden||!$('ovPets').hidden);
-  if(!S||!running||(paused&&!pauseOK)||tip||pickOpts||intelOn){vgSlowT=0;return}
-  const p=vgPlan()||stagePlan()||coachPlan();if(!p){vgKey='';vgSlowT=0;return}
+  const stgI=!!(intelOn&&S&&S.stage&&S.stage.ph==='show'&&S.stage.o&&!S.stage.o.dead);
+  if(!S||!running||(paused&&!pauseOK&&!stgI)||tip||pickOpts||(intelOn&&!stgI)){vgSlowT=0;return}
+  const p=(S.stage&&S.stage.ph==='show'&&stagePlan())||vgPlan()||stagePlan()||coachPlan();   /* 介绍新妖时，圈它优先 */if(!p){vgKey='';vgSlowT=0;return}
   {const vi=S.vil?S.vil.i:-2;if(vi!==vgSlowI){vgSlowI=vi;vgSlowed=new Set()}}
   if(p.k!==vgKey){vgKey=p.k;if(!vgSlowed.has(p.k)){vgSlowed.add(p.k);vgSlowT=1.3}}   /* 新目标：放慢一下；同一任务里同一个目标只慢一次（怪死了换下一只、门进出屏幕都不再慢） */
   const wr=w.getBoundingClientRect(),cb=cv.getBoundingClientRect(),ox=cb.left-wr.left,oy=cb.top-wr.top,t=performance.now()/1000;
@@ -4044,18 +4058,18 @@ function renderPause(){   // 暂停页：当前阶段 + 每项数值 / 本境界
   {/* 11-03 John：每个阶段把数值标清楚——我方气血、攻击、法术伤害；这一波妖的气血、物防、法防 */
    const base=dps()/pathAtk(),fa=S.path==='fa',pc=v=>Math.round(v*100)+'%',b=monBand(S.maxR),W=waveK()+1;
    /* 11-03 02:02 John：比例尺太绕、还得换算 → 不显示抽象数字，直接说“普攻几秒打死”“一发能打死几只”；防御照旧用百分比 */
-   const atk=Math.max(1e-9,dps()/burstMul()),hu=hpUnit(),nH=hu*ZHP.n,nN=monName('n',b);
+   const atk=Math.max(1e-9,dps()/burstMul()),hu=hpAt(false),huS=hpAt(true),two=huS>hu*1.15,nH=hu*ZHP.n,nN=monName('n',b);
    const fS=v=>v<.1?'不到 0.1 秒':v<9.95?(Math.round(v*10)/10)+' 秒':v<60?Math.round(v)+' 秒':Math.floor(v/60)+' 分 '+Math.round(v%60)+' 秒';
    const fN=v=>v>=9.5?String(Math.round(v)):String(Math.round(v*10)/10);
    const sp=fa?[['火符一发',spPool('fire')*base],['掌心雷一发',spPool('bolt')*base]]:[['掌心雷一发',BOLT_S*skPow()*base],[skName('bomb')+'一发',BOMB_S*skPow()*base*(bombEvo()?1.5:1)]];
    const bh=eScale()*4.5*(1+.03*kMix())*(1+.15*(S.life-1))*(vilOn()?.5+.4*S.vil.i/(VIL.length-1):1);
-   const kps=atk/nH;
-   h+='<h4>数值一览（第 '+W+' 波）</h4><div class="r"><b>'+ri(heroArtKey(S.rR),'big')+'我方</b><span class="v">气血 <b>'+fmt(Math.ceil(S.hpF*hpc))+'</b> / '+fmt(hpc)+' · 普攻'+(kps>=1?'每秒能打死约 <b>'+fN(kps)+'</b> 只'+nN:'打死一只'+nN+'要 <b>'+fS(1/kps)+'</b>')+'</span>'
+   const kps=atk/nH,kpsS=atk/(huS*ZHP.n);
+   h+='<h4>数值一览（第 '+W+' 波）</h4><div class="r"><b>'+ri(heroArtKey(S.rR),'big')+'我方</b><span class="v">气血 <b>'+fmt(Math.ceil(S.hpF*hpc))+'</b> / '+fmt(hpc)+' · 普攻'+(two?'割草时':'')+(kps>=1?'每秒能打死约 <b>'+fN(kps)+'</b> 只'+nN:'打死一只'+nN+'要 <b>'+fS(1/kps)+'</b>')+(two?'；妖潮时'+(kpsS>=1?'约 <b>'+fN(kpsS)+'</b> 只':'一只要 <b>'+fS(1/kpsS)+'</b>'):'')+'</span>'+'<span class="n">按子弹全打中算：剑气直着往上飞，要站在妖的正下方；妖偏在一边时只打得中一半左右</span>'
      +(S.path==='ti'?'<span class="n">开剑意沸腾：普攻 ×2.2；再开疾风连斩：再 ×2</span>':'')
      +'<span class="n">'+sp.map(([a,v],j)=>ri('ic_'+(fa?['fire','bolt']:['bolt','bomb'])[j],'sm')+a+'：约 '+fN(v/nH)+' 只'+nN+'的气血（大妖的 '+Math.min(100,Math.round(v/bh*100))+'%）').join('<br>')+(fa?'<br>法修普攻只有基础的 '+Math.round(pathAtk()*100)+'%，主要靠法术':'')+'</span></div>';
    const types=['n','run','brute','hex','guard','elite'].filter(t=>t==='n'||has(t));
-   h+='<div class="r"><b>本波妖物</b><span class="v">（当前'+(S.surgeOn?'妖潮':'割草')+'时 · 普攻打死要多久）</span></div>';
-   for(const t of types){const d=defOf({type:t,band:b});h+='<div class="r"><b>'+ri(b?'mon_'+t+'_'+b:'mon_'+t,'big')+monName(t,b)+'</b><span class="v">普攻 <b>'+fS(hu*ZHP[t]/(atk*Math.max(.05,1-d.p)))+'</b> · 物防 '+pc(d.p)+' · 法防 '+pc(d.m)+'</span>'+(t==='guard'?'<span class="n">护法：身边的妖物防、法防再 +'+pc(.4+.04*b)+'；掌心雷劈它伤害 ×2 并破罩 4 秒</span>':t==='brute'?'<span class="n">剑意越高物防越低；法术无视它的护甲</span>':t==='hex'?'<span class="n">法防高：用普攻、剑气打它更划算</span>':'')+'</div>'}
+   h+='<div class="r"><b>本波妖物</b><span class="v">（普攻打死一只要多久'+(two?'：<b>割草时</b> / <b>妖潮时</b>（妖潮里的妖厚约 '+fN(huS/hu)+' 倍，退潮后没打完的还留在场上）':'')+'）</span></div>';
+   for(const t of types){const d=defOf({type:t,band:b});h+='<div class="r"><b>'+ri(b?'mon_'+t+'_'+b:'mon_'+t,'big')+monName(t,b)+'</b><span class="v">普攻 <b>'+fS(hu*ZHP[t]/(atk*Math.max(.05,1-d.p)))+'</b>'+(two?' / <b>'+fS(huS*ZHP[t]/(atk*Math.max(.05,1-d.p)))+'</b>':'')+' · 物防 '+pc(d.p)+' · 法防 '+pc(d.m)+'</span>'+(t==='guard'?'<span class="n">护法：身边的妖物防、法防再 +'+pc(.4+.04*b)+'；掌心雷劈它伤害 ×2 并破罩 4 秒</span>':t==='brute'?'<span class="n">剑意越高物防越低；法术无视它的护甲</span>':t==='hex'?'<span class="n">法防高：用普攻、剑气打它更划算</span>':'')+'</div>'}
    {const sk=has('bskill')||waveK()>=6?'；会'+[has('bskill')?'读条（可打断）':'',waveK()>=8?'天威（打不断，开金钟罩）':'','召唤护法'].filter(Boolean).join('、'):'';
     h+='<div class="r"><b>'+ri('boss_'+clamp(S.peakR|0,0,17),'big')+'本波大妖</b><span class="v">普攻约 <b>'+fS(bh/.85/atk)+'</b> 打死 · 物防 15% · 法防 15%</span><span class="n">妖潮退去、缓一会儿后单独上场'+sk+'</span></div>'}}
   {const c=petCur(),RD=PET_RD[c.role],sl=slot(),cost=petLvCost(c.l),nx=petNextForm(c.line,c.l);h+='<h4>灵石强化（随时可用）</h4><div class="r"><b>'+ri('pet_'+c.i,'big')+petName(c.i+1)+'</b><span class="v">'+PET_LINES[c.line].n+' · Lv'+c.l+(nx?'（Lv'+nx.at+' 进化为「'+petName(nx.i+1)+'」）':'')+' · '+RD.n+' · 伤害约为你普攻的 '+Math.round(petRate()*100)+'% · 总灵石 '+fmt(sl?sl.coins:0)+'</span><span class="n">'+(c.l>=petCap()?'<button class="sb" disabled>本境界已养满</button>':'<button class="sb" data-pet="up"'+(sl&&sl.coins>=cost?'':' disabled')+'>培养 💰'+fmt(cost)+'</button>')+' <button class="sb" data-pet="list">换路线 / 详情</button> <button class="sb" data-pet="shop">商店 · 立刻生效</button></span></div>'}
