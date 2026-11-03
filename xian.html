@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "xian", "sbjs": "supabase.js"};if(/(^|\.)youfeng\.app$|\.pages\.dev$/.test(location.hostname))window.NG_CFG.url=location.origin+'/sb';</script>
-<script>(function(){var B="20261103152725";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261103153302";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>御剑斩妖录</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -91,7 +91,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .go:active{transform:translateY(3px);box-shadow:0 2px 0 #a3600a}
 .go.alt{background:linear-gradient(180deg,#d9dee8,#9aa4b6);box-shadow:0 5px 0 #5b6475;color:#1a1f2a}
 .go.alt:active{box-shadow:0 2px 0 #5b6475}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.row2:has(>button[hidden])>button:not([hidden]){grid-column:1/-1}   /* 一排只剩一个按钮时铺满 */
 #rankList .nd,.rank .nd{color:#7dffa8}body.ink #rankList .nd,body.ink .rank .nd{color:#1f7a45}
 #deathOpts .go small{font-size:12px;opacity:.85;font-weight:400}#deathOpts .go{line-height:1.3;padding-top:10px;padding-bottom:10px}
 #petList .item.on{border-color:rgba(255,214,119,.8);box-shadow:0 0 0 1px rgba(255,214,119,.4) inset}#petList .item .info{flex:1;min-width:0}.petstrip{display:flex;flex-wrap:wrap;align-items:center;gap:1px;margin-top:6px}.petstrip i{font-style:normal;opacity:.5;font-size:11px}#petList .item p{font-size:12px}
@@ -2966,7 +2966,7 @@ const TIPS={
   shield:{t:'金钟罩',d:'右下角新技能：六秒内妖魔破阵不会伤你，大妖也不例外。用完要等四十五秒。'},
   psform:{t:'被动进化',d:'被动法术（火鸦、护法飞剑、雷云）和体修被动（剑罡护体、战意、剑气纵横）在 Lv8、Lv14、Lv20 各进化一次：改名字、换样子、威力也变强。火鸦、雷云、剑气纵横的巨剑会跟在你身边，火鸦从鸟身上飞出去；护法飞剑绕身，形态越高越大越亮；剑罡是身上的光罩，战意是脚下的火焰（气血越低越旺）。法宝（紫金葫芦、照妖镜、镇魂钟）也一样，Lv8、Lv14、Lv20 进化，绕着你浮在身边。法术按钮右上角是等级，Lv8 银框、Lv14 金框、Lv20 彩虹框。'},
   jar:{t:'聚灵瓶（积少成多）',d:'名牌左边的小瓶子。每吃一颗聚气丹涨约八分之一瓶，打小妖一点一点涨，斩大妖一次涨一大截。装满一瓶「聚灵成功」：额外再给这一瓶 25% 的修为，然后重新攒。后期一颗聚气丹只占一层的一点点，靠它把零碎的收益攒成看得见的奖励；名牌下面的细条是这一层的进度。'},
-  vein:{t:'灵脉（带锁）',d:'灵脉是左道最赚的门：一扇顶约 6 扇聚气丹（门上写着能涨多少修为），升境全靠它提速。代价是必须先把锁打开才能吃——锁没开撞上去没用，而打锁的这几秒没人管右道，妖会压过来。怎么选：右道没什么妖、危险度低，就破锁吃灵脉；右道吃紧、危险度高，先吃眼前的聚气丹保命，下一扇灵脉再说。'},
+  vein:{t:'灵脉（带锁）',d:'灵脉是左道最赚的门：吃一扇 = 吃 6 扇聚气丹的修为（门上写着能涨多少修为），升境全靠它提速。代价是必须先把锁打开才能吃——锁没开撞上去没用，而打锁的这几秒没人管右道，妖会压过来。怎么选：右道没什么妖、危险度低，就破锁吃灵脉；右道吃紧、危险度高，先吃眼前的聚气丹保命，下一扇灵脉再说。'},
   trap:{t:'右道陷阱',d:'右道上的心魔，只占半条道。在右道打妖时侧身让开就行。'},
   freeze:{t:'定身符',d:'右下角新技能：全场的妖定住三秒半，趁机清怪。用完要等三十五秒。'},
   fu:{t:'符箓（带锁）',d:'撞上去：多一张雷劫符，或者让某个技能马上能再用（体修还回 30 灵力）。技能本来就能用时，记得在撞上之前先把它放掉——撞上马上补回来，等于白用一次。法修学了天赋「灵符感应」会自动帮你放。'},
@@ -3081,13 +3081,13 @@ const VIL=[
   {id:'shield',d:'右下角多了「金钟罩」。开了以后 6 秒内妖破阵伤不到你：大妖快破阵、或者想去左道吃门顾不上右道时用。点一次就算完成。',t:'开一次金钟罩',s:'6 秒内破阵不伤你：大妖要破阵、或想去左道吃门时用',u:['shield','elite'],need:{sk_shield:1}},
   {id:'freeze',d:'右下角多了「定身符」。点一下，全场的妖定住 3.5 秒，顶不住的时候用来救命。点一次就算完成。',t:'放一次定身符',s:'全场定住 3.5 秒：顶不住时救命',u:['freeze','zou','trap'],need:{sk_freeze:1}},
   {id:'fu',d:'马上会来一扇符箓门（先开锁）。吃到后，用掉的技能马上补回来，雷劫符会多一张。窍门：技能本来就能用时，撞门之前先把它放掉，撞上又补回来，等于白用一次。',t:'吃一扇符箓门',s:'符箓把用掉的技能马上补回来',u:['fu'],row:['fu','qi']},
-  {id:'vein',d:'马上会来一扇灵脉（带锁的大门）。一扇灵脉顶约 6 扇聚气丹，是升层最快的门，但要先把锁打开。右道不急的时候最值得去开。',t:'打开锁，吃一扇灵脉',s:'一扇灵脉顶约 6 扇聚气丹；右道不急时最划算',u:['vein','hex'],row:['vein','qi']},
+  {id:'vein',d:'马上会来一扇灵脉（带锁的大门）。吃一扇灵脉 = 吃 6 扇聚气丹的修为，是升层最快的门，但要先把锁打开。右道不急的时候最值得去开。',t:'打开锁，吃一扇灵脉',s:'吃一扇灵脉 = 吃 6 扇聚气丹的修为；右道不急时最划算',u:['vein','hex'],row:['vein','qi']},
   {id:'cast',d:'大妖头上出现读条时，它在放技能。集中火力猛打它，打掉它 8% 的血就能打断。写着「天威」的打不断，只能开金钟罩扛。',t:'大妖读条时，集火打断它',s:'头上出现读条就猛打它，打掉 8% 的血就断了；「天威」打不断，要开金钟罩',u:['bskill'],need:{int:1}},
   {id:'jie',d:'到了'+REALMS[2]+'以后，左道会降下紫色的天劫，上面有很厚的锁。集中火力把锁劈开再冲过去，修为直接 +'+JIE_L+' 层（顶几十颗聚气丹）、还永久变强；劈不开就躲到右道。成功或躲开都算完成。',t:'闯一次天劫',s:'左道降下紫色天劫：集火劈开冲过去，劈不开就躲到右道（到'+REALMS[2]+'才会降）',u:['jie'],need:{jie:1}},
   {id:'stats',d:'点屏幕左上角的「第 N 波」，会暂停并打开数值一览：你普攻几秒打死一只妖、法术一发能打死几只、每种妖的物防法防都在这里。打开看一眼就算完成。',t:'点左上「第 N 波」，看看数值一览',s:'暂停页里有我方攻击、妖怪气血和防御，打不过时来这里看',u:[],need:{pause:1}},
   {id:'pet',d:'村长送你一笔灵石。点上面的「灵宠」按钮，再点「培养」。灵宠会自己找妖打，越养越强。「强化」里能花灵石永久变强，「商店」里买装扮。',t:'点「灵宠」，培养一次',s:'村长送你一笔灵石：灵宠会自己找妖打，越养越强',u:[],need:{pet:1},setup:'pet'},
   {id:'jar',d:'名牌旁边的小瓶子是聚灵瓶。吃聚气丹、打妖、斩大妖都在往里攒，攒满一瓶「聚灵成功」，额外再给一大截修为，然后重新攒。现在：攒满一瓶。',t:'攒满一瓶聚灵瓶',s:'吃丹、打妖、斩大妖都在攒：满一瓶额外给修为',u:[],need:{jar:1}},
-  {id:'path',d:'越往后每一层要的修为越多，光吃聚气丹会很慢。想升得快：先把聚气丹打涨再吃；有灵脉就去开（一扇顶 6 扇）；天劫来了就劈（+'+JIE_L+' 层）；斩大妖、攒满聚灵瓶都会多给修为。升到'+REALMS[3]+'时会让你选路线：体修靠剑气硬推、更抗打；法修靠法术，七种法术立刻全会。选完就出村了。',t:'升到'+REALMS[3]+'，选体修还是法修',s:'体修靠剑气硬推、抗打；法修靠法术；选完就出村',u:['summon'],need:{path:1}}];
+  {id:'path',d:'越往后每一层要的修为越多，光吃聚气丹会很慢。想升得快：先把聚气丹打涨再吃；有灵脉就去开（吃一扇灵脉 = 吃 6 扇聚气丹的修为）；天劫来了就劈（+'+JIE_L+' 层）；斩大妖、攒满聚灵瓶都会多给修为。升到'+REALMS[3]+'时会让你选路线：体修靠剑气硬推、更抗打；法修靠法术，七种法术立刻全会。选完就出村了。',t:'升到'+REALMS[3]+'，选体修还是法修',s:'体修靠剑气硬推、抗打；法修靠法术；选完就出村',u:['summon'],need:{path:1}}];
 const VIL_REW=2;   // 每个任务给的灵石
 const vilOn=()=>!!(S&&S.vil&&!S.vil.done);
 const vilFade=()=>vilOn()?1:S&&S.vilEndT!=null?clamp(1-(S.t-S.vilEndT)/300,0,1):0;   /* 14:27 John：出村后保护要慢慢撤 → 出村时 1，5 分钟内线性降到 0（厚皮妖、防御、锁、保底气血、妖和大妖的强度都跟着它慢慢恢复） */
@@ -3127,7 +3127,7 @@ function vilTick(dt){if(!vilOn())return;const v=S.vil,T=VIL[v.i];if(!T)return;
   if(T.row&&!v.pop){v.rowT-=dt;if(v.rowT<=0&&!S.vilRow&&!S.objs.some(o=>o.k==='gate'&&!o.dead&&o.g===T.row[0])){S.vilRow=T.row.slice();v.rowT=6}}
   if(T.setup==='guard'&&!v.pop&&!v.setDone&&!S.bossAlive&&!S.bossNext&&!inSurge()){v.setDone=true;vilGuard()}
   if(T.setup==='guard'&&v.setDone&&!S.objs.some(o=>o.k==='z'&&!o.dead&&o.type==='guard')&&vilGot('k_guard')<1){v.setDone=false}   // 护法漏过去了：再来一组
-  if(T.setup==='pet'&&!v.pop&&!v.setDone){v.setDone=true;const s=slot();if(s){bankCoins();const c=petLvCost(petCur().l);if(s.coins<c){s.coins=c;commit(Save.cur)}toast('村长送你 '+fmt(c)+' 灵石','点上面的「灵宠」→ 培养')}}
+  if(T.setup==='pet'&&!v.pop){const s=slot();if(s){const pc=petCur();if(pc.l>=petCap()){toast('灵宠这个境界已经养满','这一步自动完成');vilNext(false);return}const c=petLvCost(pc.l);if(s.coins<c){bankCoins();if(s.coins<c){s.coins=c;commit(Save.cur)}if(!v.setDone)toast('村长送你 '+fmt(c)+' 灵石','点上面的「灵宠」→ 培养');renderPets();if(!$('ovPause').hidden)renderPause()}v.setDone=true}}   /* 15:28 John：灵石不够培养卡在这一步 → 整个任务期间灵石不够就补到够一级，养满了直接算完成 */
   if(vilDoneNow())vilNext(false)}
 function vilGuard(){   // 护法妖带着一圈小妖出场：不先点掉它，旁边的都更难打
   const x0=mid+8,x1=roadX+roadW-8,cx=rand(x0+40,x1-40),hb=hpUnit();
@@ -3143,14 +3143,14 @@ function vilGoal(){const v=S.vil,T=VIL[v.i];if(!T)return '';
   return '<b>新手任务 '+v.i+'/'+(VIL.length-1)+'</b>：'+T.t+ex+(stuck?'<br><small>卡住了可以点「跳过」</small>':'')+' <span class="vsk" data-v="one">跳过</span>'}
 $('goal').addEventListener('pointerdown',e=>{const b=e.target.closest('.vsk');if(!b||!vilOn())return;e.preventDefault();e.stopPropagation();
   if(b.dataset.v==='all')vilEnd(false);else{const T=vilCur();if(T&&T.id==='path'){toast('最后一步','升到'+REALMS[3]+'选完路线就出村；不想等就点「退出新手村」');return}vilNext(true)}});
-const VIL_VP={"drag": ["hero", [["vi_tap", "按住屏幕"], ["vi_drag", "左右拖"], ["ic_qi", "左道：门"], ["mon_n", "右道：妖"]]], "qi": ["ic_qi", [["vi_lr", "走到它正下方"], ["ic_qi", "撞上去"], ["vi_up", "修为涨"]]], "pump": ["ic_qi", [["pj_ti", "站它下面开火"], ["vi_num", "数字变大"], ["ic_qi", "再撞上去"]]], "kill": ["mon_n", [["vi_right", "去右道"], ["pj_ti", "自动开火"], ["vi_up", "打妖也涨修为"], ["vi_nocross", "别让它破阵"]]], "xin": ["ic_xin", [["ic_xin", "红门：掉修为"], ["vi_lr", "换到旁边那扇"]]], "art": ["ic_art", [["lock", "先开火打开锁"], ["ic_art", "再撞上去"], ["ic_dmg", "整局永久变强"]]], "surge": ["ic_bomb", [["mon_n", "妖一下子变多"], ["ic_bomb", "压上来时点它"], ["vi_hourglass", "撑过去"]]], "boss": ["boss", [["pj_ti", "站它下面一直打"], ["vi_nocross", "别让它破阵"], ["vi_up", "斩了修为大涨"]]], "fb": ["ic_gourd", [["lock", "先打开锁"], ["ic_gourd", "撞上去拿法宝"], ["ic_orb", "自己帮你打"]]], "bolt": ["ic_bolt", [["mon_n", "找妖最多那列"], ["ic_bolt", "点一下劈整列"]]], "guard": ["mon_guard", [["ic_t_guard", "罩着旁边的妖"], ["vi_target", "先打它"]]], "shield": ["ic_shield", [["ic_shield", "点一下"], ["ic_armor", "6 秒破阵不伤"]]], "freeze": ["ic_freeze", [["ic_freeze", "点一下"], ["ic_freeze", "全场定住 3.5 秒"]]], "fu": ["ic_fu", [["lock", "先开锁"], ["ic_fu", "撞上去"], ["vi_refresh", "技能马上补回"]]], "vein": ["ic_vein", [["lock", "先开锁"], ["ic_vein", "一扇 ≈ 6 颗丹"], ["vi_up", "升层最快"]]], "cast": ["boss", [["vi_hourglass", "头上出读条"], ["pj_ti", "猛打它"], ["vi_break", "打掉 8% 就断"]]], "jie": ["ic_jie", [["pj_ti", "集火劈开锁"], ["vi_up", "修为 +1.2 层"], ["vi_lr", "劈不开躲右道"]]], "stats": ["vi_scroll", [["vi_tap", "点左上「第 N 波」"], ["vi_scroll", "看数值一览"]]], "pet": ["pet_0", [["vi_tap", "点「灵宠」"], ["ic_coin", "点「培养」"], ["pet_0", "自己找妖打"]]], "jar": ["jar", [["ic_qi", "吃丹"], ["mon_n", "打妖"], ["boss", "斩大妖"], ["jar", "攒满送修为"]]], "path": ["hero", [["ic_qi", "打涨再吃"], ["ic_vein", "开灵脉 ×6"], ["ic_jie", "劈天劫"], ["boss", "斩大妖"], ["jar", "攒聚灵瓶"]]]};   /* 14:26 John：任务说明能用图就用图，不要一大串字 → 弹窗 = 一张大图 + 几步带图标的短句，原来的长说明收进「详细说明」 */
+const VIL_VP={"drag": ["hero", [["vi_tap", "按住屏幕"], ["vi_drag", "左右拖"], ["ic_qi", "左道：门"], ["mon_n", "右道：妖"]]], "qi": ["ic_qi", [["vi_lr", "走到它正下方"], ["ic_qi", "撞上去"], ["vi_up", "修为涨"]]], "pump": ["ic_qi", [["pj_ti", "站它下面开火"], ["vi_num", "数字变大"], ["ic_qi", "再撞上去"]]], "kill": ["mon_n", [["vi_right", "去右道"], ["pj_ti", "自动开火"], ["vi_up", "打妖也涨修为"], ["vi_nocross", "别让它破阵"]]], "xin": ["ic_xin", [["ic_xin", "红门：掉修为"], ["vi_lr", "换到旁边那扇"]]], "art": ["ic_art", [["lock", "先开火打开锁"], ["ic_art", "再撞上去"], ["ic_dmg", "整局永久变强"]]], "surge": ["ic_bomb", [["mon_n", "妖一下子变多"], ["ic_bomb", "压上来时点它"], ["vi_hourglass", "撑过去"]]], "boss": ["boss", [["pj_ti", "站它下面一直打"], ["vi_nocross", "别让它破阵"], ["vi_up", "斩了修为大涨"]]], "fb": ["ic_gourd", [["lock", "先打开锁"], ["ic_gourd", "撞上去拿法宝"], ["ic_orb", "自己帮你打"]]], "bolt": ["ic_bolt", [["mon_n", "找妖最多那列"], ["ic_bolt", "点一下劈整列"]]], "guard": ["mon_guard", [["ic_t_guard", "罩着旁边的妖"], ["vi_target", "先打它"]]], "shield": ["ic_shield", [["ic_shield", "点一下"], ["ic_armor", "6 秒破阵不伤"]]], "freeze": ["ic_freeze", [["ic_freeze", "点一下"], ["ic_freeze", "全场定住 3.5 秒"]]], "fu": ["ic_fu", [["lock", "先开锁"], ["ic_fu", "撞上去"], ["vi_refresh", "技能马上补回"]]], "vein": ["ic_vein", [["lock", "先开锁"], ["ic_vein", "修为 = 6 扇聚气丹"], ["vi_up", "升层最快"]]], "cast": ["boss", [["vi_hourglass", "头上出读条"], ["pj_ti", "猛打它"], ["vi_break", "打掉 8% 就断"]]], "jie": ["ic_jie", [["pj_ti", "集火劈开锁"], ["vi_up", "修为 +1.2 层"], ["vi_lr", "劈不开躲右道"]]], "stats": ["vi_scroll", [["vi_tap", "点左上「第 N 波」"], ["vi_scroll", "看数值一览"]]], "pet": ["pet_0", [["vi_tap", "点「灵宠」"], ["ic_coin", "点「培养」"], ["pet_0", "自己找妖打"]]], "jar": ["jar", [["ic_qi", "吃丹"], ["mon_n", "打妖"], ["boss", "斩大妖"], ["jar", "攒满送修为"]]], "path": ["hero", [["ic_qi", "打涨再吃"], ["ic_vein", "开灵脉：修为 ×6"], ["ic_jie", "劈天劫"], ["boss", "斩大妖"], ["jar", "攒聚灵瓶"]]]};   /* 14:26 John：任务说明能用图就用图，不要一大串字 → 弹窗 = 一张大图 + 几步带图标的短句，原来的长说明收进「详细说明」 */
 function vpImg(k,cls){if(k==='hero')k=heroArtKey(S?S.rR:0);else if(k==='boss')k='boss_'+clamp((S&&S.peakR)|0,0,17);if(/^[a-z]/.test(k)&&ART_ON&&ART_MAN[ART_PRE+k])return '<img class="'+cls+'" src="art/'+ART_PRE+k+'.webp?v='+ART_V+'" alt="">';return '<span class="'+cls+' em">'+(/^[a-z]/.test(k)?'✨':k)+'</span>'}
 function vilVP(T){const V=VIL_VP[T.id];if(!V)return '';return '<div class="vbHero">'+vpImg(V[0],'vbBig')+'</div><div class="vbSteps">'+V[1].map(([k,s],i)=>(i?'<b class="vbArr">›</b>':'')+'<div class="vs">'+vpImg(k,'vsI')+'<span>'+spText(s)+'</span></div>').join('')+'</div>'}
 /* 11-03 02:05 John：上面一小串字谁知道要干嘛 → 每个新任务都暂停弹窗讲清楚怎么做，点「知道了」再开始；任务行只当提醒 */
 function vilPop(){const v=S.vil,T=VIL[v.i];if(!T)return;v.pop=0;paused=true;drag=null;
   $('vbStep').textContent='新手任务 '+v.i+' / '+(VIL.length-1);$('vbT').textContent=spText(T.t);{const vp=vilVP(T);$('vbVP').innerHTML=vp;$('vbVP').hidden=!vp;$('vbD').textContent=spText(T.d||T.s);$('vbMore').hidden=!vp;$('vbMore').open=false;$('vbD').hidden=!!vp;if(vp)$('vbMore').querySelector('div').textContent=spText(T.d||T.s)}
   $('vbDone').hidden=!v.last;$('vbDone').textContent=v.last?spText(v.last):'';v.last=null;
-  $('vbSkip').hidden=T.id==='path';$('vilBox').hidden=false;$('goal').innerHTML=vilGoal();$('coachSkip').hidden=true}
+  $('vbSkip').hidden=T.id==='path';{const ok=$('vbOk'),one=T.id==='path';ok.style.gridColumn=one?'1 / -1':'';ok.style.flex=one?'1 1 100%':''}   /* 15:29 John：只剩一个按钮时整排铺满 */$('vilBox').hidden=false;$('goal').innerHTML=vilGoal();$('coachSkip').hidden=true}
 function vilPopClose(){$('vilBox').hidden=true;paused=false;$('coachSkip').hidden=!coach}
 $('vbOk').onclick=()=>{vilPopClose()};
 $('vbSkip').onclick=()=>{vilPopClose();if(vilOn())vilNext(true)};
@@ -3164,7 +3164,7 @@ function vgGate(g,below){let b=null;for(const o of S.objs)if(o.k==='gate'&&!o.de
 const vgG=o=>({x:(o.x0+o.x1)/2,y:o.y,r:Math.max(o.x1-o.x0,o.h)*.62});
 function vgZ(f){let b=null;for(const o of S.objs)if(o.k==='z'&&!o.dead&&o.y>0&&f(o)&&(!b||o.y>b.y))b=o;return b}
 const vgZr=o=>({x:o.x,y:o.y,r:o.r*2+14});
-function vgDom(id){const el=typeof id==='string'?$(id):id;if(!el||el.hidden||!el.offsetParent)return null;const a=el.getBoundingClientRect(),b=cv.getBoundingClientRect();if(!a.width)return null;return {x:a.left-b.left+a.width/2,y:a.top-b.top+a.height/2,r:Math.max(a.width,a.height)*.62,dom:1}}
+function vgDom(id){const el=typeof id==='string'?$(id):id;if(!el||el.hidden||!el.offsetParent)return null;const a=el.getBoundingClientRect(),b=cv.getBoundingClientRect();if(!a.width)return null;const rect=a.width>a.height*1.4;return {x:a.left-b.left+a.width/2,y:a.top-b.top+a.height/2,r:rect?a.height/2+4:Math.max(a.width,a.height)*.62,w:a.width,h:a.height,rect,dom:1}}   /* 15:28 John：要点哪个按钮就只亮哪个 → 扁的按钮用贴边的圆角框，不再用大圆圈把旁边的按钮也圈进来 */
 const vgPartner=o=>S.objs.find(q=>q!==o&&q.k==='gate'&&!q.dead&&q.rid&&q.rid===o.rid);
 function vgPlan(){   // 当前任务该圈哪里、说什么
   if(!vilOn())return null;const v=S.vil,T=VIL[v.i];if(!T||v.pop||T.id==='tour')return null;
@@ -3182,7 +3182,7 @@ function vgPlan(){   // 当前任务该圈哪里、说什么
     case 'fu':{const o=vgGate('fu');if(!o)return null;const sk=o.fu&&o.fu!=='bomb'&&skReady(o.fu)?vgDom('sk'+SKN[o.fu]):null;
       if(!lock(o)&&sk)return P('撞门前先把它放掉',sk,'撞上门马上补回来＝白用一次',{k:'pre',more:[Object.assign(vgG(o),{c:'green'})]});return gateStep(o,'符箓：技能补回来')}
     case 'vein':{const o=vgGate('vein');if(!o)return null;const q=vgPartner(o),rt=q&&q.val?Math.round(o.val/Math.max(1e-9,q.val)):6;
-      return lock(o)?P('灵脉：一扇顶 '+rt+' 扇聚气丹',vgG(o),'站到它下面开火打开锁，再撞上去',{k:'lock',more:q?[Object.assign(vgG(q),{c:'grey'})]:[]}):P('锁开了，撞上去！',vgG(o),'',{c:'green',k:'go'})}
+      return lock(o)?P('灵脉 = '+rt+' 扇聚气丹的修为',vgG(o),'站到它下面开火打开锁，再撞上去',{k:'lock',more:q?[Object.assign(vgG(q),{c:'grey'})]:[]}):P('锁开了，撞上去！',vgG(o),'',{c:'green',k:'go'})}
     case 'surge':{if(!S.surgeOn){const d=vgDom('hWaveWrap');return d&&MOW-wph()<12?P('妖潮快来了',d,'倒计时到 0，妖一下子变多',{k:'cd'}):null}
       const b=vgDom('skBomb'),n=S.objs.filter(o=>o.k==='z'&&!o.dead&&o.y>H*.2).length;return b&&S.bombs>0&&n>=3&&!vilGot('sk_bomb')?P('点雷劫符！',b,'一下清掉一大片',{k:'bomb'}):null}
     case 'boss':{const z=vgZ(o=>o.boss);return z?P('大妖：一直打它',vgZr(z),'别让它撞破大阵',{c:'red',k:'boss'}):null}
@@ -3196,7 +3196,7 @@ function vgPlan(){   // 当前任务该圈哪里、说什么
     case 'jie':{const o=vgGate('jie');return o?(lock(o)?P('集火劈开天劫',vgG(o),'劈不开就躲到右道',{c:'red',k:'lock'}):P('劈开了，冲过去！',vgG(o),'',{c:'green',k:'go'})):null}
     case 'jar':{const J=S.jarPos;return J?P('聚灵瓶：攒满给一大截修为',{x:J.x,y:J.y,r:24},'吃丹、打妖、斩大妖都在攒（现在 '+Math.floor(clamp(S.jar||0,0,1)*100)+'%）',{k:'j'}):null}
     case 'stats':{const d=vgDom('hYqWrap');return d?P('点这里',d,'打开暂停页看数值一览',{k:'st'}):null}
-    case 'pet':{if(!$('ovPets').hidden){const b=[...document.querySelectorAll('#petList button')].find(x=>/^培养/.test(x.textContent)&&!x.disabled);const d=b&&vgDom(b);return d?P('点「培养」',d,'灵宠会自己找妖打',{k:'p2'}):null}if(!$('ovPause').hidden){const b=document.querySelector('#pauseBuild button[data-pet=up]');const d=b&&vgDom(b);return d?P('点「培养」',d,'灵宠会自己找妖打',{k:'p2'}):null}const d=vgDom('hPetB');return d?P('点「灵宠」',d,'在这里培养灵宠',{k:'p1'}):null}
+    case 'pet':{if(!$('ovPets').hidden){const b=[...document.querySelectorAll('#petList button')].find(x=>/^培养/.test(x.textContent)&&!x.disabled);const d=b&&vgDom(b);const bk=vgDom('bPetsBack');return d?P('点「培养」',d,'灵宠会自己找妖打',{k:'p2',more:bk?[Object.assign(bk,{c:'grey'})]:[]}):null}if(!$('ovPause').hidden){const b=document.querySelector('#pauseBuild button[data-pet=up]');const d=b&&!b.disabled&&vgDom(b),bk=vgDom('bResume');return d?P('点「培养」',d,'灵宠会自己找妖打',{k:'p2',more:bk?[Object.assign(bk,{c:'grey'})]:[]}):null}const d=vgDom('hPetB');return d?P('点「灵宠」',d,'在这里培养灵宠',{k:'p1'}):null}
   }
   return null}
 function coachPlan(){   /* 新手村外的教学提示也走同一套高亮 */
@@ -3213,12 +3213,12 @@ function vgDraw(dt){
   {const vi=S.vil?S.vil.i:-2;if(vi!==vgSlowI){vgSlowI=vi;vgSlowed=new Set()}}
   if(p.k!==vgKey){vgKey=p.k;if(!vgSlowed.has(p.k)){vgSlowed.add(p.k);vgSlowT=1.3}}   /* 新目标：放慢一下；同一任务里同一个目标只慢一次（怪死了换下一只、门进出屏幕都不再慢） */
   const wr=w.getBoundingClientRect(),cb=cv.getBoundingClientRect(),ox=cb.left-wr.left,oy=cb.top-wr.top,t=performance.now()/1000;
-  vgX.save();vgX.fillStyle='rgba(4,6,12,.62)';vgX.fillRect(0,0,W2,H2);vgX.globalCompositeOperation='destination-out';vgX.fillStyle='#000';for(const a of p.t){vgX.beginPath();vgX.arc(ox+a.x,oy+a.y,a.r+6,0,6.283);vgX.fill()}vgX.globalCompositeOperation='source-over';   /* 12:31：挖洞改用“擦掉”方式——原来的奇偶填充在圈超出屏幕边时挖不开，怪没亮 */
+  vgX.save();vgX.fillStyle='rgba(4,6,12,.62)';vgX.fillRect(0,0,W2,H2);vgX.globalCompositeOperation='destination-out';vgX.fillStyle='#000';for(const a of p.t){vgX.beginPath();if(a.rect)vgX.roundRect(ox+a.x-a.w/2-5,oy+a.y-a.h/2-5,a.w+10,a.h+10,10);else vgX.arc(ox+a.x,oy+a.y,a.r+6,0,6.283);vgX.fill()}vgX.globalCompositeOperation='source-over';   /* 12:31：挖洞改用“擦掉”方式——原来的奇偶填充在圈超出屏幕边时挖不开，怪没亮 */
   const col={gold:'255,214,119',green:'110,235,140',red:'255,90,110',grey:'200,200,210'};
-  for(const a of p.t){const pp=.5+.5*Math.sin(t*7),c=col[a.c]||col.gold;vgX.strokeStyle='rgba('+c+','+(.65+.35*pp)+')';vgX.lineWidth=3+2*pp;vgX.beginPath();vgX.arc(ox+a.x,oy+a.y,a.r+6+2*pp,0,6.283);vgX.stroke();
+  for(const a of p.t){const pp=.5+.5*Math.sin(t*7),c=col[a.c]||col.gold;vgX.strokeStyle='rgba('+c+','+(.65+.35*pp)+')';vgX.lineWidth=3+2*pp;vgX.beginPath();if(a.rect){const q=5+2*pp;vgX.roundRect(ox+a.x-a.w/2-q,oy+a.y-a.h/2-q,a.w+2*q,a.h+2*q,10+pp)}else vgX.arc(ox+a.x,oy+a.y,a.r+6+2*pp,0,6.283);vgX.stroke();
     if(a.x_){vgX.strokeStyle='rgba(255,70,90,.9)';vgX.lineWidth=6;vgX.lineCap='round';const d=a.r*.45,X=ox+a.x,Y=oy+a.y;vgX.beginPath();vgX.moveTo(X-d,Y-d);vgX.lineTo(X+d,Y+d);vgX.moveTo(X+d,Y-d);vgX.lineTo(X-d,Y+d);vgX.stroke()}}
   const A=p.t[0],ax=ox+A.x,ay=oy+A.y,above=ay>H2*.5;
-  if(A.dom){vgX.font='34px sans-serif';vgX.textAlign='center';vgX.textBaseline='middle';vgX.fillText('👉',ax-A.r-28+Math.sin(t*8)*6,ay)}
+  if(A.dom){vgX.font='34px sans-serif';vgX.textAlign='center';vgX.textBaseline='middle';{const hx=ax-(A.rect?A.w/2+8:A.r)-28+Math.sin(t*8)*6,hi=artImg('vi_tap');if(hi){vgX.save();vgX.translate(hx,ay);vgX.rotate(-1.2);vgX.drawImage(hi,-22,-22,44,44);vgX.restore()}else vgX.fillText('👉',hx,ay)}}
   else{const bob=Math.sin(t*8)*5,y0=above?ay-A.r-16+bob:ay+A.r+16-bob;vgX.fillStyle='rgb('+(col[A.c]||col.gold)+')';vgX.beginPath();if(above){vgX.moveTo(ax,y0);vgX.lineTo(ax-12,y0-18);vgX.lineTo(ax+12,y0-18)}else{vgX.moveTo(ax,y0);vgX.lineTo(ax-12,y0+18);vgX.lineTo(ax+12,y0+18)}vgX.fill()}
   const hit=y=>y-20<6||y+(p.s?44:20)>H2-6||p.t.some(a=>{const cy=oy+a.y,r=a.r+10;return y-20<cy+r&&y+(p.s?44:20)>cy-r&&Math.abs(ox+a.x-W2/2)<W2});   /* 12:31：字不能盖住要点的东西（原来顶部按钮的字压在「第 N 波」上） */
   const up=ay-A.r-(A.dom?54:64),dn=ay+A.r+(A.dom?40:58);let ty=A.dom||above?up:dn;if(hit(ty))ty=ty===up?dn:up;if(hit(ty))ty=A.dom||above?up:dn;
@@ -3275,7 +3275,7 @@ const COACH={
   run:{t:'跑得快，先打它',slow:.5,max:2.2},brute:{t:'皮厚，漏了损失大',slow:.5,max:2.2},elite:{t:'噬元魔：漏了跌一层',slow:.5,max:2.4},
   four:{t:'全是坏门：挑最轻的',bad:1,slow:.45,max:2.6},dodge:{t:'错开了：等一下再横移',s:'可以一扇都不撞',slow:.45,max:2.8},
   trap:{t:'右道坏门：侧身躲开',bad:1,slow:.5,max:2.2},zou:{t:'走火入魔：撞了会变慢',bad:1,slow:.5,max:2.2},
-  jie:{t:'天劫：集火劈开它！',s:'劈开冲过去：+1.2 层、永久变强；劈不开就躲开',slow:.4,max:4.5},vein:{t:'灵脉：一扇顶约 6 扇聚气丹',s:'先打开锁才能吃，右道不急时最划算',slow:.4,max:4},
+  jie:{t:'天劫：集火劈开它！',s:'劈开冲过去：+1.2 层、永久变强；劈不开就躲开',slow:.4,max:4.5},vein:{t:'灵脉：吃一扇 = 吃 6 扇聚气丹的修为',s:'先打开锁才能吃，右道不急时最划算',slow:.4,max:4},
   vein_pick:{t:'灵脉还是聚气丹？',s:'右道不急→破锁吃灵脉；右道吃紧→吃聚气丹',slow:.4,max:4},
   jar:{t:'聚灵瓶满了！',s:'吃聚气丹、打小妖都在攒，满一瓶额外奖励修为',banner:1,max:2.6},
   jie_warn:{t:'天劫要来了',s:'先把右道清干净，留着火力劈它',banner:1,max:2.4},art:{t:'剑诀：开锁，学一招',slow:.5,max:2.4},
@@ -3312,7 +3312,7 @@ function startCoach(key,o){
   coach={key,C:COACH[key],o,t:0,x0:S.x,k0:S.kills,v0:o&&o.val};$('coachSkip').hidden=false;
   if((key==='vein'||key==='vein_pick')&&o){const q=veinMate(o),rt=q?o.val/Math.max(1e-9,q.val):0;   /* 11-02 17:05 John：灵脉没讲为什么要吃 → 直接写出这扇比旁边聚气丹多几倍、该不该冒险 */
     if(key==='vein_pick'&&q){coach.T='灵脉 +'+fmtG(o.val*(S.gateMul||1))+' ＝ 聚气丹的 '+(rt>=5?Math.round(rt):rt.toFixed(1))+' 倍';coach.Sx=(S.dangerShow||0)<.35?'右道不急：破锁吃灵脉，赚得多':'右道吃紧：先吃聚气丹，保命要紧'}
-    else coach.T='灵脉 +'+fmtG(o.val*(S.gateMul||1))+(q&&rt>1.5?'：顶 '+Math.round(rt)+' 扇聚气丹':'：一扇顶约 6 扇聚气丹')}
+    else coach.T='灵脉 +'+fmtG(o.val*(S.gateMul||1))+(q&&rt>1.5?'：顶 '+Math.round(rt)+' 扇聚气丹':'：吃一扇 = 吃 6 扇聚气丹的修为')}
   return true;
 }
 function veinMate(o){let b=null;for(const q of S.objs)if(q.k==='gate'&&!q.dead&&q.g==='qi'&&Math.abs(q.y-o.y)<140&&(!b||Math.abs(q.y-o.y)<Math.abs(b.y-o.y)))b=q;return b}
