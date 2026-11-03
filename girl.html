@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl", "sbjs": "supabase.js"};if(/(^|\.)youfeng\.app$|\.pages\.dev$/.test(location.hostname))window.NG_CFG.url=location.origin+'/sb';</script>
-<script>(function(){var B="20261103151631";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261103152725";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" media="print" onload="this.media='all'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,6 +38,7 @@ body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:var(
 .hud{position:absolute;top:8px;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;
   padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));pointer-events:none}
 .stats{display:flex;gap:5px;flex-wrap:wrap;min-width:0}
+.hbRow{display:flex;gap:5px}.chip.hb{display:inline-flex;align-items:center;gap:3px;cursor:pointer;font-weight:700;font-family:inherit;pointer-events:auto}.chip.hb img{width:20px;height:20px;object-fit:contain;margin:-3px 0}   /* 15:22 John：第 N 波旁边直接放 强化 / 萌宠 / 商店 三个按钮 */
 .chip{background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:4px 7px;font-size:11px;color:var(--muted);
   display:flex;align-items:baseline;gap:4px;white-space:nowrap}
 .chip b{font-family:var(--display);font-weight:400;color:var(--ink);font-size:14px;font-variant-numeric:tabular-nums;letter-spacing:.02em}
@@ -362,6 +363,7 @@ body.ink #petList .item.on{border-color:rgba(201,71,61,.7);box-shadow:0 0 0 1px 
       <div class="chip" id="hWaveWrap">噩梦潮<b id="hBoss">40s</b></div>
       <div class="chip ok" id="hPressWrap">危险<b id="hPress">0%</b></div>
       <div class="chip" id="hYqWrap">第<b id="hYq">1</b>波</div>
+      <div class="hbRow" id="hBtnRow"><button class="chip hb" id="hStrB">强化</button><button class="chip hb" id="hPetB">萌宠</button><button class="chip hb" id="hShopB">商店</button></div>
     </div>
     <div class="btns">
       <button class="ib spd" id="bSpd" aria-label="游戏速度">×1</button>
@@ -1322,7 +1324,7 @@ function applyUpg(k,quiet){
   if(!quiet){toast(UPG[k].name+' UP',UPG[k].desc);sfx('up')}
   renderUps();
 }
-function renderUps(){
+function renderUps(){try{hudIcons()}catch(e){}
   const el=$('ups');el.innerHTML='';if(!S)return;
   const eff={dmg:'伤害×'+fmtD(S.dmg),rate:'星速×'+fmtD(S.rate),spread:'+'+(S.spread*2)+' 道星光',pierce:'穿 '+S.pierce+' 只',
     mech:['','炮击','导弹炮击','双重炮'][S.mech]||''};
@@ -3107,7 +3109,7 @@ const VIL=[
   {id:'cast',d:'大噩梦头上出现读条时，它在放技能。集中星力猛打它，打掉它 8% 的体力就能打断。写着「噩梦咆哮」的打不断，只能开泡泡护盾扛。',t:'大噩梦读条时，集火打断它',s:'头上出现读条就猛打它，打掉 8% 的血就断了；「噩梦咆哮」打不断，要开泡泡护盾',u:['bskill'],need:{int:1}},
   {id:'jie',d:'到了'+REALMS[2]+'以后，左道会降下紫色的流星考验，上面有很厚的锁。集中星力把锁打开再冲过去，魔力直接 +'+JIE_L+' 星（顶几十颗星光糖）、还永久变强；打不开就躲到右边。成功或躲开都算完成。',t:'闯一次流星考验',s:'左道降下紫色流星考验：集火打开冲过去，打不开就躲到右边（到'+REALMS[2]+'才会降）',u:['jie'],need:{jie:1}},
   {id:'stats',d:'点屏幕左上角的「第 N 波」，会暂停并打开数值一览：你普攻几秒净化一只怪、魔法一发能净化几只、每种怪的物防法防都在这里。打开看一眼就算完成。',t:'点左上「第 N 波」，看看数值一览',s:'暂停页里有我方攻击、怪怪元气和防御，打不过时来这里看',u:[],need:{pause:1}},
-  {id:'pet',d:'村长送你一笔星钻。点左上「第 N 波」打开暂停页，找到萌宠那一栏，点「喂养」。萌宠会自己找怪打，越养越强。',t:'在暂停页「喂养」一次萌宠',s:'村长送你一笔星钻：萌宠会自己找怪打，越养越强',u:[],need:{pet:1},setup:'pet'},
+  {id:'pet',d:'村长送你一笔星钻。点上面的「萌宠」按钮，再点「喂养」。萌宠会自己找怪打，越养越强。「强化」里能花星钻永久变强，「商店」里买装扮。',t:'点「萌宠」，喂养一次',s:'村长送你一笔星钻：萌宠会自己找怪打，越养越强',u:[],need:{pet:1},setup:'pet'},
   {id:'jar',d:'名牌旁边的小瓶子是星光瓶。吃星光糖、打怪、净化大噩梦都在往里攒，攒满一瓶「星光瓶满啦」，额外再给一大截魔力，然后重新攒。现在：攒满一瓶。',t:'攒满一瓶星光瓶',s:'吃糖、打怪、净化大噩梦都在攒：满一瓶额外给魔力',u:[],need:{jar:1}},
   {id:'path',d:'越往后每一星要的魔力越多，光吃星光糖会很慢。想升得快：先把星光糖打涨再吃；有愿望水晶就去开（一扇顶 6 扇）；流星考验来了就劈（+'+JIE_L+' 星）；净化大噩梦、攒满星光瓶都会多给魔力。升到'+REALMS[3]+'时会让你选路线：星弓系靠星光硬推、更抗打；咒语系靠魔法，七种魔法立刻全会。选完就出村了。',t:'升到'+REALMS[3]+'，选星弓系还是咒语系',s:'星弓系靠星光硬推、抗打；咒语系靠魔法；选完就出村',u:['summon'],need:{path:1}}];
 const VIL_REW=2;   // 每个任务给的星钻
@@ -3149,7 +3151,7 @@ function vilTick(dt){if(!vilOn())return;const v=S.vil,T=VIL[v.i];if(!T)return;
   if(T.row&&!v.pop){v.rowT-=dt;if(v.rowT<=0&&!S.vilRow&&!S.objs.some(o=>o.k==='gate'&&!o.dead&&o.g===T.row[0])){S.vilRow=T.row.slice();v.rowT=6}}
   if(T.setup==='guard'&&!v.pop&&!v.setDone&&!S.bossAlive&&!S.bossNext&&!inSurge()){v.setDone=true;vilGuard()}
   if(T.setup==='guard'&&v.setDone&&!S.objs.some(o=>o.k==='z'&&!o.dead&&o.type==='guard')&&vilGot('k_guard')<1){v.setDone=false}   // 黏人漏过去了：再来一组
-  if(T.setup==='pet'&&!v.pop&&!v.setDone){v.setDone=true;const s=slot();if(s){bankCoins();const c=petLvCost(petCur().l);if(s.coins<c){s.coins=c;commit(Save.cur)}toast('村长送你 '+fmt(c)+' 星钻','点左上「第 N 波」→ 暂停页 → 喂养')}}
+  if(T.setup==='pet'&&!v.pop&&!v.setDone){v.setDone=true;const s=slot();if(s){bankCoins();const c=petLvCost(petCur().l);if(s.coins<c){s.coins=c;commit(Save.cur)}toast('村长送你 '+fmt(c)+' 星钻','点上面的「萌宠」→ 喂养')}}
   if(vilDoneNow())vilNext(false)}
 function vilGuard(){   // 黏人怪带着一圈烦恼球出场：不先点掉它，旁边的都更难打
   const x0=mid+8,x1=roadX+roadW-8,cx=rand(x0+40,x1-40),hb=hpUnit();
@@ -3165,7 +3167,7 @@ function vilGoal(){const v=S.vil,T=VIL[v.i];if(!T)return '';
   return '<b>新手任务 '+v.i+'/'+(VIL.length-1)+'</b>：'+T.t+ex+(stuck?'<br><small>卡住了可以点「跳过」</small>':'')+' <span class="vsk" data-v="one">跳过</span>'}
 $('goal').addEventListener('pointerdown',e=>{const b=e.target.closest('.vsk');if(!b||!vilOn())return;e.preventDefault();e.stopPropagation();
   if(b.dataset.v==='all')vilEnd(false);else{const T=vilCur();if(T&&T.id==='path'){toast('最后一步','升到'+REALMS[3]+'选完路线就出村；不想等就点「退出新手村」');return}vilNext(true)}});
-const VIL_VP={"drag": ["hero", [["vi_tap", "按住屏幕"], ["vi_drag", "左右拖"], ["ic_qi", "左道：门"], ["mon_n", "右道：怪"]]], "qi": ["ic_qi", [["vi_lr", "走到它正下方"], ["ic_qi", "撞上去"], ["vi_up", "魔力涨"]]], "pump": ["ic_qi", [["pj_ti", "站它下面开火"], ["vi_num", "数字变大"], ["ic_qi", "再撞上去"]]], "kill": ["mon_n", [["vi_right", "去右道"], ["pj_ti", "自动开火"], ["vi_up", "打怪也涨魔力"], ["vi_nocross", "别让它冲破结界"]]], "xin": ["ic_xin", [["ic_xin", "红门：掉魔力"], ["vi_lr", "换到旁边那扇"]]], "art": ["ic_art", [["lock", "先开火打开锁"], ["ic_art", "再撞上去"], ["ic_dmg", "整局永久变强"]]], "surge": ["ic_bomb", [["mon_n", "怪一下子变多"], ["ic_bomb", "压上来时点它"], ["vi_hourglass", "撑过去"]]], "boss": ["boss", [["pj_ti", "站它下面一直打"], ["vi_nocross", "别让它冲破结界"], ["vi_up", "净化了魔力大涨"]]], "fb": ["ic_gourd", [["lock", "先打开锁"], ["ic_gourd", "撞上去拿魔法道具"], ["ic_orb", "自己帮你打"]]], "bolt": ["ic_bolt", [["mon_n", "找怪最多那列"], ["ic_bolt", "点一下扫整列"]]], "guard": ["mon_guard", [["ic_t_guard", "罩着旁边的怪"], ["vi_target", "先打它"]]], "shield": ["ic_shield", [["ic_shield", "点一下"], ["ic_armor", "6 秒冲破结界不伤"]]], "freeze": ["ic_freeze", [["ic_freeze", "点一下"], ["ic_freeze", "全场定住 3.5 秒"]]], "fu": ["ic_fu", [["lock", "先开锁"], ["ic_fu", "撞上去"], ["vi_refresh", "技能马上补回"]]], "vein": ["ic_vein", [["lock", "先开锁"], ["ic_vein", "一颗 ≈ 6 颗糖"], ["vi_up", "升星最快"]]], "cast": ["boss", [["vi_hourglass", "头上出读条"], ["pj_ti", "猛打它"], ["vi_break", "打掉 8% 就断"]]], "jie": ["ic_jie", [["pj_ti", "集火打开锁"], ["vi_up", "魔力 +1.2 星"], ["vi_lr", "打不开躲右道"]]], "stats": ["vi_scroll", [["vi_tap", "点左上「第 N 波」"], ["vi_scroll", "看数值一览"]]], "pet": ["pet_0", [["vi_tap", "点左上「第 N 波」"], ["ic_coin", "点「喂养」"], ["pet_0", "自己找怪打"]]], "jar": ["jar", [["ic_qi", "吃糖"], ["mon_n", "打怪"], ["boss", "净化大噩梦"], ["jar", "攒满送魔力"]]], "path": ["hero", [["ic_qi", "打涨再吃"], ["ic_vein", "开愿望水晶 ×6"], ["ic_jie", "打开流星考验"], ["boss", "净化大噩梦"], ["jar", "攒星光瓶"]]]};   /* 14:26 John：任务说明能用图就用图，不要一大串字 → 弹窗 = 一张大图 + 几步带图标的短句，原来的长说明收进「详细说明」 */
+const VIL_VP={"drag": ["hero", [["vi_tap", "按住屏幕"], ["vi_drag", "左右拖"], ["ic_qi", "左道：门"], ["mon_n", "右道：怪"]]], "qi": ["ic_qi", [["vi_lr", "走到它正下方"], ["ic_qi", "撞上去"], ["vi_up", "魔力涨"]]], "pump": ["ic_qi", [["pj_ti", "站它下面开火"], ["vi_num", "数字变大"], ["ic_qi", "再撞上去"]]], "kill": ["mon_n", [["vi_right", "去右道"], ["pj_ti", "自动开火"], ["vi_up", "打怪也涨魔力"], ["vi_nocross", "别让它冲破结界"]]], "xin": ["ic_xin", [["ic_xin", "红门：掉魔力"], ["vi_lr", "换到旁边那扇"]]], "art": ["ic_art", [["lock", "先开火打开锁"], ["ic_art", "再撞上去"], ["ic_dmg", "整局永久变强"]]], "surge": ["ic_bomb", [["mon_n", "怪一下子变多"], ["ic_bomb", "压上来时点它"], ["vi_hourglass", "撑过去"]]], "boss": ["boss", [["pj_ti", "站它下面一直打"], ["vi_nocross", "别让它冲破结界"], ["vi_up", "净化了魔力大涨"]]], "fb": ["ic_gourd", [["lock", "先打开锁"], ["ic_gourd", "撞上去拿魔法道具"], ["ic_orb", "自己帮你打"]]], "bolt": ["ic_bolt", [["mon_n", "找怪最多那列"], ["ic_bolt", "点一下扫整列"]]], "guard": ["mon_guard", [["ic_t_guard", "罩着旁边的怪"], ["vi_target", "先打它"]]], "shield": ["ic_shield", [["ic_shield", "点一下"], ["ic_armor", "6 秒冲破结界不伤"]]], "freeze": ["ic_freeze", [["ic_freeze", "点一下"], ["ic_freeze", "全场定住 3.5 秒"]]], "fu": ["ic_fu", [["lock", "先开锁"], ["ic_fu", "撞上去"], ["vi_refresh", "技能马上补回"]]], "vein": ["ic_vein", [["lock", "先开锁"], ["ic_vein", "一颗 ≈ 6 颗糖"], ["vi_up", "升星最快"]]], "cast": ["boss", [["vi_hourglass", "头上出读条"], ["pj_ti", "猛打它"], ["vi_break", "打掉 8% 就断"]]], "jie": ["ic_jie", [["pj_ti", "集火打开锁"], ["vi_up", "魔力 +1.2 星"], ["vi_lr", "打不开躲右道"]]], "stats": ["vi_scroll", [["vi_tap", "点左上「第 N 波」"], ["vi_scroll", "看数值一览"]]], "pet": ["pet_0", [["vi_tap", "点「萌宠」"], ["ic_coin", "点「喂养」"], ["pet_0", "自己找怪打"]]], "jar": ["jar", [["ic_qi", "吃糖"], ["mon_n", "打怪"], ["boss", "净化大噩梦"], ["jar", "攒满送魔力"]]], "path": ["hero", [["ic_qi", "打涨再吃"], ["ic_vein", "开愿望水晶 ×6"], ["ic_jie", "打开流星考验"], ["boss", "净化大噩梦"], ["jar", "攒星光瓶"]]]};   /* 14:26 John：任务说明能用图就用图，不要一大串字 → 弹窗 = 一张大图 + 几步带图标的短句，原来的长说明收进「详细说明」 */
 function vpImg(k,cls){if(k==='hero')k=heroArtKey(S?S.rR:0);else if(k==='boss')k='boss_'+clamp((S&&S.peakR)|0,0,17);if(/^[a-z]/.test(k)&&ART_ON&&ART_MAN[ART_PRE+k])return '<img class="'+cls+'" src="art/'+ART_PRE+k+'.webp?v='+ART_V+'" alt="">';return '<span class="'+cls+' em">'+(/^[a-z]/.test(k)?'✨':k)+'</span>'}
 function vilVP(T){const V=VIL_VP[T.id];if(!V)return '';return '<div class="vbHero">'+vpImg(V[0],'vbBig')+'</div><div class="vbSteps">'+V[1].map(([k,s],i)=>(i?'<b class="vbArr">›</b>':'')+'<div class="vs">'+vpImg(k,'vsI')+'<span>'+spText(s)+'</span></div>').join('')+'</div>'}
 /* 11-03 02:05 John：上面一小串字谁知道要干嘛 → 每个新任务都暂停弹窗讲清楚怎么做，点「知道了」再开始；任务行只当提醒 */
@@ -3218,7 +3220,7 @@ function vgPlan(){   // 当前任务该圈哪里、说什么
     case 'jie':{const o=vgGate('jie');return o?(lock(o)?P('集火打开流星考验',vgG(o),'打不开就躲到右边',{c:'red',k:'lock'}):P('打开了，冲过去！',vgG(o),'',{c:'green',k:'go'})):null}
     case 'jar':{const J=S.jarPos;return J?P('星光瓶：攒满给一大截魔力',{x:J.x,y:J.y,r:24},'吃糖、打怪、净化大噩梦都在攒（现在 '+Math.floor(clamp(S.jar||0,0,1)*100)+'%）',{k:'j'}):null}
     case 'stats':{const d=vgDom('hYqWrap');return d?P('点这里',d,'打开暂停页看数值一览',{k:'st'}):null}
-    case 'pet':{if(!$('ovPause').hidden){const b=document.querySelector('#pauseBuild button[data-pet=up]');const d=b&&vgDom(b);return d?P('点「喂养」',d,'萌宠会自己找怪打',{k:'p2'}):null}const d=vgDom('hYqWrap');return d?P('先点这里打开暂停页',d,'萌宠在暂停页里喂养',{k:'p1'}):null}
+    case 'pet':{if(!$('ovPets').hidden){const b=[...document.querySelectorAll('#petList button')].find(x=>/^喂养/.test(x.textContent)&&!x.disabled);const d=b&&vgDom(b);return d?P('点「喂养」',d,'萌宠会自己找怪打',{k:'p2'}):null}if(!$('ovPause').hidden){const b=document.querySelector('#pauseBuild button[data-pet=up]');const d=b&&vgDom(b);return d?P('点「喂养」',d,'萌宠会自己找怪打',{k:'p2'}):null}const d=vgDom('hPetB');return d?P('点「萌宠」',d,'在这里喂养萌宠',{k:'p1'}):null}
   }
   return null}
 function coachPlan(){   /* 新手村外的教学提示也走同一套高亮 */
@@ -3229,7 +3231,7 @@ function vgDraw(dt){
   if(vgC.width!==Math.round(W2*dpr)||vgC.height!==Math.round(H2*dpr)){vgC.width=Math.round(W2*dpr);vgC.height=Math.round(H2*dpr)}
   vgX.setTransform(dpr,0,0,dpr,0,0);vgX.clearRect(0,0,W2,H2);
   vgSlowT=Math.max(0,vgSlowT-dt);   /* 12:45 John：没引导时也莫名变慢——原来只有画出引导时才倒计时，引导一消失慢动作就卡住不走 */
-  const pauseOK=vilOn()&&VIL[S.vil.i]&&VIL[S.vil.i].id==='pet'&&!$('ovPause').hidden;
+  const pauseOK=vilOn()&&VIL[S.vil.i]&&VIL[S.vil.i].id==='pet'&&(!$('ovPause').hidden||!$('ovPets').hidden);
   if(!S||!running||(paused&&!pauseOK)||tip||pickOpts||intelOn){vgSlowT=0;return}
   const p=vgPlan()||coachPlan();if(!p){vgKey='';vgSlowT=0;return}
   {const vi=S.vil?S.vil.i:-2;if(vi!==vgSlowI){vgSlowI=vi;vgSlowed=new Set()}}
@@ -3257,6 +3259,7 @@ const TOUR=[   /* 14:26 John：说明别一大串字 → 每步一句话 */
   ['hWaveWrap','噩梦潮倒计时','到 0 怪一下子变多；撑过去大噩梦单独上场。'],
   ['hPressWrap','危险','右道压力：越高越要清右道、放技能。'],
   ['hYqWrap','第 N 波','排行榜比这个；点它看数值一览。'],
+  ['hBtnRow','强化 · 萌宠 · 商店','强化：花星钻永久变强；萌宠：喂养它帮你打；商店：买装扮。点开会暂停。'],
   ['btns','速度、声音、暂停','调速度 · 调声音 · 暂停和存档。'],
   ['@left','左道：门','绿门加魔力，红门扣魔力；带锁的先打开。'],
   ['@right','右道：怪','怪往下冲，冲破结界就掉魔力。'],
@@ -4178,11 +4181,19 @@ function spdUI(){const k=gSpd(),b=$('bSpd');if(!b)return;b.textContent='×'+k;b.
 $('bSpd').onclick=e=>{e.stopPropagation();const s=slot();if(!s)return;const i=SPDS.indexOf(gSpd());s.spd=SPDS[(i+1)%SPDS.length];commit(Save.cur);spdUI();toast('游戏速度 ×'+s.spd,s.spd>1?'门、怪、冷却、波次一起加快':'恢复正常速度')};
 $('shopTabs').onclick=e=>{const b=e.target.closest('button');if(b){shopTabCur=+b.dataset.t;renderShop()}};$('cosTabs').onclick=e=>{const b=e.target.closest('button');if(b){cosTabCur=b.dataset.t;renderShop()}};
 $('bShop').onclick=()=>{shopBack='ovHub';renderShop();show('ovShop')};
+/* 15:22：局内顶栏的 强化 / 萌宠 / 商店：点开时暂停，返回就接着打 */
+function hudOpen(){if(!running||tip||intelOn||pickOpts||(S&&S.deathOpen)||paused)return false;paused=true;drag=null;$('coachSkip').hidden=true;$('cutSkip').hidden=true;return true}
+function hudBack(){paused=false;show(null);$('coachSkip').hidden=!coach;$('cutSkip').hidden=!cut;renderUps()}
+$('hStrB').onclick=e=>{e.stopPropagation();if(!hudOpen())return;shopBack='game';shopTabCur=0;renderShop();show('ovShop')};
+$('hShopB').onclick=e=>{e.stopPropagation();if(!hudOpen())return;shopBack='game';shopTabCur=1;renderShop();show('ovShop')};
+$('hPetB').onclick=e=>{e.stopPropagation();if(!hudOpen())return;petsBack='game';renderPets();show('ovPets')};
+function hudIcons(){const ic=(k,l)=>(ART_ON&&ART_MAN[ART_PRE+k]?'<img src="art/'+ART_PRE+k+'.webp?v='+ART_V+'" alt="">':'')+'<span>'+l+'</span>';$('hStrB').innerHTML=ic('ic_dmg','强化');$('hPetB').innerHTML=ic('pet_'+((S&&petCur().i)||0),'萌宠');$('hShopB').innerHTML=ic('ic_coin','商店')}
+hudIcons();
 function petBadge(){const s=slot();if(!s)return;const c=(()=>{const P=petsOf(s),k=P.sel;return {k,l:P.lines[k]}})(),evo=c.l%PET_EVO===PET_EVO-1&&petNextForm(c.k,c.l)&&s.coins>=petLvCost(c.l);$('bPets').textContent=evo?'萌 宠 · 可进化':'萌 宠'}
 $('bPets').onclick=()=>{petsBack='ovHub';renderPets();show('ovPets')};
-$('bPetsBack').onclick=()=>{if(petsBack==='ovHub'){renderHub();show('ovHub')}else{renderPause();show('ovPause')}};
+$('bPetsBack').onclick=()=>{if(petsBack==='game'){hudBack();return}if(petsBack==='ovHub'){renderHub();show('ovHub')}else{renderPause();show('ovPause')}};
 $('bOverShop').onclick=()=>{shopBack='ovOver';renderShop();show('ovShop')};
-$('bShopBack').onclick=()=>{if(shopBack==='ovHub')renderHub();if(shopBack==='ovPause')renderPause();show(shopBack)};
+$('bShopBack').onclick=()=>{if(shopBack==='game'){hudBack();return}if(shopBack==='ovHub')renderHub();if(shopBack==='ovPause')renderPause();show(shopBack)};
 $('bTut').onclick=()=>{const s=slot();if(!s)return;s.tutDone=false;s.noTips=false;s.seen={};s.vilPick=null;s.vilDone=false;commit(Save.cur);$('tutNote').hidden=false};
 $('bSlots').onclick=()=>{renderSlots();show('ovTitle')};
 let helpTabCur=0;   /* 11-02 17:45：玩法说明 40 多条一长串 → 按类分按钮 */
