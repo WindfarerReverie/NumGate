@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl", "sbjs": "supabase.js"};if(/(^|\.)youfeng\.app$|\.pages\.dev$/.test(location.hostname))window.NG_CFG.url=location.origin+'/sb';</script>
-<script>(function(){var B="20261103153302";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261103154434";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" media="print" onload="this.media='all'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1448,9 +1448,38 @@ function gateEffect(o){   // short description shown on the gate
 }
 
 /* ================= SPAWNING ================= */
+/* 15:37 John：新怪一来就是一堆，情报没意义 → 新种类第一次要出场时：先停刷，等右道清得差不多（最多 8 秒），
+   再单独放这一只（黏人怪带 3 只烦恼球演示光罩）；它走进画面时放慢、圈亮，再弹情报卡；关卡后继续圈着它、写打法，净化再恢复正常刷怪 */
+function stageNeed(type){if(!S||S.tut||vilOn()||S.stage||!INTEL[type])return false;const s=slot();if(!s||s.noIntel)return false;const iq=s.intel||{},st=S.stagedT||{};if(st[type])return false;for(const k in iq)if(k===type||k.startsWith(type+'_'))return false;return true}
+function startStage(type){(S.stagedT=S.stagedT||{})[type]=1;S.stage={t:type,ph:'wait',t0:S.t}}
+function stageHold(){const g=S.stage;if(!g)return false;
+  if(g.ph==='wait'){let n=0;for(const o of S.objs)if(o.k==='z'&&!o.dead&&o.y>-40&&o.y<squadY)n++;if(n>2&&S.t-g.t0<8)return true;
+    const x0=mid+8,x1=roadX+roadW-8,cx=(x0+x1)/2,hpB=hpUnit(),o=mkZ(g.t,cx,-40,hpB,1);o.intelChk=1;o.stg=1;S.objs.push(o);g.o=o;g.mins=[];
+    if(g.t==='guard')for(const dx of [-34,0,34]){const m=mkZ('n',clamp(cx+dx,x0+12,x1-12),-80-Math.abs(dx)*.3,hpB,1);m.intelChk=1;S.objs.push(m);g.mins.push(m)}
+    g.ph='show';g.t1=S.t;return true}
+  if(g.ph==='show'){if(!g.o||g.o.dead||S.t-g.t1>(g.lite?8:30)){S.stage=null;return false}return !g.lite}
+  return false}
+function stageTick(){const g=S.stage;if(!g)return;if(!running||paused)return;stageHold();if(!S.stage||g.ph!=='show'||!g.o||g.o.dead)return;const o=g.o;
+  if(!g.seen&&o.y>H*.16){g.seen=1;g.slowUntil=performance.now()+1100}
+  if(g.seen&&!g.shown&&performance.now()>g.slowUntil&&!intelOn&&!tip&&!pickOpts&&!S.deathOpen){g.shown=1;g.tClose=null;const s=slot(),vb=bandOf(o),key=o.type+(vb?'_'+vb:'');if(s&&!s.noIntel&&!(s.intel||{})[key])openIntel(key,o)}}
+const STG_TIP={n:['烦恼球','冲破结界会吸走魔力','站到它那一列打'],run:['急躁鬼','跑得特别快','看到就先横移过去打'],brute:['拖延懒懒','皮厚、物防高','集火它，别让它冲破结界'],elite:['内耗怪','冲破结界吸走一大截魔力','看到就集火'],hex:['瞌睡精','读条读满你的星速变慢','读条时先打它'],guard:['黏人怪','罩着身边的怪更抗打','先打它，彩虹光束伤害 ×2']};
+function stagePlan(){const g=S&&S.stage;if(!g||g.ph!=='show'||!g.o||g.o.dead||!g.seen||intelOn)return null;const o=g.o;if(o.y>squadY)return null;
+  const T=STG_TIP[o.type]||[monName(o.type,0),'',''],nm=monName(o.type,bandOf(o));let r=o.r*2.2+14;if(g.mins&&g.mins.length)for(const m of g.mins)if(!m.dead)r=Math.max(r,Math.hypot(m.x-o.x,m.y-o.y)+m.r*1.6);
+  return {tt:nm+'：'+T[1],s:g.shown?'打法：'+T[2]:'新怪怪来了',t:[{x:o.x,y:o.y,r:Math.min(r,roadW*.28),c:'red'}],k:'stage:'+o.type+(g.shown?':2':':1')}}
+function mkZ(type,x,y,hpB,atkB){
+  const z={k:'z',x,y,ph:rand(0,6.28),hit:0,type,tier:Math.min(6,waveK()),band:monBand(S.maxR)};
+  if(type==='elite')Object.assign(z,{r:15,hp:hpB*6,atk:0,pct:0,sp:24,coin:6,realm:S.peakR});
+  if(type==='n')Object.assign(z,{r:11,hp:hpB,atk:atkB,pct:.02,sp:30,coin:1});
+  if(type==='run')Object.assign(z,{r:9,hp:hpB*.6,atk:atkB,pct:.02,sp:0,fast:2.6,coin:1});
+  if(type==='brute')Object.assign(z,{r:19,hp:hpB*7,atk:atkB*5,pct:.08,sp:12,coin:4});
+  if(type==='hex')Object.assign(z,{r:12,hp:hpB*2,atk:atkB,pct:.02,sp:18,coin:3,cast:-rand(0,1)});
+  if(type==='guard')Object.assign(z,{r:13,hp:hpB*2.5,atk:atkB,pct:.03,sp:20,coin:3});
+  {const fd=vilFade();if(fd>0){const vf={brute:2/7,elite:2/6,guard:1.4/2.5,hex:1.2/2}[type];if(vf)z.hp*=1+(vf-1)*fd}}   /* 13:19 John：新手村有的怪打半天、比大噩梦还厚 → 村里拖延懒懒/内耗怪/黏人/瞌睡咒都只比烦恼球厚一点 */
+  z.hp0=z.hp;return z}
 function spawnZombies(){
   const x0=mid+8,x1=roadX+roadW-8;
-  if(S.bossAlive||S.bossNext||(vilOn()&&!S.vil.u.n))return;   /* 新手村还没教打怪时不刷怪；大噩梦在场时不刷烦恼球（大噩梦自己召唤的除外） */
+  if(S.bossAlive||S.bossNext||(vilOn()&&!S.vil.u.n))return;
+  if(S.stage&&!S.stage.lite)return;   /* 新怪展示期间不刷别的怪 */   /* 新手村还没教打怪时不刷怪；大噩梦在场时不刷烦恼球（大噩梦自己召唤的除外） */
   const n=Math.round(zBase()+ri(0,1)-.2);let gAlive=0;for(const o of S.objs)if(o.k==='z'&&!o.dead&&o.type==='guard')gAlive++;
   const cx=rand(x0+22,x1-22);
   const hpB=hpUnit(),atkB=1;
@@ -1458,15 +1487,8 @@ function spawnZombies(){
     let type='n';const q=Math.random(),P=zProbs();let acc=0;
     for(const [ty,pp] of P){acc+=pp;if(q<acc){type=ty;break}}
     if(type==='guard'){if(gAlive>=(inSurge()?2:1))type='n';else gAlive++}   /* 黏人怪同时最多 1 只（噩梦潮 2 只），不能刷成一片 */
-    const z={k:'z',x:clamp(cx+rand(-30,30),x0+12,x1-12),y:-30-rand(0,60),ph:rand(0,6.28),hit:0,type,tier:Math.min(6,waveK()),band:monBand(S.maxR)};
-    if(type==='elite')Object.assign(z,{r:15,hp:hpB*6,atk:0,pct:0,sp:24,coin:6,realm:S.peakR});
-    if(type==='n')Object.assign(z,{r:11,hp:hpB,atk:atkB,pct:.02,sp:30,coin:1});
-    if(type==='run')Object.assign(z,{r:9,hp:hpB*.6,atk:atkB,pct:.02,sp:0,fast:2.6,coin:1});
-    if(type==='brute')Object.assign(z,{r:19,hp:hpB*7,atk:atkB*5,pct:.08,sp:12,coin:4});
-    if(type==='hex')Object.assign(z,{r:12,hp:hpB*2,atk:atkB,pct:.02,sp:18,coin:3,cast:-rand(0,1)});
-    if(type==='guard')Object.assign(z,{r:13,hp:hpB*2.5,atk:atkB,pct:.03,sp:20,coin:3});
-    {const fd=vilFade();if(fd>0){const vf={brute:2/7,elite:2/6,guard:1.4/2.5,hex:1.2/2}[type];if(vf)z.hp*=1+(vf-1)*fd}}   /* 13:19 John：新手村有的怪打半天、比大噩梦还厚 → 村里拖延懒懒/内耗怪/黏人/瞌睡咒都只比烦恼球厚一点 */
-    z.hp0=z.hp;S.objs.push(z);
+    if(stageNeed(type)){startStage(type);if(i===0)return;continue}   /* 15:37 John：新怪第一次出现时单独放出来、圈亮、再讲 */
+    S.objs.push(mkZ(type,clamp(cx+rand(-30,30),x0+12,x1-12),-30-rand(0,60),hpB,atkB));
   }
 }
 /* 11-02 John：烦恼球只有 6 种、不随称号变 → 每 3 个称号换一批（6 种 × 6 阶 = 36 种），本领不变、模样和名字换 */
@@ -2955,8 +2977,8 @@ const INTEL={
   guard:{e:'🛡',a:'身边一圈里的怪物防、法防再 +40%（越进阶越高），打它们非常费劲。同时最多 1 只（噩梦潮 2 只）。',c:{ti:'彩虹光束劈它：伤害 ×2、破罩 4 秒，再清圈里的怪。',fa:'星星魔弹或彩虹光束点掉它：破罩 4 秒。',x:'先用彩虹光束点掉黏人怪，再清其他。'}}};
 let intelOn=null;
 function intelThreat(o){const d=Math.max(1e-9,dps()*dmgMul(o)),sec=Math.max(0,o.hp)/d;return {sec,lv:sec<.6?['低','#4a9b5b']:sec<2.5?['中','#c98a2a']:['高','#c9473d']}}
-function intelScan(){if(!S||S.tut||vilOn()||intelOn||tip||pickOpts||S.deathOpen||S.pathAnim)return;const s=slot();if(!s||s.noIntel)return;s.intel=s.intel||{};
-  for(const o of S.objs){if(o.k!=='z'||o.dead||o.intelChk)continue;o.intelChk=1;const vb=o.boss?0:bandOf(o),key=o.boss?(o.look?'b'+o.look.bi:null):o.type+(vb?'_'+vb:'');if(!key||s.intel[key])continue;if(!o.boss&&!INTEL[o.type])continue;openIntel(key,o);return}}
+function intelScan(){if(!S||S.tut||vilOn()||intelOn||tip||pickOpts||S.deathOpen||S.pathAnim||(S.stage&&S.stage.ph==='show'))return;const s=slot();if(!s||s.noIntel)return;s.intel=s.intel||{};
+  for(const o of S.objs){if(o.k!=='z'||o.dead||o.intelChk)continue;o.intelChk=1;const vb=o.boss?0:bandOf(o),key=o.boss?(o.look?'b'+o.look.bi:null):o.type+(vb?'_'+vb:'');if(!key||s.intel[key])continue;if(!o.boss&&!INTEL[o.type])continue;if(!o.boss&&!S.stage&&o.y<squadY){S.stage={t:o.type,ph:'show',o,mins:[],lite:1,t1:S.t,seen:1,slowUntil:performance.now()+900};return}openIntel(key,o);return}}   /* 进阶怪：先放慢圈亮它，再弹卡，关卡后再圈几秒 */
 function openIntel(key,o){intelOn=key;paused=true;drag=null;const boss=key[0]==='b'&&o.boss,vb=boss?0:bandOf(o),I=boss?null:INTEL[o.type],th=intelThreat(o),sec=th.sec<.1?'不到 0.1':th.sec<10?th.sec.toFixed(1):String(Math.round(th.sec));
   const nm=boss?(BOSSES[o.look.bi]||{}).n||'大噩梦':monName(o.type,vb);
   $('intelStep').textContent=boss?'新大噩梦 · '+REALMS[o.look.bi]:vb?'新怪怪 · '+monName(o.type,0)+'一族的进阶':'新怪怪';$('intelTitle').textContent=nm;
@@ -3140,7 +3162,7 @@ function vilNext(skipped){const v=S.vil,T=VIL[v.i];v.last=null;
   vilStart(v.i+1)}
 function vilEnd(graduated){const v=S.vil;if(!v||v.done)return;
   let base=0;for(const k in v.u)if(FEAT[k]!=null)base=Math.max(base,FEAT[k]);
-  v.done=true;S.vilEndT=S.t;S.featOff=graduated?0:Math.max(0,S.t-base);   // 跳过时：没解锁的东西从现在起按正常节奏陆续出现，不会一下子全冒出来
+  v.done=true;S.vilEndT=S.t;{const s=slot();if(s&&graduated){s.intel=s.intel||{};s.intel.n=1;s.intel.guard=1}}   /* 村里教过烦恼球、黏人怪；其他怪出村后单独介绍 */S.featOff=graduated?0:Math.max(0,S.t-base);   // 跳过时：没解锁的东西从现在起按正常节奏陆续出现，不会一下子全冒出来
   const s=slot();if(s){s.vilDone=true;commit(Save.cur)}
   if(graduated){S.coins+=VIL_REW*5;toast('出村了！','新手村毕业 · 星钻 +'+VIL_REW*5+' · 村里的保护 5 分钟内慢慢撤掉')}else toast('已退出新手村','按正常进度玩：没解锁的东西会陆续出现')}
 function vilTick(dt){if(!vilOn())return;const v=S.vil,T=VIL[v.i];if(!T)return;
@@ -3233,7 +3255,7 @@ function vgDraw(dt){
   vgSlowT=Math.max(0,vgSlowT-dt);   /* 12:45 John：没引导时也莫名变慢——原来只有画出引导时才倒计时，引导一消失慢动作就卡住不走 */
   const pauseOK=vilOn()&&VIL[S.vil.i]&&VIL[S.vil.i].id==='pet'&&(!$('ovPause').hidden||!$('ovPets').hidden);
   if(!S||!running||(paused&&!pauseOK)||tip||pickOpts||intelOn){vgSlowT=0;return}
-  const p=vgPlan()||coachPlan();if(!p){vgKey='';vgSlowT=0;return}
+  const p=vgPlan()||stagePlan()||coachPlan();if(!p){vgKey='';vgSlowT=0;return}
   {const vi=S.vil?S.vil.i:-2;if(vi!==vgSlowI){vgSlowI=vi;vgSlowed=new Set()}}
   if(p.k!==vgKey){vgKey=p.k;if(!vgSlowed.has(p.k)){vgSlowed.add(p.k);vgSlowT=1.3}}   /* 新目标：放慢一下；同一任务里同一个目标只慢一次（怪死了换下一只、门进出屏幕都不再慢） */
   const wr=w.getBoundingClientRect(),cb=cv.getBoundingClientRect(),ox=cb.left-wr.left,oy=cb.top-wr.top,t=performance.now()/1000;
@@ -3467,7 +3489,7 @@ function effectPop(key,title,line,icon,bad){title=spText(title);line=spText(line
   const s=slot();if(!s||s.seen['e_'+key]||vilOn())return;s.seen['e_'+key]=true;commit(Save.cur);
   pop={title,line,icon,bad,t:0,dur:1.9};
 }
-function tScale(){if(cut)return .015;if(vgSlowT>0&&vgKey&&vilOn())return .3;if(S&&S.pathAnim)return .04;if(pop&&pop.t<1.1)return .12;if(coach&&coach.C.slow)return coach.C.slow;return 1}
+function tScale(){if(cut)return .015;if(S&&S.stage&&S.stage.slowUntil&&performance.now()<S.stage.slowUntil)return .3;if(vgSlowT>0&&vgKey&&vilOn())return .3;if(S&&S.pathAnim)return .04;if(pop&&pop.t<1.1)return .12;if(coach&&coach.C.slow)return coach.C.slow;return 1}
 function drawCoach(dt){
   if(!S||!running)return;
   if(S.pathAnim){S.pathAnim.t+=dt;drawPathAnim(S.pathAnim);if(S.pathAnim.t>2.7)S.pathAnim=null}
@@ -3975,7 +3997,7 @@ function frame(ts){requestAnimationFrame(frame);try{frameBody(ts)}catch(e){conso
 function frameBody(ts){
   const dt=Math.min(.033,(ts-last)/1000||0);last=ts;
   if(running&&!paused){
-    const ts=tScale()*(S&&S.hitStop>0?(S.hitStop-=dt,.06):1);{const k=gSpd(),n=Math.ceil(k-1e-9);for(let i=0;i<n;i++)update(dt*ts*k/n);scroll+=speed()*dt*ts*k}   /* 11-02 18:47 John：玩家自选速度 ×1 / ×1.5 / ×2（×2 分两步算，不穿模） */coachScan(dt);brkScan();pickScan();intelScan();
+    const ts=tScale()*(S&&S.hitStop>0?(S.hitStop-=dt,.06):1);{const k=gSpd(),n=Math.ceil(k-1e-9);for(let i=0;i<n;i++)update(dt*ts*k/n);scroll+=speed()*dt*ts*k}   /* 11-02 18:47 John：玩家自选速度 ×1 / ×1.5 / ×2（×2 分两步算，不穿模） */coachScan(dt);brkScan();pickScan();if(S)stageTick();intelScan();
     hudT-=dt;if(hudT<=0&&S){hudT=.2;
       skillUI();hintScan();{const gt=goalText();if($('goal').innerHTML!==gt)$('goal').innerHTML=gt}{const sb=document.querySelector('.hud .stats');if(sb){const y=sb.getBoundingClientRect().bottom-wrap.getBoundingClientRect().top+5;$('goal').style.top=Math.max(60,Math.round(y))+'px'}}{const cs=$('coachSkip'),g=$('goal');cs.style.top=vilOn()?(g.offsetTop+g.offsetHeight+6)+'px':''}   /* 新手村：任务行有自己的跳过，引导的跳过按钮挪到它下面，不叠在一起 */   /* 11-02 17:05：状态条挤成四行时，下一称号那行字跟着往下，不再压在状态条上 */$('hDist').textContent=fmt(S.dist/40);{const rr=realmOf(S.count);$('hRealm').textContent=rName(rr)+(S.bottle?' · 变身前夕':'')+(S.path?' · '+(S.path==='ti'?'星弓系':'咒语系'):'');$('hRealmBar').style.width=((S.bottle?1:rr.frac)*100)+'%';$('hRealmWrap').classList.toggle('bottle',S.bottle)}$('hCoin').textContent=fmt(S.coins);
       {const p=dangerTick(.2),pw=$('hPressWrap');$('hPress').textContent=Math.round(p*100)+'%';{const fa=S.path==='fa',sn={};if(fa)for(const o of S.objs){if(o.k!=='z'||o.dead||o.boss||o.y<0)continue;const t=tierOf(o);if((o.type==='n'&&t>=2)||o.type==='guard')sn.fire=1;if((o.type==='brute'&&t>=1)||o.type==='hex')sn.bolt=1;if(o.type==='elite'&&t>=2)sn.sword=1;if(o.type==='run'&&t>=3)sn.ice=1}
