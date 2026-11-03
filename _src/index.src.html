@@ -324,7 +324,7 @@ body.ink #petList .item.on{border-color:rgba(201,71,61,.7);box-shadow:0 0 0 1px 
 .skills .mporb{order:-1}
 .skills .sk .ic{font-size:clamp(16px,5.4vw,24px)!important}.skills .sk small{font-size:clamp(8px,2.4vw,9.5px)!important}
 .skills .skhint{position:absolute!important}
-.dguide{border:2px solid var(--gold);border-radius:14px;padding:10px 12px;margin:6px 0 10px;background:rgba(255,214,119,.12);animation:hintbob 1.2s ease-in-out infinite}.dguide b{display:block;font-size:17px;margin-bottom:4px}.dguide p{margin:0 0 8px;font-size:13px}.dguide[hidden]{display:none}
+.dguide{border:2px solid var(--gold);border-radius:14px;padding:10px 12px;margin:6px 0 10px;background:rgba(255,214,119,.12);animation:hintbob 1.2s ease-in-out infinite}.dguide b{display:block;font-size:17px;margin-bottom:4px}.dguide p{margin:0 0 8px;font-size:13px}.dguide[hidden]{display:none}.dgb{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}.dgb .go{font-size:14px;padding:10px 4px;min-height:0}.dgb .go.hot{box-shadow:0 0 0 3px var(--gold)}
 </style>
 
 <div id="wrap">
@@ -630,7 +630,7 @@ const leakNew=()=>{if(!S)return 1;const L=waveK()+1;return L<20?.6:L<30?.6+.4*(L
 const leakHp=o=>(o.boss?bossHpF():(LEAK_HP[o.type]||.02)*(1+.1*tierOf(o))*(.45+.55*Math.min(1,Math.max(0,((S&&S.maxR)||0)-1)/5))*leakNew())*S.armor*(o.st?0:1)*(tempOn('stun')?.7:1);   // early realms forgive more   // share of max 气血 one leaking monster costs (staged tutorial monsters cost nothing)
 function heal(f,lbl){if(!S||!(f>0))return;fxAdd(17,S.x,squadY-30,130,.9,{anchor:.75,vy:-30});const b=S.hpF;S.hpF=Math.min(1,S.hpF+f);const v=Math.round((S.hpF-b)*hpCap());if(v>0)ftext(S.x,squadY-96,(lbl?lbl+' · ':'')+'气血 +'+v,'#7dffa8',22)}
 const hpCap=()=>Math.round((100+60*Math.max(0,(S&&S.maxR)||0))*(S&&S.path==='ti'?1.15*(1+.1*tiLv('body')):1));
-function loseHp(f,x,lbl){if(!(f>0)||S.won)return;S.hpF-=f;{const fl=.3*vilFade();if(fl>0&&S.hpF<fl){S.hpF=fl;}}if(vilOn()&&S.hpF<.3){S.hpF=.3;if(!S.vil.hpN){S.vil.hpN=1;toast('新手村护体','村里有保护，气血不会掉得太狠')}}S.hpHit=(S.hpHit||0)+f;S.hpHitT=.35;S.hpHitX=x;S.hpHitL=lbl||'';S.hpFlash=.6}
+function loseHp(f,x,lbl){if(!(f>0)||S.won)return;S.hpF-=f;if(!vilOn()&&!S.tut&&waveK()+1<STAIR_B[0]&&S.hpF<.2){S.hpF=.2;if(!S.newbTold){S.newbTold=1;toast('新手护体','前 '+STAIR_B[0]+' 波气血不会耗尽：放心多打、多试')}}   /* 20:58 John：新手期不允许倒下 → 第一道墙之前气血最低保住 20% */{const fl=.3*vilFade();if(fl>0&&S.hpF<fl){S.hpF=fl;}}if(vilOn()&&S.hpF<.3){S.hpF=.3;if(!S.vil.hpN){S.vil.hpN=1;toast('新手村护体','村里有保护，气血不会掉得太狠')}}S.hpHit=(S.hpHit||0)+f;S.hpHitT=.35;S.hpHitX=x;S.hpHitL=lbl||'';S.hpFlash=.6}
 const below=()=>S.peakL-layersOf(S.count)>.05;
 function addLayers(d,src){const r=Math.max(1,realmOf(S.count).r),c0=rCode(realmOf(S.count));if(d>0&&vilOn()&&(src==='qi'||src==='vein')&&realmOf(S.count).r===0){S.count=Math.max(S.count,RBASE*1.02);d=0}   /* 新手村凡人阶段：吃一颗聚气丹正好进第一层，不多给 */if(d>0&&below())d*=3;if(d>0){const G=S.gsrc||(S.gsrc={});G[src||'other']=(G[src||'other']||0)+d}   // 修为来源统计（调平衡用）   // 重修旧境: regaining lost layers is 3× faster
   S.count=Math.max(1,S.count*Math.pow(2,d*lf(r)));
@@ -4186,12 +4186,15 @@ function bankCoins(){
   if(!S||!slot())return;const add=Math.floor(S.coins)-S.banked;
   if(add>0){slot().coins+=add;S.banked+=add;commit(Save.cur)}
 }
-function metaGuide(){const g=$('deathGuide');g.innerHTML='';g.hidden=true;const s=slot();if(!s||vilOn())return;const L=waveK()+1;
-  let k=null;if(!metaUnl('pet')&&!s.unl.petG&&L>=20)k='pet';else if(!metaUnl('str')&&!s.unl.strG&&L>=STAIR_B[1]-2)k='str';if(!k)return;
-  s.unl[k+'G']=1;if(k==='pet')s.unl.pet=1;let gift=0;if(k==='pet'){for(let i=0;i<5;i++)gift+=petLvCost(i);s.coins+=gift}commit(Save.cur);
-  const T=k==='pet'?['新伙伴：灵宠','领养一只灵宠，它会自己找妖打，越养越强。村长送你 '+fmt(gift)+' 灵石，先去培养几级再回来。','去领养灵宠']:['永久强化','商店的「强化」里能花灵石让剑意、剑速等永久变强，回来马上生效。打不过的时候，回去重修攒灵石，再来这里变强。','去强化'];
-  g.innerHTML='<b></b><p></p><button class="go"></button>';g.querySelector('b').textContent=T[0];g.querySelector('p').textContent=T[1];const bt=g.querySelector('button');bt.textContent=T[2];
-  bt.onclick=()=>{try{hudIcons();metaBtns()}catch(e){}if(k==='pet'){petsBack='ovDeath';renderPets();show('ovPets')}else{shopBack='ovDeath';shopTabCur=0;renderShop();show('ovShop')}};g.hidden=false;try{metaBtns()}catch(e){}}
+function metaGuide(){   /* 20:57 John：所有玩家每次倒下都引导三条路：回去再刷一段 / 商店买永久强化 / 培养灵宠 */
+  const g=$('deathGuide');g.innerHTML='';g.hidden=true;const s=slot();if(!s||vilOn())return;try{bankCoins()}catch(e){}
+  s.unl=s.unl||{};let gift=0;if(!metaUnl('pet')&&!s.unl.petG&&waveK()+1>=20){s.unl.petG=1;s.unl.pet=1;for(let i=0;i<5;i++)gift+=petLvCost(i);s.coins+=gift}commit(Save.cur);
+  const P=petsOf(s),pl=P.lines[P.sel];let np=0,cc=s.coins;for(let l=pl;l<pl+60&&l<petCap();l++){const c=petLvCost(l);if(cc<c)break;cc-=c;np++}
+  let ns=0;cc=s.coins;for(const it of SHOP){if(it.k!=='dmg'&&it.k!=='rate')continue;let l=lv(it.k);while(l<it.max&&l<shopCap(it)&&cc>=cost(it,l)){cc-=cost(it,l);l++;ns++}}
+  g.innerHTML='<b>想打过去，有三条路</b><p></p><div class="dgb"><button class="go" data-a="rw">回去再刷一段</button><button class="go" data-a="str">去强化</button><button class="go" data-a="pet">培养灵宠</button></div>';
+  g.querySelector('p').textContent=(gift?'村长送你 '+fmt(gift)+' 灵石，先去领养一只灵宠。':'')+'现在有 '+fmt(s.coins)+' 灵石'+(np?'，够灵宠升 '+np+' 级':'')+(ns?'，或强化 '+ns+' 级':'')+'。回到前面的波次打一段，也能攒灵石、涨修为。';
+  for(const b of g.querySelectorAll('button'))b.onclick=()=>{const a=b.dataset.a;if(a==='rw'){const r=$('rwGo');if(r)r.click();return}if(a==='pet'){petsBack='ovDeath';renderPets();show('ovPets')}else{shopBack='ovDeath';shopTabCur=0;renderShop();show('ovShop')}};
+  if(gift)g.querySelector('[data-a="pet"]').classList.add('hot');g.hidden=false}
 function metaBtns(){}   /* 按钮一直显示 */
 function deathOffer(){   // 死亡不清档：自己选回到第几波重修（旁边算清楚后果），或结束本局
   if(S.deathOpen)return;S.deathOpen=true;S.deaths=(S.deaths||0)+1;{const sl=slot();if(sl){sl.deaths=(sl.deaths||0)+1;commit(Save.cur)}}
