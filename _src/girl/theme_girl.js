@@ -359,6 +359,7 @@ draw=function(){
     S.zc=0;for(const o of S.objs)if(o.k==='z')S.zc++;
     for(const o of S.objs)if(o.k==='z'){drawZ(o);drawZFx(o)}
     if(S.hexT>0)outlined('星速 −25% '+Math.ceil(S.hexT)+'s',S.x,squadY+sw()*.3+40,13,C.minus,CN);
+    if(S.shieldT>0)outlined('泡泡护盾 '+Math.ceil(S.shieldT)+'s',S.x,squadY+sw()*.3+(S.hexT>0?72:40),14,'#ffb6e6',CN);
     if(S.temp&&tempOn(S.temp.k))outlined(TEMPS[S.temp.k].n+' 生效中',S.x,squadY+sw()*.3+56,13,'#ffb347',CN);
     drawBullets();drawSquadT();
     if(tip&&S.tipObj)drawRing(S.tipObj);
