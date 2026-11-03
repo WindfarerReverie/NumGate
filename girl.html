@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl", "sbjs": "supabase.js"};if(/(^|\.)youfeng\.app$|\.pages\.dev$/.test(location.hostname))window.NG_CFG.url=location.origin+'/sb';</script>
-<script>(function(){var B="20261103021731";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261103085204";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" media="print" onload="this.media='all'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -618,9 +618,12 @@ const SLOTS=3;
 const Save={slots:{},col:null,cur:0,writing:{},pending:{}};
 const TIPKEYS=['intro','qi','n','xin','art','surge','bomb','boss','run','bottle','brk','bolt','four','brute','fb','dodge','elite','zou','shield','vein','trap','freeze','fu','jie','mech','add','mul','buff','sub','div','skills'];
 const allSeen=()=>{const o={};for(const k of TIPKEYS)o[k]=true;return o};
-const blank=()=>({coins:0,lv:{},best:0,runs:0,tutDone:false,seen:{},created:Date.now(),updated:Date.now()});
+/* 11-03 08:47 John：星钻后期上亿太夸张 → 所有星钻收入和价格统一 ÷100（比例不变，平衡不变），旧存档的星钻也 ÷100 换算一次（cu 标记） */
+const CU=100;
+const blank=()=>({cu:1,coins:0,lv:{},best:0,runs:0,tutDone:false,seen:{},created:Date.now(),updated:Date.now()});
 function norm(d){
   if(!d||typeof d!=='object')return d;
+  if(!d.cu){d.coins=(+d.coins||0)/CU;const R=d.run&&d.run.S;if(R){R.coins=(+R.coins||0)/CU;R.banked=Math.floor((+R.banked||0)/CU);if(Array.isArray(R.cfx))for(const c of R.cfx)c.v/=CU;if(Array.isArray(R.wl))for(const w of R.wl)if(w.c!=null)w.c=Math.round(w.c/CU)}d.cu=1}
   d.lv=(d.lv&&typeof d.lv==='object')?d.lv:{};
   for(const k of ['troops','dmg','rate','armor','gate','coin','start','bomb'])d.lv[k]=Math.max(0,Math.floor(+d.lv[k]||0));
   d.coins=Math.max(0,Math.floor(+d.coins||0));d.life=Math.max(1,Math.floor(+d.life||1));d.clears=Math.max(0,+d.clears||0);d.bestClear=+d.bestClear||0;d.best=+d.best||0;d.bestWave=+d.bestWave||0;d.bestRealm=+d.bestRealm||0;d.runs=+d.runs||0;
@@ -770,7 +773,7 @@ const PET_LINES={beast:{n:'毛绒线',role:'claw',forms:[0,4,2,6,8,12,9,14,16],d
 const PET_KEYS=['beast','spirit'],PET_EVO=5;
 const PET_RD={claw:{n:'贴身扑扑',p:1.2},orb:{n:'魔法泡泡',p:1.5}};
 const petPow=l=>1+.12*l;
-const petLvCost=l=>Math.round(12000*Math.pow(1.22,l));   // 11-02 00:09 涨价：Lv5（第一次进化）约 9 万，Lv10 约 34 万，Lv20 约 290 万，Lv30 约 2100 万，Lv40（终极形态）约 1.5 亿
+const petLvCost=l=>Math.round(120*Math.pow(1.22,l));   // 11-03 星钻 ÷100 后：Lv0 120，Lv5（第一次进化）约 320，Lv10 约 880，Lv20 约 6400，Lv30 约 4.7 万，Lv40（终极形态）约 34 万
 const PET_BASE=.15;   // 0 级 ≈ 每秒 0.1 秒基础星力；每级 +12%
 const petForm=(k,l)=>{const F=PET_LINES[k].forms;return F[Math.min(F.length-1,Math.floor(l/PET_EVO))]};
 const petNextForm=(k,l)=>{const F=PET_LINES[k].forms,n=Math.floor(l/PET_EVO)+1;return n<F.length?{i:F[n],at:n*PET_EVO}:null};
@@ -841,16 +844,16 @@ const lv=k=>(slot()&&slot().lv&&slot().lv[k])||0;
 
 /* ================= SHOP ================= */
 const SHOP=[   /* 11-02 John：商店太便宜（化神一局能捡上百万星钻，几十星钻一级等于白送）→ 起价 ×20、涨幅放缓：前几级新手第一局买得起，越往后一级要打一整局 */
-  {k:'troops',next:1,name:'初始魔力',eff:l=>'开局魔力 '+(12+l*8),max:40,base:300,g:1.3},
-  {k:'dmg',name:'基础星力',eff:l=>'伤害 +'+(l*15)+'%',max:40,base:500,g:1.3},
-  {k:'rate',name:'基础星速',eff:l=>'星速 +'+(l*8)+'%',max:20,base:500,g:1.36},
-  {k:'armor',name:'防护泡泡',eff:l=>'漏怪少掉 '+(l*4)+'% 魔力',max:15,base:600,g:1.42},
-  {k:'gate',name:'道具效果',eff:l=>'星光糖、愿望水晶 +'+(l*10)+'%',max:25,base:600,g:1.33},
-  {k:'coin',name:'星钻收益',eff:l=>'星钻 +'+(l*15)+'%',max:20,base:800,g:1.45},
-  {k:'start',next:1,name:'开局魔法书',eff:l=>'开局送 '+l+' 门魔法书',max:4,base:3000,g:2.6},
-  {k:'bomb',next:1,name:'星光爆发储备',eff:l=>'开局 '+(1+l)+' 张星光爆发',max:2,base:5000,g:3}
+  {k:'troops',next:1,name:'初始魔力',eff:l=>'开局魔力 '+(12+l*8),max:40,base:3,g:1.3},
+  {k:'dmg',name:'基础星力',eff:l=>'伤害 +'+(l*15)+'%',max:40,base:5,g:1.3},
+  {k:'rate',name:'基础星速',eff:l=>'星速 +'+(l*8)+'%',max:20,base:5,g:1.36},
+  {k:'armor',name:'防护泡泡',eff:l=>'漏怪少掉 '+(l*4)+'% 魔力',max:15,base:6,g:1.42},
+  {k:'gate',name:'道具效果',eff:l=>'星光糖、愿望水晶 +'+(l*10)+'%',max:25,base:6,g:1.33},
+  {k:'coin',name:'星钻收益',eff:l=>'星钻 +'+(l*15)+'%',max:20,base:8,g:1.45},
+  {k:'start',next:1,name:'开局魔法书',eff:l=>'开局送 '+l+' 门魔法书',max:4,base:30,g:2.6},
+  {k:'bomb',next:1,name:'星光爆发储备',eff:l=>'开局 '+(1+l)+' 张星光爆发',max:2,base:50,g:3}
 ];
-const cost=(it,l)=>Math.round(it.base*Math.pow(it.g,l));
+const cost=(it,l)=>Math.max(1,Math.round(it.base*Math.pow(it.g,l)));
 function shopLive(k,l0,l1){   /* 11-02 04:11：局内买强化立刻生效（开局类的从下一局开始） */
   if(!S||!running)return;const r=(a,b)=>b/a;
   if(k==='dmg'){const f=r(1+l0*.15,1+l1*.15);S.dmg*=f;S.permMul*=f}
@@ -1677,7 +1680,7 @@ for(const k of ['heavy','lian','body','pojun'])POPT['ti_'+k]={ok:()=>S.path==='t
 Object.assign(PNAME,{ti_gang:'星光护盾',ti_zhan:'勇气',ti_jj:'星光纵横',ti_heavy:'重箭',ti_lian:'连射',ti_body:'星光护甲',ti_pojun:'破防'});
 Object.assign(PNAME,{fa_crow:'星星小鸟',fa_orb:'守护星',fa_cloud:'彩虹云',fa_fire:'星星魔弹升级',fa_sword:'流星乱舞升级',fa_ice:'冰晶咒升级',fa_bolt:'彩虹光束升级',fa_mp:'魔法值'});
 POPT.coin={ok:()=>true,line:()=>'本称号能强化的都满了：星钻 +'+fmt(coinPack())+'（突破称号后上限会提高）',ic:{e:'💰'},go:()=>{S.coins+=coinPack()}};
-const coinPack=()=>Math.round(40*(1+S.maxR)*S.coinMul);
+const coinPack=()=>Math.max(1,Math.round(40*(1+S.maxR)*S.coinMul/CU));
 const INFK=['inf_dmg','inf_rate','inf_hp','inf_sp','inf_mp'];
 const infK=()=>S.path==='fa'?['inf_sp','inf_mp','inf_hp']:['inf_dmg','inf_rate','inf_hp'];   /* 11-02 John：元婴咒语系满级后只刷到星力/星速/淬体，跟咒语系无关 → 咒语系换成魔法精进、魔法值精进、元气精进 */
 const pName=k=>k==='inf_hp'&&S&&S.path==='fa'?'元气精进':spText(PNAME[k]);
@@ -1708,7 +1711,7 @@ function rollPick(){   // always: one 短期 (this next wave), one 长期 (grows
 function pickScan(){
   if(!S||pickOpts||!(S.pickQ>0)||coach||pop||S.brkPend)return;
   if(S.maxR>=3&&!S.path&&vilOn()&&vilCur().id!=='path')return;   /* 新手村：任务做完才转职（跳过也行） */
-  S.pickQ--;const pathNow=S.maxR>=3&&!S.path;const o=pathNow?['path_ti','path_fa']:rollPick();if(!o){S.coins+=50;return}
+  S.pickQ--;const pathNow=S.maxR>=3&&!S.path;const o=pathNow?['path_ti','path_fa']:rollPick();if(!o){S.coins+=1;return}
   pickOpts=o;paused=true;
   const tr=nextTrait(),box=$('pickList');box.innerHTML='';
   $('pickWhy').textContent=pathNow?'晋升'+REALMS[S.maxR]+' · 选择魔法路线':S.pickWhy||'选一个强化';
@@ -1760,7 +1763,7 @@ function breakthrough(){
   if(S.path==='fa'){S.mp=mpMax();faEvoPop()}if(S.path==='ti')tiEvoPop();sfx('realm');renderUps();
 }
 function dropCoins(x,y,base){
-  const v=base*(1+Math.min(S.t,600)/60)*S.coinMul;   // value per drop stops growing after 10 min, so long runs don't break the shop
+  const v=base*(1+Math.min(S.t,600)/60)*S.coinMul/CU;   // value per drop stops growing after 10 min, so long runs don't break the shop
   if(S.cfx.length<40)S.cfx.push({x,y,sx:x,sy:y,t:0,v});else S.coins+=v;
 }
 function killZ(o){
@@ -2535,26 +2538,26 @@ const heroTop=r=>(r>=17?90:r>=16?70:r>=10?66:r>=6?54:46)*(1+.02*r);
 /* ===== 11-02 17:08 John：移动反馈 + 装扮（拖尾 / 足下光环）放进商店，DIY 自己的衣装 ===== */
 const COS_TR_X=[   // 修仙版拖尾
  {k:'cloud',n:'云气',p:0,c:['#ffffff','#bfe6ff'],w:9,pt:'dot'},
- {k:'sword',n:'剑光',p:3000,c:['#e8f8ff','#5cc8ff'],w:7,pt:'spark',glow:1},
- {k:'ink',n:'泼墨',p:8000,c:['#3a3a3a','#8a8a8a'],w:11,pt:'ink'},
- {k:'peach',n:'桃花',p:20000,c:['#ffd0de','#ff7aa8'],w:8,pt:'petal'},
- {k:'fire',n:'火羽',p:50000,c:['#fff0a0','#ff5a1a'],w:10,pt:'ember',glow:1},
- {k:'frost',n:'冰晶',p:120000,c:['#ffffff','#7ad8ff'],w:8,pt:'snow',glow:1},
- {k:'thunder',n:'雷纹',p:300000,c:['#fff6c0','#a77cff'],w:7,pt:'bolt',glow:1},
- {k:'dragon',n:'金龙',p:800000,c:['#fff4c0','#ffb300'],w:12,pt:'star',glow:1,wave:1}];
+ {k:'sword',n:'剑光',p:30,c:['#e8f8ff','#5cc8ff'],w:7,pt:'spark',glow:1},
+ {k:'ink',n:'泼墨',p:80,c:['#3a3a3a','#8a8a8a'],w:11,pt:'ink'},
+ {k:'peach',n:'桃花',p:200,c:['#ffd0de','#ff7aa8'],w:8,pt:'petal'},
+ {k:'fire',n:'火羽',p:500,c:['#fff0a0','#ff5a1a'],w:10,pt:'ember',glow:1},
+ {k:'frost',n:'冰晶',p:1200,c:['#ffffff','#7ad8ff'],w:8,pt:'snow',glow:1},
+ {k:'thunder',n:'雷纹',p:3000,c:['#fff6c0','#a77cff'],w:7,pt:'bolt',glow:1},
+ {k:'dragon',n:'金龙',p:8000,c:['#fff4c0','#ffb300'],w:12,pt:'star',glow:1,wave:1}];
 const COS_TR_G=[   // 女生版拖尾
  {k:'cloud',n:'星尘',p:0,c:['#ffffff','#ffc8ec'],w:9,pt:'dot'},
- {k:'sword',n:'彩虹',p:3000,c:['#ff7ab6','#7ad0ff'],w:10,pt:'spark',rainbow:1},
- {k:'ink',n:'泡泡',p:8000,c:['#ffffff','#bfe8ff'],w:8,pt:'bubble'},
- {k:'peach',n:'樱花',p:20000,c:['#ffe0ea','#ff8ab4'],w:8,pt:'petal'},
- {k:'fire',n:'爱心',p:50000,c:['#ffd0e4','#ff4f8f'],w:9,pt:'heart',glow:1},
- {k:'frost',n:'蝴蝶',p:120000,c:['#f0e0ff','#b07aff'],w:8,pt:'fly',glow:1},
- {k:'thunder',n:'糖果',p:300000,c:['#fff0f8','#ff9ad0'],w:10,pt:'candy'},
- {k:'dragon',n:'极光',p:800000,c:['#a0ffe0','#c07aff'],w:13,pt:'star',glow:1,wave:1,rainbow:1}];
+ {k:'sword',n:'彩虹',p:30,c:['#ff7ab6','#7ad0ff'],w:10,pt:'spark',rainbow:1},
+ {k:'ink',n:'泡泡',p:80,c:['#ffffff','#bfe8ff'],w:8,pt:'bubble'},
+ {k:'peach',n:'樱花',p:200,c:['#ffe0ea','#ff8ab4'],w:8,pt:'petal'},
+ {k:'fire',n:'爱心',p:500,c:['#ffd0e4','#ff4f8f'],w:9,pt:'heart',glow:1},
+ {k:'frost',n:'蝴蝶',p:1200,c:['#f0e0ff','#b07aff'],w:8,pt:'fly',glow:1},
+ {k:'thunder',n:'糖果',p:3000,c:['#fff0f8','#ff9ad0'],w:10,pt:'candy'},
+ {k:'dragon',n:'极光',p:8000,c:['#a0ffe0','#c07aff'],w:13,pt:'star',glow:1,wave:1,rainbow:1}];
 const COS_AU_X=[
- {k:'none',n:'无',p:0},{k:'rune',n:'符阵',p:5000,c:'#ffd677'},{k:'taiji',n:'太极',p:30000,c:'#ffffff'},{k:'lotus',n:'莲台',p:150000,c:'#ff9ac0'},{k:'sun',n:'金轮',p:600000,c:'#ffc23a'}];
+ {k:'none',n:'无',p:0},{k:'rune',n:'符阵',p:50,c:'#ffd677'},{k:'taiji',n:'太极',p:300,c:'#ffffff'},{k:'lotus',n:'莲台',p:1500,c:'#ff9ac0'},{k:'sun',n:'金轮',p:6000,c:'#ffc23a'}];
 const COS_AU_G=[
- {k:'none',n:'无',p:0},{k:'rune',n:'魔法阵',p:5000,c:'#ff9ad8'},{k:'taiji',n:'星星环',p:30000,c:'#fff3a0'},{k:'lotus',n:'花环',p:150000,c:'#ffb0d0'},{k:'sun',n:'彩虹圈',p:600000,c:'#9ad8ff'}];
+ {k:'none',n:'无',p:0},{k:'rune',n:'魔法阵',p:50,c:'#ff9ad8'},{k:'taiji',n:'星星环',p:300,c:'#fff3a0'},{k:'lotus',n:'花环',p:1500,c:'#ffb0d0'},{k:'sun',n:'彩虹圈',p:6000,c:'#9ad8ff'}];
 const cosTr=()=>ART_PRE==='g_'?COS_TR_G:COS_TR_X,cosAu=()=>ART_PRE==='g_'?COS_AU_G:COS_AU_X;
 function cosOf(s){s=s||slot();if(!s)return {own:{},tr:'cloud',au:'none'};if(!s.cos)s.cos={own:{},tr:'cloud',au:'none'};return s.cos}
 const cosTrDef=()=>{const k=cosOf().tr;return cosTr().find(d=>d.k===k)||cosTr()[0]},cosAuDef=()=>{const k=cosOf().au;return cosAu().find(d=>d.k===k)||cosAu()[0]};
@@ -2944,7 +2947,7 @@ const VIL=[
   {id:'stats',d:'点屏幕左上角的「第 N 波」，会暂停并打开数值一览：你普攻几秒净化一只怪、魔法一发能净化几只、每种怪的物防法防都在这里。打开看一眼就算完成。',t:'点左上「第 N 波」，看看数值一览',s:'暂停页里有我方攻击、怪怪元气和防御，打不过时来这里看',u:[],need:{pause:1}},
   {id:'pet',d:'村长送你一笔星钻。点左上「第 N 波」打开暂停页，找到萌宠那一栏，点「喂养」。萌宠会自己找怪打，越养越强。',t:'在暂停页「喂养」一次萌宠',s:'村长送你一笔星钻：萌宠会自己找怪打，越养越强',u:[],need:{pet:1},setup:'pet'},
   {id:'path',d:'继续冒险，升到'+REALMS[3]+'时会让你选路线：星弓系靠星光硬推、更抗打；咒语系靠魔法，七种魔法立刻全会。选完就出村了。',t:'升到'+REALMS[3]+'，选星弓系还是咒语系',s:'星弓系靠星光硬推、抗打；咒语系靠魔法；选完就出村',u:['summon'],need:{path:1}}];
-const VIL_REW=60;   // 每个任务给的星钻
+const VIL_REW=2;   // 每个任务给的星钻
 const vilOn=()=>!!(S&&S.vil&&!S.vil.done);
 const vilNS=()=>vilOn()&&!S.vil.u.surge;   // 村里还没教噩梦潮：不来噩梦潮
 const vilCur=()=>vilOn()?VIL[S.vil.i]:null;
@@ -3871,7 +3874,7 @@ function rwEst(c){const cur=waveK()+1,n=Math.max(0,cur-c),wl=S.wl||[],ds=[];
   for(let i=wl.length-1;i>0&&ds.length<10;i--){const a=wl[i-1],b=wl[i];if(b.w===a.w+1&&b.t>a.t&&a.D>0)ds.push({L:b.L-a.L,c:b.c-a.c,g:b.D/a.D})}
   let dL,dC,gD,mine=ds.length>=3;
   if(mine){dL=ds.reduce((x,d)=>x+d.L,0)/ds.length;dC=ds.reduce((x,d)=>x+d.c,0)/ds.length;gD=Math.exp(ds.reduce((x,d)=>x+Math.log(Math.max(1e-6,d.g)),0)/ds.length)}
-  else{const w=Math.max(1,cur-1);dL=calAt(WCAL.L,w)-calAt(WCAL.L,w-1);dC=Math.exp(calAt(WCAL.G,w))-Math.exp(calAt(WCAL.G,w-1));gD=Math.exp(calAt(WCAL.D,w)-calAt(WCAL.D,w-1))}
+  else{const w=Math.max(1,cur-1);dL=calAt(WCAL.L,w)-calAt(WCAL.L,w-1);dC=(Math.exp(calAt(WCAL.G,w))-Math.exp(calAt(WCAL.G,w-1)))/CU;gD=Math.exp(calAt(WCAL.D,w)-calAt(WCAL.D,w-1))}
   const L=Math.max(0,dL)*n,C=Math.max(0,dC)*n,G=Math.min(10,Math.pow(clamp(gD,1,1.25),n)),ease=1-Math.pow(1/G,1-WF),eRel=n?eScale(c-1+.6)/eScale(cur-1+.6):1;
   return {cur,n,L,C,G,ease,eRel,min:n*CYC/60,mine}}
 function rwPanel(box,mode){const cur=waveK()+1,hi=mode==='pause'?Math.max(1,cur-1):cur;let c=clamp(cur-5,1,hi);
