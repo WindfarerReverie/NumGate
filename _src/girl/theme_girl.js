@@ -216,7 +216,7 @@ drawFaxiang=function(g,x,y,sc,t,lvl){
 const WPAL=[['#b8b0d8','#6a5a8a'],['#a8a0d0','#5a4a80'],['#9a90c8','#4e3e78'],['#8a7ec0','#42346e'],['#7a6ab4','#382a64'],['#6a58a8','#2e2058'],['#5a469a','#24184c']];
 drawZ=function(o){
   if(o.boss&&o.look){drawBoss(o);return}
-  const r=o.r,wob=Math.sin(S.t*6+o.ph)*1.5,tier=o.tier||0,pal=WPAL[tier]||WPAL[0],X=o.x+wob,Y=o.y,hit=o.hit>0;
+  const r=o.boss?o.r:o.r*(S.zSc||1),wob=Math.sin(S.t*6+o.ph)*1.5,tier=o.tier||0,pal=WPAL[tier]||WPAL[0],X=o.x+wob,Y=o.y,hit=o.hit>0;
   ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.ellipse(o.x,o.y+r*.85,r*.85,r*.3,0,0,6.28);ctx.fill();
   let body=pal[0],edge=pal[1];
   if(o.type==='run'){body='#ff9a6a';edge='#a84a2a'}else if(o.type==='hex'){body='#c8a8f0';edge='#6a4aa0'}else if(o.type==='guard'){body='#ffc8d8';edge='#b06a88'}else if(o.type==='brute'){body='#8aa0b8';edge='#4a5a70'}else if(o.type==='elite'){body='#7a4ab0';edge='#2a1050'}

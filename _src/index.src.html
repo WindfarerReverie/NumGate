@@ -1515,19 +1515,35 @@ function mkZ(type,x,y,hpB,atkB){
   if(type==='guard')Object.assign(z,{r:13,hp:hpB*2.5,atk:atkB,pct:.03,sp:20,coin:3});
   {const fd=vilFade();if(fd>0){const vf={brute:2/7,elite:2/6,guard:1.4/2.5,hex:1.2/2}[type];if(vf)z.hp*=1+(vf-1)*fd}}   /* 13:19 John：新手村有的妖打半天、比大妖还厚 → 村里石甲妖/噬元魔/护法/咒怨都只比小妖厚一点 */
   z.hp0=z.hp;return z}
+/* 11-04 02:00 John：怪之间要有间隔，不能画面上叠在一起；挤不下就把怪画小一点。
+   zVR：画出来的半径（贴图约 3 倍 r 高）；S.zSc：场上太挤时整体缩小（最小 0.62）；zSeparate：每帧互相让开（主要横向让，靠墙让不开时后面的稍等）。 */
+const zVR=o=>o.boss?o.r*1.05:o.r*1.42*(S&&S.zSc||1);
+function zSeparate(dt){
+  const L=[];for(const o of S.objs)if(o.k==='z'&&!o.dead&&o.y>-120)L.push(o);
+  {const x0=mid+8,x1=roadX+roadW-8,area=(x1-x0)*Math.max(200,squadY+40);let need=0;for(const o of L)if(!o.boss){const d=2*o.r*1.42+10;need+=d*d}else{const d=2*o.r*1.05;need+=d*d*.6}
+   const want=need>area*.42?Math.max(.62,Math.sqrt(area*.42/need)):1;S.zSc=(S.zSc||1)+(want-(S.zSc||1))*Math.min(1,dt*1.5)}
+  if(L.length<2)return;L.sort((a,b)=>a.y-b.y);const x0=mid+8,x1=roadX+roadW-8,GAP=6,mx=90*dt;let RM=0;for(const o of L)RM=Math.max(RM,zVR(o));
+  for(let i=0;i<L.length;i++){const a=L[i],ra=zVR(a);
+    for(let j=i+1;j<L.length;j++){const b=L[j],rb=zVR(b),md=ra+rb+GAP,dy=b.y-a.y;if(dy>=ra+RM+GAP)break;if(dy>=md)continue;
+      let dx=b.x-a.x;const d=Math.sqrt(dx*dx+dy*dy);if(d>=md)continue;const ov=md-d;if(Math.abs(dx)<.5)dx=(a.ph>b.ph?1:-1)*.5;
+      const sx=Math.sign(dx),wa=a.boss?0:b.boss?1:.5,wb=1-wa,push=Math.min(mx,ov*.5+1);
+      const ax=clamp(a.x-sx*push*wa*2,x0+a.r,x1-a.r),bx=clamp(b.x+sx*push*wb*2,x0+b.r,x1-b.r);const moved=Math.abs(ax-a.x)+Math.abs(bx-b.x);a.x=ax;b.x=bx;
+      if(moved<push*.6&&!a.boss&&a.stgY==null)a.y-=Math.min(ov*.5,40*dt)}}}   /* a 在上面（后来的）：横向让不开就稍等一下 */
 function spawnZombies(){
   const x0=mid+8,x1=roadX+roadW-8;
   if(S.bossAlive||S.bossNext||(vilOn()&&!S.vil.u.n))return;
   if(S.stage&&!S.stage.lite)return;   /* 新妖展示期间不刷别的妖 */   /* 新手村还没教打妖时不刷妖；大妖在场时不刷小妖（大妖自己召唤的除外） */
   const lull=!!S.bossWait,n=lull?1:Math.round(zBase()+ri(0,1)-.2);let gAlive=0;for(const o of S.objs)if(o.k==='z'&&!o.dead&&o.type==='guard')gAlive++;
-  const cx=rand(x0+22,x1-22);
+  const cx=rand(x0+22,x1-22),placed=[];   /* 11-04 02:00 John：怪不要叠在一起出来 → 每只单独找空位、前后错开 */
   const hpB=hpUnit(),atkB=1;
   for(let i=0;i<Math.max(1,n);i++){
     let type='n';const q=Math.random(),P=lull?[]:zProbs();let acc=0;
     for(const [ty,pp] of P){acc+=pp;if(q<acc){type=ty;break}}
     if(type==='guard'){if(gAlive>=(inSurge()?2:1))type='n';else gAlive++}   /* 护法妖同时最多 1 只（妖潮 2 只），不能刷成一片 */
     if(stageNeed(type)){startStage(type);if(i===0)return;continue}   /* 15:37 John：新妖第一次出现时单独放出来、圈亮、再讲 */
-    S.objs.push(mkZ(type,clamp(cx+rand(-30,30),x0+12,x1-12),-30-rand(0,60),hpB,atkB));
+    {const sy=-30-rand(0,16)-i*rand(38,56),z=mkZ(type,cx,sy,hpB,atkB),vr=zVR(z);let bx=cx,bd=-1;
+      for(let k=0;k<10;k++){const x=rand(x0+vr,x1-vr);let d=1e9;for(const q of S.objs){if(q.k!=='z'||q.dead||q.y>sy+160||q.y<sy-160)continue;const dx=q.x-x,dy=q.y-sy;d=Math.min(d,Math.sqrt(dx*dx+dy*dy)-zVR(q)-vr)}for(const q of placed){const dx=q.x-x,dy=q.y-sy;d=Math.min(d,Math.sqrt(dx*dx+dy*dy)-zVR(q)-vr)}if(d>bd){bd=d;bx=x}if(d>12)break}
+      z.x=bx;placed.push(z);S.objs.push(z)}
   }
 }
 /* 11-02 John：小妖只有 6 种、不随境界变 → 每 3 个大境界换一批（6 种 × 6 阶 = 36 种），本领不变、模样和名字换 */
@@ -2083,6 +2099,7 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}sprFxTick(dt);S.fxBom
       if(o.hit>0)o.hit-=dt;
     } else {o.y+=v*(o.spd||1)*dt;if(o.fl>0)o.fl-=dt}
   }
+  zSeparate(dt);
   const bl=S.bullets;
   for(let i=bl.length-1;i>=0;i--){
     const b=bl[i];b.x+=b.vx*dt;b.y+=b.vy*dt;
@@ -2462,7 +2479,7 @@ function drawZFx(o){   // monster-skill visuals shared by both themes
 }
 function drawZ(o){
   if(o.boss&&o.look){drawBoss(o);return}
-  const r=o.r,wob=Math.sin(S.t*8+o.ph)*1.5,tier=o.tier||0,pal=ZPAL[tier];
+  const r=o.boss?o.r:o.r*(S.zSc||1),wob=Math.sin(S.t*8+o.ph)*1.5,tier=o.tier||0,pal=ZPAL[tier];
   ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(o.x,o.y+r*.8,r*.9,r*.35,0,0,6.28);ctx.fill();
   if(tier>=5&&!o.boss&&aI('fx_16')){const ga=ctx.globalAlpha;ctx.globalAlpha=ga*(.3+.2*Math.sin(S.t*5+o.ph));fxImg(ctx,16,o.x+wob,o.y,r*2.6,S.t);ctx.globalAlpha=ga}else if(tier>=5&&!o.boss){ctx.strokeStyle=pal[0];ctx.globalAlpha=.35+.25*Math.sin(S.t*5+o.ph);ctx.lineWidth=3;ctx.beginPath();ctx.arc(o.x+wob,o.y,r+5,0,6.28);ctx.stroke();ctx.globalAlpha=1}
   const X=o.x+wob,Y=o.y;
