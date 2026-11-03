@@ -99,6 +99,10 @@ MAP['XPLAT'] = ('xplat', 160)
 MAP['DIV'] = ('div', 900)
 MAP['GDIV'] = ('g_div', 900)
 MAP['LEAF'] = ('leaf', 64)
+# 11-03 14:59 护山大阵 / 梦境结界（完好 + 破损两张，按气血交叉淡入）
+for pre, gp in [('', ''), ('G', 'g_')]:
+    MAP[pre + 'W1'] = (gp + 'ward', 900)
+    MAP[pre + 'W2'] = (gp + 'ward_c', 900)
 
 def find(code):
     for c in (code + 'r', code + 'q', code):
