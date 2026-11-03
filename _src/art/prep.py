@@ -107,6 +107,7 @@ for _n in ['tap','drag','lr','up','num','right','nocross','hourglass','target','
 for pre, gp in [('', ''), ('G', 'g_')]:
     MAP[pre + 'W1'] = (gp + 'ward', 900)
     MAP[pre + 'W2'] = (gp + 'ward_c', 900)
+    MAP[pre + 'W3'] = (gp + 'ward_s', 900)   # 15:59 金钟罩 / 泡泡护盾加持版
 
 def find(code):
     for c in (code + 'r', code + 'q', code):
