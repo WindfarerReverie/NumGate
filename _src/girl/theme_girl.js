@@ -359,6 +359,7 @@ draw=function(){
     S.zc=0;for(const o of S.objs)if(o.k==='z')S.zc++;
     for(const o of S.objs)if(o.k==='z'){drawZ(o);drawZFx(o)}
     if(S.hexT>0)outlined('星速 −25% '+Math.ceil(S.hexT)+'s',S.x,squadY+sw()*.3+40,13,C.minus,CN);
+    if(S.stunT>0)outlined('晕乎乎 '+S.stunT.toFixed(1)+'s',S.x,squadY-heroHH()-60,18,C.minus,CN);
     if(S.xinT>0)outlined('负能量缠身 星力 −35% '+Math.ceil(S.xinT)+'s',S.x,squadY+sw()*.3+(S.hexT>0?58:40),13,C.minus,CN);
     if(S.shieldT>0)outlined('泡泡护盾 '+Math.ceil(S.shieldT)+'s',S.x,squadY+sw()*.3+40+18*((S.hexT>0)+(S.xinT>0))+(S.hexT>0?14:0),14,'#ffb6e6',CN);
     if(S.temp&&tempOn(S.temp.k))outlined(TEMPS[S.temp.k].n+' 生效中',S.x,squadY+sw()*.3+56,13,'#ffb347',CN);
