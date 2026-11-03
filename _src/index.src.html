@@ -626,12 +626,12 @@ const power=()=>S.count<RBASE?S.count:RBASE*Math.pow(2,PL*effL());
 const BOSS_HP_K=2.2;   /* 16:47 John：大噩梦太脆 → 出村后大妖血量 ×2.2（普攻约 25～30 秒，一发大招削约四成）；新手村不变 */
 const bossHpF=()=>.2+.2*Math.min(1,Math.max(0,((S&&S.maxR)||0)-1)/8);   // a boss crossing costs 25% 气血 early, 40% from 合体 on
 const LEAK_HP={n:.02,run:.015,hex:.025,guard:.03,brute:.05,elite:.08};   /* 18:42 John：撞线就该扣血（像植物大战僵尸），小妖只扣修为等于左脚踩右脚 → 每只破阵都扣气血，前几个境界打个折 */
-const leakNew=()=>{if(!S)return 1;const L=waveK()+1;return L<20?.6:L<30?.6+.4*(L-20)/10:1};   /* 新手期撞线扣血打六折，第 20～30 波慢慢恢复 */
+const leakNew=()=>{if(!S)return 1;return vilOn()?.6:newbBoss()};   /* 22:40 新手期所有撞线扣血跟大妖同一条曲线：前 30 波 ×0.25，30～40 波到 ×1（新手村仍 ×0.6） */
 const leakHp=o=>(o.boss?bossHpF():(LEAK_HP[o.type]||.02)*(1+.1*tierOf(o))*(.45+.55*Math.min(1,Math.max(0,((S&&S.maxR)||0)-1)/5))*leakNew())*S.armor*(o.st?0:1)*(tempOn('stun')?.7:1);   // early realms forgive more   // share of max 气血 one leaking monster costs (staged tutorial monsters cost nothing)
 function heal(f,lbl){if(!S||!(f>0))return;fxAdd(17,S.x,squadY-30,130,.9,{anchor:.75,vy:-30});const b=S.hpF;S.hpF=Math.min(1,S.hpF+f);const v=Math.round((S.hpF-b)*hpCap());if(v>0)ftext(S.x,squadY-96,(lbl?lbl+' · ':'')+'气血 +'+v,'#7dffa8',22)}
 const hpCap=()=>Math.round((100+60*Math.max(0,(S&&S.maxR)||0))*(S&&S.path==='ti'?1.15*(1+.1*tiLv('body')):1));
 /* 21:01 John：新手期倒下＝数值有问题 → 诊断：新手期掉血几乎全来自大妖（天威打不断、大妖血 ×2.2 后战斗更长、放得更多；大妖破阵 20%～40%）。新手期大妖天威和破阵扣血打折：第 20 波前 ×0.35，第 20～30 波恢复 */
-const newbBoss=()=>{if(!S||vilOn())return 1;const L=waveK()+1;return L<20?.35:L<STAIR_B[0]?.35+.65*(L-20)/(STAIR_B[0]-20):1};
+const newbBoss=()=>{if(!S||vilOn())return 1;const L=waveK()+1,B=STAIR_B[0];return L<B?.25:L<B+10?.25+.75*(L-B)/10:1};   /* 23:10 新手期（前 30 波）扣血一律 ×0.25，第 30～40 波连续升到 ×1 */
 function loseHp(f,x,lbl){if(!(f>0)||S.won)return;S.hpF-=f;if(!vilOn()&&!S.tut&&waveK()+1<STAIR_B[0]&&S.hpF<.2){S.hpF=.2;if(!S.newbTold){S.newbTold=1;toast('新手护体','前 '+STAIR_B[0]+' 波气血不会耗尽：放心多打、多试')}}   /* 20:58 John：新手期不允许倒下 → 第一道墙之前气血最低保住 20% */{const fl=.3*vilFade();if(fl>0&&S.hpF<fl){S.hpF=fl;}}if(vilOn()&&S.hpF<.3){S.hpF=.3;if(!S.vil.hpN){S.vil.hpN=1;toast('新手村护体','村里有保护，气血不会掉得太狠')}}S.hpHit=(S.hpHit||0)+f;S.hpHitT=.35;S.hpHitX=x;S.hpHitL=lbl||'';S.hpFlash=.6}
 const below=()=>S.peakL-layersOf(S.count)>.05;
 function addLayers(d,src){const r=Math.max(1,realmOf(S.count).r),c0=rCode(realmOf(S.count));if(d>0&&vilOn()&&(src==='qi'||src==='vein')&&realmOf(S.count).r===0){S.count=Math.max(S.count,RBASE*1.02);d=0}   /* 新手村凡人阶段：吃一颗聚气丹正好进第一层，不多给 */if(d>0&&below())d*=3;if(d>0){const G=S.gsrc||(S.gsrc={});G[src||'other']=(G[src||'other']||0)+d}   // 修为来源统计（调平衡用）   // 重修旧境: regaining lost layers is 3× faster
@@ -2041,7 +2041,7 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}sprFxTick(dt);S.fxBom
     const sg=inSurge();
     if(sg&&!S.surgeOn){S.surgeOn=true;S.Dref=Math.max(S.Dref,refDps());if(!(S.rwF<1)){(S.cks=S.cks||[]).push({w:waveK()+1,f:S.Dref*(S.M||1),t:S.t});if(S.cks.length>60)S.cks.shift()}S.maxWave=Math.max(S.maxWave,waveK()+1);(S.wl=S.wl||[]).push({w:waveK()+1,t:Math.round(S.t),L:+layersOf(S.count).toFixed(3),c:Math.round(S.coins),D:+S.Dref.toPrecision(5)});if(S.wl.length>80)S.wl.shift();   /* 每波开打时记一笔，重修估算用 */{const tr=traitOf(waveK());toast('第 '+(waveK()+1)+' 波妖潮'+(tr?' · '+TRAITS[tr].n:''),tr?TRAITS[tr].d+'（克制：'+TRAITS[tr].c.map(x=>PNAME[x]).join('、')+'）':'撑住 20 秒，多去右道清怪')}sfx('surge')}
     for(const k of ['surge','bomb','bolt','shield','freeze'])if(has(k)&&!S.unl[k]){S.unl[k]=1;if(k!=='surge'&&!vilOn())toast('解锁新技能：'+TIPS[k].t,'在屏幕下方，点一下就能用')}
-    if(!sg&&S.surgeOn){S.surgeOn=false;vilEv('surge');queuePick('撑过第 '+(waveK()+1)+' 波');const add=!ultFull();if(add)ultAdd(.35);if(!vilOn()&&S.hpF<1)heal(.1,'撑过妖潮');
+    if(!sg&&S.surgeOn){S.surgeOn=false;vilEv('surge');queuePick('撑过第 '+(waveK()+1)+' 波');const add=!ultFull();if(add)ultAdd(.35);if(!vilOn()&&S.hpF<1)heal(.1+.1*(1-newbBoss())/.75,'撑过妖潮');
       if(!S.tut&&S.bossK<waveK()-1&&!S.bossAlive){S.bossK=waveK()-1;S.bossWait=S.t;toast('妖潮退去',(add?'雷劫符充能 +35% · ':'')+'清掉剩下的妖，大妖就要来了')}else toast('妖潮退去',add?'雷劫符充能 +35%，抓紧吃门涨修为':'抓紧吃门涨修为');sfx('calm')}
     if(S.bossWait){const el=S.t-S.bossWait,left=S.objs.filter(o=>o.k==='z'&&!o.dead&&!o.boss&&o.y>-20).length;if((el>=BOSS_CALM&&left<=3)||(el>=20&&left<=6)||el>=BOSS_CALM_MAX){S.bossWait=0;S.bossNext=S.t+.6}}   /* 16:12 John：妖潮过后要有缓和期——零星几只小妖，清得差不多了再来大妖 */
     if(!sg&&S.t>=PRE&&(S.bossWait||S.bossNext||S.bossAlive)&&MOW-wph()<CALM_AFTER)S.wOff=(S.wOff||0)+dt;   /* 大妖没打完，下一波妖潮不开始 */

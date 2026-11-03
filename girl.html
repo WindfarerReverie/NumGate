@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl", "sbjs": "supabase.js"};if(/(^|\.)youfeng\.app$|\.pages\.dev$/.test(location.hostname))window.NG_CFG.url=location.origin+'/sb';</script>
-<script>(function(){var B="20261103210556";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261103224037";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" media="print" onload="this.media='all'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -662,12 +662,12 @@ const power=()=>S.count<RBASE?S.count:RBASE*Math.pow(2,PL*effL());
 const BOSS_HP_K=2.2;   /* 16:47 John：大噩梦太脆 → 出村后大噩梦血量 ×2.2（普攻约 25～30 秒，一发大招削约四成）；新手村不变 */
 const bossHpF=()=>.2+.2*Math.min(1,Math.max(0,((S&&S.maxR)||0)-1)/8);   // a boss crossing costs 25% 元气 early, 40% from 合体 on
 const LEAK_HP={n:.02,run:.015,hex:.025,guard:.03,brute:.05,elite:.08};   /* 18:42 John：撞线就该扣血（像植物大战僵尸），烦恼球只扣魔力等于左脚踩右脚 → 每只冲破结界都扣元气，前几个称号打个折 */
-const leakNew=()=>{if(!S)return 1;const L=waveK()+1;return L<20?.6:L<30?.6+.4*(L-20)/10:1};   /* 新手期撞线扣血打六折，第 20～30 波慢慢恢复 */
+const leakNew=()=>{if(!S)return 1;return vilOn()?.6:newbBoss()};   /* 22:40 新手期所有撞线扣血跟大噩梦同一条曲线：前 30 波 ×0.25，30～40 波到 ×1（新手村仍 ×0.6） */
 const leakHp=o=>(o.boss?bossHpF():(LEAK_HP[o.type]||.02)*(1+.1*tierOf(o))*(.45+.55*Math.min(1,Math.max(0,((S&&S.maxR)||0)-1)/5))*leakNew())*S.armor*(o.st?0:1)*(tempOn('stun')?.7:1);   // early realms forgive more   // share of max 元气 one leaking monster costs (staged tutorial monsters cost nothing)
 function heal(f,lbl){if(!S||!(f>0))return;fxAdd(17,S.x,squadY-30,130,.9,{anchor:.75,vy:-30});const b=S.hpF;S.hpF=Math.min(1,S.hpF+f);const v=Math.round((S.hpF-b)*hpCap());if(v>0)ftext(S.x,squadY-96,(lbl?lbl+' · ':'')+'元气 +'+v,'#7dffa8',22)}
 const hpCap=()=>Math.round((100+60*Math.max(0,(S&&S.maxR)||0))*(S&&S.path==='ti'?1.15*(1+.1*tiLv('body')):1));
 /* 21:01 John：新手期倒下＝数值有问题 → 诊断：新手期掉血几乎全来自大噩梦（天威打不断、大噩梦血 ×2.2 后战斗更长、放得更多；大噩梦冲破结界 20%～40%）。新手期大噩梦咆哮和冲破结界扣血打折：第 20 波前 ×0.35，第 20～30 波恢复 */
-const newbBoss=()=>{if(!S||vilOn())return 1;const L=waveK()+1;return L<20?.35:L<STAIR_B[0]?.35+.65*(L-20)/(STAIR_B[0]-20):1};
+const newbBoss=()=>{if(!S||vilOn())return 1;const L=waveK()+1,B=STAIR_B[0];return L<B?.25:L<B+10?.25+.75*(L-B)/10:1};   /* 23:10 新手期（前 30 波）扣血一律 ×0.25，第 30～40 波连续升到 ×1 */
 function loseHp(f,x,lbl){if(!(f>0)||S.won)return;S.hpF-=f;if(!vilOn()&&!S.tut&&waveK()+1<STAIR_B[0]&&S.hpF<.2){S.hpF=.2;if(!S.newbTold){S.newbTold=1;toast('新手防护泡泡','前 '+STAIR_B[0]+' 波元气不会耗尽：放心多打、多试')}}   /* 20:58 John：新手期不允许倒下 → 第一道墙之前元气最低保住 20% */{const fl=.3*vilFade();if(fl>0&&S.hpF<fl){S.hpF=fl;}}if(vilOn()&&S.hpF<.3){S.hpF=.3;if(!S.vil.hpN){S.vil.hpN=1;toast('新手村防护泡泡','村里有保护，元气不会掉得太狠')}}S.hpHit=(S.hpHit||0)+f;S.hpHitT=.35;S.hpHitX=x;S.hpHitL=lbl||'';S.hpFlash=.6}
 const below=()=>S.peakL-layersOf(S.count)>.05;
 function addLayers(d,src){const r=Math.max(1,realmOf(S.count).r),c0=rCode(realmOf(S.count));if(d>0&&vilOn()&&(src==='qi'||src==='vein')&&realmOf(S.count).r===0){S.count=Math.max(S.count,RBASE*1.02);d=0}   /* 新手村凡人阶段：吃一颗星光糖正好进第一星，不多给 */if(d>0&&below())d*=3;if(d>0){const G=S.gsrc||(S.gsrc={});G[src||'other']=(G[src||'other']||0)+d}   // 魔力来源统计（调平衡用）   // 重新攒旧境: regaining lost layers is 3× faster
@@ -2077,7 +2077,7 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}sprFxTick(dt);S.fxBom
     const sg=inSurge();
     if(sg&&!S.surgeOn){S.surgeOn=true;S.Dref=Math.max(S.Dref,refDps());if(!(S.rwF<1)){(S.cks=S.cks||[]).push({w:waveK()+1,f:S.Dref*(S.M||1),t:S.t});if(S.cks.length>60)S.cks.shift()}S.maxWave=Math.max(S.maxWave,waveK()+1);(S.wl=S.wl||[]).push({w:waveK()+1,t:Math.round(S.t),L:+layersOf(S.count).toFixed(3),c:Math.round(S.coins),D:+S.Dref.toPrecision(5)});if(S.wl.length>80)S.wl.shift();   /* 每波开打时记一笔，重新攒估算用 */{const tr=traitOf(waveK());toast('第 '+(waveK()+1)+' 波噩梦潮'+(tr?' · '+TRAITS[tr].n:''),tr?TRAITS[tr].d+'（克制：'+TRAITS[tr].c.map(x=>PNAME[x]).join('、')+'）':'撑住 20 秒，多去右道清怪')}sfx('surge')}
     for(const k of ['surge','bomb','bolt','shield','freeze'])if(has(k)&&!S.unl[k]){S.unl[k]=1;if(k!=='surge'&&!vilOn())toast('解锁新技能：'+TIPS[k].t,'在屏幕下方，点一下就能用')}
-    if(!sg&&S.surgeOn){S.surgeOn=false;vilEv('surge');queuePick('撑过第 '+(waveK()+1)+' 波');const add=!ultFull();if(add)ultAdd(.35);if(!vilOn()&&S.hpF<1)heal(.1,'撑过噩梦潮');
+    if(!sg&&S.surgeOn){S.surgeOn=false;vilEv('surge');queuePick('撑过第 '+(waveK()+1)+' 波');const add=!ultFull();if(add)ultAdd(.35);if(!vilOn()&&S.hpF<1)heal(.1+.1*(1-newbBoss())/.75,'撑过噩梦潮');
       if(!S.tut&&S.bossK<waveK()-1&&!S.bossAlive){S.bossK=waveK()-1;S.bossWait=S.t;toast('噩梦潮退去',(add?'星光爆发充能 +35% · ':'')+'清掉剩下的怪，大噩梦就要来了')}else toast('噩梦潮退去',add?'星光爆发充能 +35%，抓紧吃门涨魔力':'抓紧吃门涨魔力');sfx('calm')}
     if(S.bossWait){const el=S.t-S.bossWait,left=S.objs.filter(o=>o.k==='z'&&!o.dead&&!o.boss&&o.y>-20).length;if((el>=BOSS_CALM&&left<=3)||(el>=20&&left<=6)||el>=BOSS_CALM_MAX){S.bossWait=0;S.bossNext=S.t+.6}}   /* 16:12 John：噩梦潮过后要有缓和期——零星几只烦恼球，清得差不多了再来大噩梦 */
     if(!sg&&S.t>=PRE&&(S.bossWait||S.bossNext||S.bossAlive)&&MOW-wph()<CALM_AFTER)S.wOff=(S.wOff||0)+dt;   /* 大噩梦没打完，下一波噩梦潮不开始 */
