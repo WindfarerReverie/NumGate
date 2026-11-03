@@ -113,6 +113,13 @@ for pre, gp in [('', ''), ('G', 'g_')]:
     MAP[pre + 'BX1'] = (gp + 'aura_rage', 640)
     MAP[pre + 'BX2'] = (gp + 'aura_haste', 640)
 
+# 11-03 23:30 长期强化外观：灵光贯顶光柱、冲击环、脚下法阵 3 档
+for pre, gp in [('', ''), ('G', 'g_')]:
+    MAP[pre + 'LTP'] = (gp + 'lt_pillar', 640)
+    MAP[pre + 'LTR'] = (gp + 'lt_ring', 560)
+    for _i in (1, 2, 3):
+        MAP[pre + 'LTU%d' % _i] = (gp + 'lt_au%d' % _i, 512)
+
 def find(code):
     for c in (code + 'r', code + 'q', code):
         p = os.path.join(SRC, 'numgate_%s.png' % c)
