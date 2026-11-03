@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl", "sbjs": "supabase.js"};if(/(^|\.)youfeng\.app$|\.pages\.dev$/.test(location.hostname))window.NG_CFG.url=location.origin+'/sb';</script>
-<script>(function(){var B="20261103163643";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261103164029";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" media="print" onload="this.media='all'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1268,8 +1268,11 @@ const GW={w:[0,3,10,13,17,22,30,40,50,100,150,200,550],g:[.04,-.05,-.05,.1,.7,1.
 function gwAt(w){const W=GW.w,G=GW.g,n=W.length-1;if(w>=W[n])return G[n]+.02*(w-W[n]);let i=1;while(W[i]<w)i++;const u=(w-W[i-1])/(W[i]-W[i-1]);return G[i-1]+(G[i]-G[i-1])*u}
 function eScale(w){if(w==null)w=wPos();const vk=vilOn()?.6+.35*S.vil.i/(VIL.length-1):1-.05*vilFade();if(vk<1)w=Math.min(w,1.5+.7*S.vil.i);const D=Math.exp(calAt(WCAL.D,w));return vk*D*Math.exp(gwAt(w))*Math.pow(Math.max(1e-9,S.Dref)/D,WF)}   /* 新手村：本事还没学全，怪从六成血开始、随任务慢慢加到九成五（大噩梦五成→九成），强度也跟着任务进度走，卡在某一步不会越来越难；出村不会突然变难 */   // 第 w 波的怪物强度：平均水平的玩家打第 w 波时的强度 ×（你的星力 / 平均星力）^0.3
 const kMix=()=>WF*kEff()+(1-WF)*calAt(WCAL.K,wPos());   // 后期加压曲线也主要看波数
-function hpAt(sg){if(!S||S.t<PRE||vilNS()||S.tut)return hpUnit();const w0=S.wOff||0,s0=S.surgeOn,cur=wph(),tp=sg?MOW+10:Math.min(cur,MOW-5);S.wOff=w0+(cur-tp);S.surgeOn=!!sg;let r;try{r=hpUnit()}finally{S.wOff=w0;S.surgeOn=s0}return r}   /* 16:27 John：面板很猛、实际打不动——噩梦潮里刷的怪单只厚 3～4 倍，面板要把割草和噩梦潮分开写 */
-const hpUnit=()=>target()*eScale()*(S.surgeOn?(S.sb||1):.85)/(zps()*zMix());   /* 11-03：割草时烦恼球再薄 15%，割草感更足；压力放在噩梦潮和大噩梦 */
+function hpAtF(f,sg){if(!S||S.t<PRE||vilNS()||S.tut)return f();const w0=S.wOff||0,s0=S.surgeOn,cur=wph(),tp=sg?MOW+10:Math.min(cur,MOW-5);S.wOff=w0+(cur-tp);S.surgeOn=!!sg;let r;try{r=f()}finally{S.wOff=w0;S.surgeOn=s0}return r}
+const hpAt=sg=>hpAtF(hpUnit,sg);   /* 16:27 John：面板很猛、实际打不动——面板把割草和噩梦潮分开写 */
+const SURGE_HP_CAP=1.5;   /* 16:39 John：噩梦潮的怪皮太厚，单只最多是割草时的 1.5 倍（原来到 2.4～3.7 倍） */
+const hpRaw=()=>target()*eScale()*(S.surgeOn?(S.sb||1):.85)/(zps()*zMix());
+const hpUnit=()=>{const r=hpRaw();if(!S||!S.surgeOn||S.t<PRE||vilNS()||S.tut)return r;return Math.min(r,SURGE_HP_CAP*hpAtF(hpRaw,false))};   /* 11-03：割草时烦恼球再薄 15%，割草感更足；压力放在噩梦潮和大噩梦 */
 const speed=()=>H*.098*(1+Math.min(S.t,300)/750);   /* 11-02 18:13：门和路面再慢 30%（.14→.098） */
 /*SPEED_.14*/   /* 11-02 17:05：门和路面再慢约 12% */
 /*SPEED_OLD .16*/   /* 11-02 09:16：门和路面整体慢 20%（门的间隔按时间算，收益不变；锁按穿屏时间自动加厚） */   // slower ramp: ×1.4 at 5 min (was ×1.8 at 2 min)

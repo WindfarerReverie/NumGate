@@ -1232,8 +1232,11 @@ const GW={w:[0,3,10,13,17,22,30,40,50,100,150,200,550],g:[.04,-.05,-.05,.1,.7,1.
 function gwAt(w){const W=GW.w,G=GW.g,n=W.length-1;if(w>=W[n])return G[n]+.02*(w-W[n]);let i=1;while(W[i]<w)i++;const u=(w-W[i-1])/(W[i]-W[i-1]);return G[i-1]+(G[i]-G[i-1])*u}
 function eScale(w){if(w==null)w=wPos();const vk=vilOn()?.6+.35*S.vil.i/(VIL.length-1):1-.05*vilFade();if(vk<1)w=Math.min(w,1.5+.7*S.vil.i);const D=Math.exp(calAt(WCAL.D,w));return vk*D*Math.exp(gwAt(w))*Math.pow(Math.max(1e-9,S.Dref)/D,WF)}   /* 新手村：本事还没学全，妖从六成血开始、随任务慢慢加到九成五（大妖五成→九成），强度也跟着任务进度走，卡在某一步不会越来越难；出村不会突然变难 */   // 第 w 波的怪物强度：平均水平的玩家打第 w 波时的强度 ×（你的火力 / 平均火力）^0.3
 const kMix=()=>WF*kEff()+(1-WF)*calAt(WCAL.K,wPos());   // 后期加压曲线也主要看波数
-function hpAt(sg){if(!S||S.t<PRE||vilNS()||S.tut)return hpUnit();const w0=S.wOff||0,s0=S.surgeOn,cur=wph(),tp=sg?MOW+10:Math.min(cur,MOW-5);S.wOff=w0+(cur-tp);S.surgeOn=!!sg;let r;try{r=hpUnit()}finally{S.wOff=w0;S.surgeOn=s0}return r}   /* 16:27 John：面板很猛、实际打不动——妖潮里刷的妖单只厚 3～4 倍，面板要把割草和妖潮分开写 */
-const hpUnit=()=>target()*eScale()*(S.surgeOn?(S.sb||1):.85)/(zps()*zMix());   /* 11-03：割草时小妖再薄 15%，割草感更足；压力放在妖潮和大妖 */
+function hpAtF(f,sg){if(!S||S.t<PRE||vilNS()||S.tut)return f();const w0=S.wOff||0,s0=S.surgeOn,cur=wph(),tp=sg?MOW+10:Math.min(cur,MOW-5);S.wOff=w0+(cur-tp);S.surgeOn=!!sg;let r;try{r=f()}finally{S.wOff=w0;S.surgeOn=s0}return r}
+const hpAt=sg=>hpAtF(hpUnit,sg);   /* 16:27 John：面板很猛、实际打不动——面板把割草和妖潮分开写 */
+const SURGE_HP_CAP=1.5;   /* 16:39 John：妖潮的妖皮太厚，单只最多是割草时的 1.5 倍（原来到 2.4～3.7 倍） */
+const hpRaw=()=>target()*eScale()*(S.surgeOn?(S.sb||1):.85)/(zps()*zMix());
+const hpUnit=()=>{const r=hpRaw();if(!S||!S.surgeOn||S.t<PRE||vilNS()||S.tut)return r;return Math.min(r,SURGE_HP_CAP*hpAtF(hpRaw,false))};   /* 11-03：割草时小妖再薄 15%，割草感更足；压力放在妖潮和大妖 */
 const speed=()=>H*.098*(1+Math.min(S.t,300)/750);   /* 11-02 18:13：门和路面再慢 30%（.14→.098） */
 /*SPEED_.14*/   /* 11-02 17:05：门和路面再慢约 12% */
 /*SPEED_OLD .16*/   /* 11-02 09:16：门和路面整体慢 20%（门的间隔按时间算，收益不变；锁按穿屏时间自动加厚） */   // slower ramp: ×1.4 at 5 min (was ×1.8 at 2 min)
