@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl", "sbjs": "supabase.js"};if(/(^|\.)youfeng\.app$|\.pages\.dev$/.test(location.hostname))window.NG_CFG.url=location.origin+'/sb';</script>
-<script>(function(){var B="20261103141943";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261103142423";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" media="print" onload="this.media='all'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1379,7 +1379,7 @@ function mkGate(type,x0,x1,trap){
   if(T.lock)o.lock=o.lock0=U*T.lock;
   const G=vilOn()&&!S.path?vilG():gm();   /* 13:49 John：新手村升星要有梯度——第一颗进第一星，第二星要两颗左右，越往后每星要的丹越多 */   /* 11-03 13:17 John：新手村里要一眼看出效果——一颗星光糖就是一星（出村后按原来的节奏，越往后一星越难攒） */
   if(type==='qi'){o.val=o.v0=rand(1,1.5)*G;o.cap=o.val+.5*G;o.pump=U*PUMP}   // 星光糖: walk in and take it
-  else if(type==='vein')o.val=(vilOn()&&!S.path?rand(3,4):rand(7,9))*G;   /* 新手村里愿望水晶 3～4 星，免得一扇就跳一个称号 */   // 愿望水晶: break the lock first, ~6× a 星光糖
+  else if(type==='vein')o.val=rand(7,9)*G;   /* 愿望水晶约顶 6 颗星光糖（新手村也一样，村里一星本来就要好几颗） */   // 愿望水晶: break the lock first, ~6× a 星光糖
   else if(type==='jie')o.val=G;
   else if(type==='brk')o.val=G;
   else if(type==='art'){o.up=pickUpg();if(!o.up)return mkGate('qi',x0,x1,trap)}
@@ -2749,8 +2749,8 @@ function mvTick(dt){if(!S)return;const now=S.t;
   MV.joyA=drag?Math.min(1,MV.joyA+dt*8):Math.max(0,MV.joyA-dt*4)}
 /* 11-02 17:42 John：星光糖、打烦恼球是积少成多 → 星光瓶：吃星光糖约涨 1/8 瓶、打烦恼球一点点涨、大噩梦一大截；满了额外 +25% 这一瓶的魔力，并有音效大字 */
 const JAR_N=8,JAR_B=.25;
-function jarAdd(d){if(!S||!(d>0))return;const cap=JAR_N*1.25*gm();S.jar=(S.jar||0)+d/cap;S.jarF=1;
-  while(S.jar>=1){S.jar-=1;const b=cap*JAR_B;addLayers(b,'jar');S.jarN=(S.jarN||0)+1;const by=squadY-120;
+function jarAdd(d){if(!S||!(d>0))return;const cap=JAR_N*1.25*(vilOn()&&!S.path?vilG():gm());   /* 新手村按村里的星光糖大小算：约 8 颗一瓶 */S.jar=(S.jar||0)+d/cap;S.jarF=1;
+  while(S.jar>=1){S.jar-=1;const b=cap*JAR_B;addLayers(b,'jar');S.jarN=(S.jarN||0)+1;vilEv('jar');const by=squadY-120;
     ftext(S.x,by,'星光瓶满啦 · 魔力 +'+fmtG(b),'#7dffd0',24);burst(S.x+70,squadY-70,'#7dffd0',22,200);sfx('jar');S.gFlash=1;S.jarPop=1;
     if(coachOn()&&!cSeen('jar'))startCoach('jar')}}
 function drawJar(x,y){if(!S)return;const f=clamp(S.jar||0,0,1),G=ART_PRE==='g_',R=13,pop=S.jarPop||0;S.jarPop=Math.max(0,pop-.04);S.jarF=Math.max(0,(S.jarF||0)-.05);
@@ -2779,7 +2779,7 @@ function drawLayerBar(by,tw,PX){if(!S)return;PX=PX==null?S.x:PX;const rr2=realmO
   const gr=ctx.createLinearGradient(x,0,x+w,0);gr.addColorStop(0,G?'#ff9ad0':'#7fe0ff');gr.addColorStop(1,G?'#ffe3a0':'#ffd677');ctx.fillStyle=gr;rr(x,y,Math.max(3,w*sh),7,3.5);ctx.fill();
   if(S.gFlash>0){ctx.globalAlpha=S.gFlash*.8;ctx.fillStyle='#fff';rr(x,y,Math.max(3,w*sh),7,3.5);ctx.fill();ctx.globalAlpha=1}
   ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=1;rr(x,y,w,7,3.5);ctx.stroke();
-  {const jr=PX+Math.max(96,tw)/2+24,jl=PX-Math.max(96,tw)/2-24,left=jr>W-18;outlined(Math.floor(f*100)+'%',x+w/2,y+3.5,9,'#fff',CN);drawJar(left?Math.max(18,jl):jr,by+2)}}
+  {const jr=PX+Math.max(96,tw)/2+24,jl=PX-Math.max(96,tw)/2-24,left=jr>W-18;outlined(Math.floor(f*100)+'%',x+w/2,y+3.5,9,'#fff',CN);{const jx=left?Math.max(18,jl):jr;S.jarPos={x:jx,y:by+2};drawJar(jx,by+2)}}}
 /* ===== 11-02 17:55 John：被动升级了看不出来 → 被动按等级分 4 个形态（Lv1 / 8 / 14 / 20），每个形态改名、换样子；
    星星小鸟、彩虹云、星光纵横的巨箭做成跟在身边的小伙伴（有手绘图用图，没有用代码画），守护星绕身、星光盾和勇气做成身上的光罩和火焰 ===== */
 let PS_NAMES={crow:['星星小鸟','赤焰鸦','三足金乌','太阳神鸟'],orb:['守护星','天罡剑阵','诛仙剑阵','万古剑域'],cloud:['彩虹云','紫电云','九霄彩虹云','天罚神雷'],
@@ -3063,23 +3063,24 @@ const VIL=[
   {id:'drag',d:'手指按住屏幕任意地方，左右拖动，队伍就跟着换道。左边一半是「左道」，会有门；右边一半是「右道」，会有怪。现在：拖到右道，再拖回左道。',t:'按住屏幕左右拖动，带队伍换道',s:'左道是门，右道是怪：来回走一趟',u:[]},
   {id:'qi',d:'左道会掉下来绿色的门，上面写着 +多少。走到它正下方，等它撞到你的队伍，魔力就涨了。',t:'撞一颗星光糖（绿色 +）',s:'撞上去魔力就涨，魔力够了就升星',u:[]},
   {id:'pump',d:'队伍会一直往前开火。站在星光糖下面让子弹打它，门上的数字会越打越大，等数字变大了再让它撞上你。',t:'先对着星光糖开火，数字变大再撞',s:'门上的数字会被你打大，打到一半以上再吃',u:[]},
-  {id:'kill',d:'右道会冲下来烦恼球。拖到右道，站在它们下面，队伍会自动开火净化它们。烦恼球冲过红线，你会掉魔力。',t:'去右道，净化 5 只烦恼球',s:'烦恼球冲过红线会掉魔力',u:['n']},
+  {id:'kill',d:'右道会冲下来烦恼球。拖到右道，站在它们下面，队伍会自动开火净化它们。净化怪也涨一点魔力、还往星光瓶里攒；烦恼球冲过红线，你会掉魔力。',t:'去右道，净化 5 只烦恼球',s:'打怪涨魔力；烦恼球冲过红线会掉魔力',u:['n']},
   {id:'xin',d:'红色、写着 − 的门是负能量，撞上会掉魔力。马上会来一排：一扇负能量、一颗星光糖——站到星光糖那一列，让负能量从旁边过去。',t:'躲开一扇负能量（红色 −）',s:'撞上会掉魔力：换到旁边那扇门',u:['xin'],row:['xin','qi']},
   {id:'art',d:'有的门带锁：先站在它下面开火把锁打开，锁开了再撞上去。魔法书门撞到后，整局永久变强一项。',t:'先打开锁，再冲过魔法书门',s:'带锁的门要先打开；魔法书让你整局变强',u:['art'],row:['art','qi']},
   {id:'surge',d:'过一会儿噩梦潮就来：右道的怪会一下子变多。怪压上来时，点右下角的「星光爆发」，一下清掉一大片。撑到噩梦潮结束就算完成。',t:'撑过第一次噩梦潮，噩梦潮里放一次星光爆发',s:'星光爆发在右下角：怪压上来时点一下，清掉一大片',u:['surge','bomb','run'],need:{surge:1,sk_bomb:1}},
-  {id:'boss',d:'噩梦潮退了，大噩梦会单独走下来，体力很厚。拖到它下面一直打，别让它冲过红线——冲线会扣一大截元气。攒满九星后，也要打败大噩梦才能进下一个称号。',t:'噩梦潮退了，大噩梦单独上场：净化它',s:'别让它冲线，冲线扣一大截元气；九星满了也要净化大噩梦才能变身',u:['brute'],need:{boss:1}},
+  {id:'boss',d:'噩梦潮退了，大噩梦会单独走下来，体力很厚。拖到它下面一直打，别让它冲过红线——冲线会扣一大截元气。净化一只大坏情绪力涨一大截、星光瓶也涨一大截；攒满九星后，也要打败大噩梦才能进下一个称号。',t:'噩梦潮退了，大噩梦单独上场：净化它',s:'别让它冲线，冲线扣一大截元气；九星满了也要净化大噩梦才能变身',u:['brute'],need:{boss:1}},
   {id:'fb',d:'马上会来一扇带锁的魔法道具门。先开火把锁打开，再撞上去。魔法道具拿到后会自己定时帮你打怪，整局有效。',t:'打开锁，拿一件魔法道具',s:'魔法道具会自己帮你打，整局有效',u:['fb','four','dodge'],row:['fb','qi']},
   {id:'bolt',d:'右下角多了「彩虹光束」。它会劈一整列：哪一列怪最多，就站到那列再点它。点一次就算完成。',t:'放一次彩虹光束',s:'它劈一整列：哪一列怪扎堆就劈哪列',u:['bolt'],need:{sk_bolt:1}},
   {id:'guard',d:'黏人怪身边有一圈光罩，罩里的怪都更抗打。马上会来一只黏人怪带着一群烦恼球：先净化黏人，旁边的就好打了。彩虹光束劈黏人伤害翻倍。',t:'先净化黏人怪',s:'黏人怪身边的怪更抗打；彩虹光束劈它伤害翻倍',u:['guard'],need:{k_guard:1},setup:'guard'},
   {id:'shield',d:'右下角多了「泡泡护盾」。开了以后 6 秒内怪冲线伤不到你：大噩梦快冲线、或者想去左道吃门顾不上右道时用。点一次就算完成。',t:'开一次泡泡护盾',s:'6 秒内冲线不伤你：大噩梦要冲线、或想去左道吃门时用',u:['shield','elite'],need:{sk_shield:1}},
   {id:'freeze',d:'右下角多了「时光凝结」。点一下，全场的怪定住 3.5 秒，顶不住的时候用来救命。点一次就算完成。',t:'放一次时光凝结',s:'全场定住 3.5 秒：顶不住时救命',u:['freeze','zou','trap'],need:{sk_freeze:1}},
   {id:'fu',d:'马上会来一扇魔法卡门（先开锁）。吃到后，用掉的技能马上补回来，星光爆发会多一张。窍门：技能本来就能用时，撞门之前先把它放掉，撞上又补回来，等于白用一次。',t:'吃一扇魔法卡门',s:'魔法卡把用掉的技能马上补回来',u:['fu'],row:['fu','qi']},
-  {id:'vein',d:'马上会来一扇愿望水晶（带锁的大门）。一扇愿望水晶顶约 6 颗星光糖，但要先把锁打开。右边不急的时候最值得去开。',t:'打开锁，吃一扇愿望水晶',s:'一扇愿望水晶顶约 6 颗星光糖；右边不急时最划算',u:['vein','hex'],row:['vein','qi']},
+  {id:'vein',d:'马上会来一扇愿望水晶（带锁的大门）。一扇愿望水晶顶约 6 颗星光糖，是升星最快的门，但要先把锁打开。右边不急的时候最值得去开。',t:'打开锁，吃一扇愿望水晶',s:'一扇愿望水晶顶约 6 颗星光糖；右边不急时最划算',u:['vein','hex'],row:['vein','qi']},
   {id:'cast',d:'大噩梦头上出现读条时，它在放技能。集中星力猛打它，打掉它 8% 的体力就能打断。写着「噩梦咆哮」的打不断，只能开泡泡护盾扛。',t:'大噩梦读条时，集火打断它',s:'头上出现读条就猛打它，打掉 8% 的血就断了；「噩梦咆哮」打不断，要开泡泡护盾',u:['bskill'],need:{int:1}},
-  {id:'jie',d:'到了'+REALMS[2]+'以后，左道会降下紫色的流星考验，上面有很厚的锁。集中星力把锁打开再冲过去，魔力大涨还永久变强；打不开就躲到右边。成功或躲开都算完成。',t:'闯一次流星考验',s:'左道降下紫色流星考验：集火打开冲过去，打不开就躲到右边（到'+REALMS[2]+'才会降）',u:['jie'],need:{jie:1}},
+  {id:'jie',d:'到了'+REALMS[2]+'以后，左道会降下紫色的流星考验，上面有很厚的锁。集中星力把锁打开再冲过去，魔力直接 +'+JIE_L+' 星（顶几十颗星光糖）、还永久变强；打不开就躲到右边。成功或躲开都算完成。',t:'闯一次流星考验',s:'左道降下紫色流星考验：集火打开冲过去，打不开就躲到右边（到'+REALMS[2]+'才会降）',u:['jie'],need:{jie:1}},
   {id:'stats',d:'点屏幕左上角的「第 N 波」，会暂停并打开数值一览：你普攻几秒净化一只怪、魔法一发能净化几只、每种怪的物防法防都在这里。打开看一眼就算完成。',t:'点左上「第 N 波」，看看数值一览',s:'暂停页里有我方攻击、怪怪元气和防御，打不过时来这里看',u:[],need:{pause:1}},
   {id:'pet',d:'村长送你一笔星钻。点左上「第 N 波」打开暂停页，找到萌宠那一栏，点「喂养」。萌宠会自己找怪打，越养越强。',t:'在暂停页「喂养」一次萌宠',s:'村长送你一笔星钻：萌宠会自己找怪打，越养越强',u:[],need:{pet:1},setup:'pet'},
-  {id:'path',d:'继续冒险，升到'+REALMS[3]+'时会让你选路线：星弓系靠星光硬推、更抗打；咒语系靠魔法，七种魔法立刻全会。选完就出村了。',t:'升到'+REALMS[3]+'，选星弓系还是咒语系',s:'星弓系靠星光硬推、抗打；咒语系靠魔法；选完就出村',u:['summon'],need:{path:1}}];
+  {id:'jar',d:'名牌旁边的小瓶子是星光瓶。吃星光糖、打怪、净化大噩梦都在往里攒，攒满一瓶「星光瓶满啦」，额外再给一大截魔力，然后重新攒。现在：攒满一瓶。',t:'攒满一瓶星光瓶',s:'吃糖、打怪、净化大噩梦都在攒：满一瓶额外给魔力',u:[],need:{jar:1}},
+  {id:'path',d:'越往后每一星要的魔力越多，光吃星光糖会很慢。想升得快：先把星光糖打涨再吃；有愿望水晶就去开（一扇顶 6 扇）；流星考验来了就劈（+'+JIE_L+' 星）；净化大噩梦、攒满星光瓶都会多给魔力。升到'+REALMS[3]+'时会让你选路线：星弓系靠星光硬推、更抗打；咒语系靠魔法，七种魔法立刻全会。选完就出村了。',t:'升到'+REALMS[3]+'，选星弓系还是咒语系',s:'星弓系靠星光硬推、抗打；咒语系靠魔法；选完就出村',u:['summon'],need:{path:1}}];
 const VIL_REW=2;   // 每个任务给的星钻
 const vilOn=()=>!!(S&&S.vil&&!S.vil.done);
 const vilNS=()=>vilOn()&&!S.vil.u.surge;   // 村里还没教噩梦潮：不来噩梦潮
@@ -3182,6 +3183,7 @@ function vgPlan(){   // 当前任务该圈哪里、说什么
     case 'freeze':{const b=vgDom('skFreeze');return b?P('点时光凝结',b,'全场定住 3.5 秒',{k:'f'}):null}
     case 'cast':{const z=vgZ(o=>o.boss&&o.cast);return z?P('它在读条：猛打它！',vgZr(z),'打掉 8% 的血就断了',{c:'red',k:'c'}):null}
     case 'jie':{const o=vgGate('jie');return o?(lock(o)?P('集火打开流星考验',vgG(o),'打不开就躲到右边',{c:'red',k:'lock'}):P('打开了，冲过去！',vgG(o),'',{c:'green',k:'go'})):null}
+    case 'jar':{const J=S.jarPos;return J?P('星光瓶：攒满给一大截魔力',{x:J.x,y:J.y,r:24},'吃糖、打怪、净化大噩梦都在攒（现在 '+Math.floor(clamp(S.jar||0,0,1)*100)+'%）',{k:'j'}):null}
     case 'stats':{const d=vgDom('hYqWrap');return d?P('点这里',d,'打开暂停页看数值一览',{k:'st'}):null}
     case 'pet':{if(!$('ovPause').hidden){const b=document.querySelector('#pauseBuild button[data-pet=up]');const d=b&&vgDom(b);return d?P('点「喂养」',d,'萌宠会自己找怪打',{k:'p2'}):null}const d=vgDom('hYqWrap');return d?P('先点这里打开暂停页',d,'萌宠在暂停页里喂养',{k:'p1'}):null}
   }

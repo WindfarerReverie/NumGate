@@ -1343,7 +1343,7 @@ function mkGate(type,x0,x1,trap){
   if(T.lock)o.lock=o.lock0=U*T.lock;
   const G=vilOn()&&!S.path?vilG():gm();   /* 13:49 John：新手村升层要有梯度——第一颗进第一层，第二层要两颗左右，越往后每层要的丹越多 */   /* 11-03 13:17 John：新手村里要一眼看出效果——一颗聚气丹就是一层（出村后按原来的节奏，越往后一层越难攒） */
   if(type==='qi'){o.val=o.v0=rand(1,1.5)*G;o.cap=o.val+.5*G;o.pump=U*PUMP}   // 聚气丹: walk in and take it
-  else if(type==='vein')o.val=(vilOn()&&!S.path?rand(3,4):rand(7,9))*G;   /* 新手村里灵脉 3～4 层，免得一扇就跳一个大境界 */   // 灵脉: break the lock first, ~6× a 聚气丹
+  else if(type==='vein')o.val=rand(7,9)*G;   /* 灵脉约顶 6 扇聚气丹（新手村也一样，村里一层本来就要好几颗） */   // 灵脉: break the lock first, ~6× a 聚气丹
   else if(type==='jie')o.val=G;
   else if(type==='brk')o.val=G;
   else if(type==='art'){o.up=pickUpg();if(!o.up)return mkGate('qi',x0,x1,trap)}
@@ -2713,8 +2713,8 @@ function mvTick(dt){if(!S)return;const now=S.t;
   MV.joyA=drag?Math.min(1,MV.joyA+dt*8):Math.max(0,MV.joyA-dt*4)}
 /* 11-02 17:42 John：聚气丹、打小妖是积少成多 → 聚灵瓶：吃聚气丹约涨 1/8 瓶、打小妖一点点涨、大妖一大截；满了额外 +25% 这一瓶的修为，并有音效大字 */
 const JAR_N=8,JAR_B=.25;
-function jarAdd(d){if(!S||!(d>0))return;const cap=JAR_N*1.25*gm();S.jar=(S.jar||0)+d/cap;S.jarF=1;
-  while(S.jar>=1){S.jar-=1;const b=cap*JAR_B;addLayers(b,'jar');S.jarN=(S.jarN||0)+1;const by=squadY-120;
+function jarAdd(d){if(!S||!(d>0))return;const cap=JAR_N*1.25*(vilOn()&&!S.path?vilG():gm());   /* 新手村按村里的聚气丹大小算：约 8 颗一瓶 */S.jar=(S.jar||0)+d/cap;S.jarF=1;
+  while(S.jar>=1){S.jar-=1;const b=cap*JAR_B;addLayers(b,'jar');S.jarN=(S.jarN||0)+1;vilEv('jar');const by=squadY-120;
     ftext(S.x,by,'聚灵成功 · 修为 +'+fmtG(b),'#7dffd0',24);burst(S.x+70,squadY-70,'#7dffd0',22,200);sfx('jar');S.gFlash=1;S.jarPop=1;
     if(coachOn()&&!cSeen('jar'))startCoach('jar')}}
 function drawJar(x,y){if(!S)return;const f=clamp(S.jar||0,0,1),G=ART_PRE==='g_',R=13,pop=S.jarPop||0;S.jarPop=Math.max(0,pop-.04);S.jarF=Math.max(0,(S.jarF||0)-.05);
@@ -2743,7 +2743,7 @@ function drawLayerBar(by,tw,PX){if(!S)return;PX=PX==null?S.x:PX;const rr2=realmO
   const gr=ctx.createLinearGradient(x,0,x+w,0);gr.addColorStop(0,G?'#ff9ad0':'#7fe0ff');gr.addColorStop(1,G?'#ffe3a0':'#ffd677');ctx.fillStyle=gr;rr(x,y,Math.max(3,w*sh),7,3.5);ctx.fill();
   if(S.gFlash>0){ctx.globalAlpha=S.gFlash*.8;ctx.fillStyle='#fff';rr(x,y,Math.max(3,w*sh),7,3.5);ctx.fill();ctx.globalAlpha=1}
   ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=1;rr(x,y,w,7,3.5);ctx.stroke();
-  {const jr=PX+Math.max(96,tw)/2+24,jl=PX-Math.max(96,tw)/2-24,left=jr>W-18;outlined(Math.floor(f*100)+'%',x+w/2,y+3.5,9,'#fff',CN);drawJar(left?Math.max(18,jl):jr,by+2)}}
+  {const jr=PX+Math.max(96,tw)/2+24,jl=PX-Math.max(96,tw)/2-24,left=jr>W-18;outlined(Math.floor(f*100)+'%',x+w/2,y+3.5,9,'#fff',CN);{const jx=left?Math.max(18,jl):jr;S.jarPos={x:jx,y:by+2};drawJar(jx,by+2)}}}
 /* ===== 11-02 17:55 John：被动升级了看不出来 → 被动按等级分 4 个形态（Lv1 / 8 / 14 / 20），每个形态改名、换样子；
    火鸦、雷云、剑气纵横的巨剑做成跟在身边的小伙伴（有手绘图用图，没有用代码画），护法飞剑绕身、剑罡和战意做成身上的光罩和火焰 ===== */
 let PS_NAMES={crow:['火鸦','赤焰鸦','三足金乌','太阳神鸟'],orb:['护法飞剑','天罡剑阵','诛仙剑阵','万古剑域'],cloud:['雷云','紫电云','九霄雷云','天罚神雷'],
@@ -3027,23 +3027,24 @@ const VIL=[
   {id:'drag',d:'手指按住屏幕任意地方，左右拖动，队伍就跟着换道。左边一半是「左道」，会有门；右边一半是「右道」，会有妖。现在：拖到右道，再拖回左道。',t:'按住屏幕左右拖动，带队伍换道',s:'左道是门，右道是妖：来回走一趟',u:[]},
   {id:'qi',d:'左道会掉下来绿色的门，上面写着 +多少。走到它正下方，等它撞到你的队伍，修为就涨了。',t:'撞一扇聚气丹（绿色 +）',s:'撞上去修为就涨，修为够了就升层',u:[]},
   {id:'pump',d:'队伍会一直往前开火。站在聚气丹下面让子弹打它，门上的数字会越打越大，等数字变大了再让它撞上你。',t:'先对着聚气丹开火，数字变大再撞',s:'门上的数字会被你打大，打到一半以上再吃',u:[]},
-  {id:'kill',d:'右道会冲下来小妖。拖到右道，站在它们下面，队伍会自动开火打死它们。小妖冲过红线，你会掉修为。',t:'去右道，打死 5 只小妖',s:'小妖冲过红线会掉修为',u:['n']},
+  {id:'kill',d:'右道会冲下来小妖。拖到右道，站在它们下面，队伍会自动开火打死它们。打死妖也涨一点修为、还往聚灵瓶里攒；小妖冲过红线，你会掉修为。',t:'去右道，打死 5 只小妖',s:'打妖涨修为；小妖冲过红线会掉修为',u:['n']},
   {id:'xin',d:'红色、写着 − 的门是心魔，撞上会掉修为。马上会来一排：一扇心魔、一扇聚气丹——站到聚气丹那一列，让心魔从旁边过去。',t:'躲开一扇心魔（红色 −）',s:'撞上会掉修为：换到旁边那扇门',u:['xin'],row:['xin','qi']},
   {id:'art',d:'有的门带锁：先站在它下面开火把锁打开，锁开了再撞上去。剑诀门撞到后，整局永久变强一项。',t:'先打开锁，再冲过剑诀门',s:'带锁的门要先打开；剑诀让你整局变强',u:['art'],row:['art','qi']},
   {id:'surge',d:'过一会儿妖潮就来：右道的妖会一下子变多。妖压上来时，点右下角的「雷劫符」，一下清掉一大片。撑到妖潮结束就算完成。',t:'撑过第一次妖潮，妖潮里放一次雷劫符',s:'雷劫符在右下角：妖压上来时点一下，清掉一大片',u:['surge','bomb','run'],need:{surge:1,sk_bomb:1}},
-  {id:'boss',d:'妖潮退了，大妖会单独走下来，血很厚。拖到它下面一直打，别让它冲过红线——冲线会扣一大截气血。九层圆满后，也要打败大妖才能进下一个大境界。',t:'妖潮退了，大妖单独上场：打死它',s:'别让它冲线，冲线扣一大截气血；九层满了也要斩大妖才能破境',u:['brute'],need:{boss:1}},
+  {id:'boss',d:'妖潮退了，大妖会单独走下来，血很厚。拖到它下面一直打，别让它冲过红线——冲线会扣一大截气血。斩一只大妖修为涨一大截、聚灵瓶也涨一大截；九层圆满后，也要打败大妖才能进下一个大境界。',t:'妖潮退了，大妖单独上场：打死它',s:'别让它冲线，冲线扣一大截气血；九层满了也要斩大妖才能破境',u:['brute'],need:{boss:1}},
   {id:'fb',d:'马上会来一扇带锁的法宝门。先开火把锁打开，再撞上去。法宝拿到后会自己定时帮你打妖，整局有效。',t:'打开锁，拿一件法宝',s:'法宝会自己帮你打，整局有效',u:['fb','four','dodge'],row:['fb','qi']},
   {id:'bolt',d:'右下角多了「掌心雷」。它会劈一整列：哪一列妖最多，就站到那列再点它。点一次就算完成。',t:'放一次掌心雷',s:'它劈一整列：哪一列妖扎堆就劈哪列',u:['bolt'],need:{sk_bolt:1}},
   {id:'guard',d:'护法妖身边有一圈光罩，罩里的妖都更抗打。马上会来一只护法妖带着一群小妖：先打死护法，旁边的就好打了。掌心雷劈护法伤害翻倍。',t:'先打死护法妖',s:'护法妖身边的妖更抗打；掌心雷劈它伤害翻倍',u:['guard'],need:{k_guard:1},setup:'guard'},
   {id:'shield',d:'右下角多了「金钟罩」。开了以后 6 秒内妖冲线伤不到你：大妖快冲线、或者想去左道吃门顾不上右道时用。点一次就算完成。',t:'开一次金钟罩',s:'6 秒内冲线不伤你：大妖要冲线、或想去左道吃门时用',u:['shield','elite'],need:{sk_shield:1}},
   {id:'freeze',d:'右下角多了「定身符」。点一下，全场的妖定住 3.5 秒，顶不住的时候用来救命。点一次就算完成。',t:'放一次定身符',s:'全场定住 3.5 秒：顶不住时救命',u:['freeze','zou','trap'],need:{sk_freeze:1}},
   {id:'fu',d:'马上会来一扇符箓门（先开锁）。吃到后，用掉的技能马上补回来，雷劫符会多一张。窍门：技能本来就能用时，撞门之前先把它放掉，撞上又补回来，等于白用一次。',t:'吃一扇符箓门',s:'符箓把用掉的技能马上补回来',u:['fu'],row:['fu','qi']},
-  {id:'vein',d:'马上会来一扇灵脉（带锁的大门）。一扇灵脉顶约 6 扇聚气丹，但要先把锁打开。右道不急的时候最值得去开。',t:'打开锁，吃一扇灵脉',s:'一扇灵脉顶约 6 扇聚气丹；右道不急时最划算',u:['vein','hex'],row:['vein','qi']},
+  {id:'vein',d:'马上会来一扇灵脉（带锁的大门）。一扇灵脉顶约 6 扇聚气丹，是升层最快的门，但要先把锁打开。右道不急的时候最值得去开。',t:'打开锁，吃一扇灵脉',s:'一扇灵脉顶约 6 扇聚气丹；右道不急时最划算',u:['vein','hex'],row:['vein','qi']},
   {id:'cast',d:'大妖头上出现读条时，它在放技能。集中火力猛打它，打掉它 8% 的血就能打断。写着「天威」的打不断，只能开金钟罩扛。',t:'大妖读条时，集火打断它',s:'头上出现读条就猛打它，打掉 8% 的血就断了；「天威」打不断，要开金钟罩',u:['bskill'],need:{int:1}},
-  {id:'jie',d:'到了'+REALMS[2]+'以后，左道会降下紫色的天劫，上面有很厚的锁。集中火力把锁劈开再冲过去，修为大涨还永久变强；劈不开就躲到右道。成功或躲开都算完成。',t:'闯一次天劫',s:'左道降下紫色天劫：集火劈开冲过去，劈不开就躲到右道（到'+REALMS[2]+'才会降）',u:['jie'],need:{jie:1}},
+  {id:'jie',d:'到了'+REALMS[2]+'以后，左道会降下紫色的天劫，上面有很厚的锁。集中火力把锁劈开再冲过去，修为直接 +'+JIE_L+' 层（顶几十颗聚气丹）、还永久变强；劈不开就躲到右道。成功或躲开都算完成。',t:'闯一次天劫',s:'左道降下紫色天劫：集火劈开冲过去，劈不开就躲到右道（到'+REALMS[2]+'才会降）',u:['jie'],need:{jie:1}},
   {id:'stats',d:'点屏幕左上角的「第 N 波」，会暂停并打开数值一览：你普攻几秒打死一只妖、法术一发能打死几只、每种妖的物防法防都在这里。打开看一眼就算完成。',t:'点左上「第 N 波」，看看数值一览',s:'暂停页里有我方攻击、妖怪气血和防御，打不过时来这里看',u:[],need:{pause:1}},
   {id:'pet',d:'村长送你一笔灵石。点左上「第 N 波」打开暂停页，找到灵宠那一栏，点「培养」。灵宠会自己找妖打，越养越强。',t:'在暂停页「培养」一次灵宠',s:'村长送你一笔灵石：灵宠会自己找妖打，越养越强',u:[],need:{pet:1},setup:'pet'},
-  {id:'path',d:'继续修炼，升到'+REALMS[3]+'时会让你选路线：体修靠剑气硬推、更抗打；法修靠法术，七种法术立刻全会。选完就出村了。',t:'升到'+REALMS[3]+'，选体修还是法修',s:'体修靠剑气硬推、抗打；法修靠法术；选完就出村',u:['summon'],need:{path:1}}];
+  {id:'jar',d:'名牌旁边的小瓶子是聚灵瓶。吃聚气丹、打妖、斩大妖都在往里攒，攒满一瓶「聚灵成功」，额外再给一大截修为，然后重新攒。现在：攒满一瓶。',t:'攒满一瓶聚灵瓶',s:'吃丹、打妖、斩大妖都在攒：满一瓶额外给修为',u:[],need:{jar:1}},
+  {id:'path',d:'越往后每一层要的修为越多，光吃聚气丹会很慢。想升得快：先把聚气丹打涨再吃；有灵脉就去开（一扇顶 6 扇）；天劫来了就劈（+'+JIE_L+' 层）；斩大妖、攒满聚灵瓶都会多给修为。升到'+REALMS[3]+'时会让你选路线：体修靠剑气硬推、更抗打；法修靠法术，七种法术立刻全会。选完就出村了。',t:'升到'+REALMS[3]+'，选体修还是法修',s:'体修靠剑气硬推、抗打；法修靠法术；选完就出村',u:['summon'],need:{path:1}}];
 const VIL_REW=2;   // 每个任务给的灵石
 const vilOn=()=>!!(S&&S.vil&&!S.vil.done);
 const vilNS=()=>vilOn()&&!S.vil.u.surge;   // 村里还没教妖潮：不来妖潮
@@ -3146,6 +3147,7 @@ function vgPlan(){   // 当前任务该圈哪里、说什么
     case 'freeze':{const b=vgDom('skFreeze');return b?P('点定身符',b,'全场定住 3.5 秒',{k:'f'}):null}
     case 'cast':{const z=vgZ(o=>o.boss&&o.cast);return z?P('它在读条：猛打它！',vgZr(z),'打掉 8% 的血就断了',{c:'red',k:'c'}):null}
     case 'jie':{const o=vgGate('jie');return o?(lock(o)?P('集火劈开天劫',vgG(o),'劈不开就躲到右道',{c:'red',k:'lock'}):P('劈开了，冲过去！',vgG(o),'',{c:'green',k:'go'})):null}
+    case 'jar':{const J=S.jarPos;return J?P('聚灵瓶：攒满给一大截修为',{x:J.x,y:J.y,r:24},'吃丹、打妖、斩大妖都在攒（现在 '+Math.floor(clamp(S.jar||0,0,1)*100)+'%）',{k:'j'}):null}
     case 'stats':{const d=vgDom('hYqWrap');return d?P('点这里',d,'打开暂停页看数值一览',{k:'st'}):null}
     case 'pet':{if(!$('ovPause').hidden){const b=document.querySelector('#pauseBuild button[data-pet=up]');const d=b&&vgDom(b);return d?P('点「培养」',d,'灵宠会自己找妖打',{k:'p2'}):null}const d=vgDom('hYqWrap');return d?P('先点这里打开暂停页',d,'灵宠在暂停页里培养',{k:'p1'}):null}
   }
