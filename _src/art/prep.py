@@ -108,6 +108,10 @@ for pre, gp in [('', ''), ('G', 'g_')]:
     MAP[pre + 'W1'] = (gp + 'ward', 900)
     MAP[pre + 'W2'] = (gp + 'ward_c', 900)
     MAP[pre + 'W3'] = (gp + 'ward_s', 900)   # 15:59 金钟罩 / 泡泡护盾加持版
+# 11-03 16:57 体修爆发技光环（剑意沸腾 / 疾风连斩；女生版 勇气爆发 / 流星连射）
+for pre, gp in [('', ''), ('G', 'g_')]:
+    MAP[pre + 'BX1'] = (gp + 'aura_rage', 640)
+    MAP[pre + 'BX2'] = (gp + 'aura_haste', 640)
 
 def find(code):
     for c in (code + 'r', code + 'q', code):
