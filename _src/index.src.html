@@ -1231,10 +1231,10 @@ const TRAITS={
   stun:{n:'震魂妖潮',d:'石甲妖冲近时会把你震晕 1 秒（停火、不能动）',c:['armor','bell'],need:'brute'}};
 /* 11-03 19:20 体修普攻 1.3→1.0、重剑每级 12%→8%、连斩 10%→7%（第二轮仍 0 倒、危险度 0.1～0.3）。11-03 18:40 体修普攻 1.9→1.3（同强度怪下体修 0 倒、危险度≈0，法修危险度≈0.6）。11-03 18:08 John：用不同波段的妖物特色体现两条路差异，排行榜上交替领先 → 每 5 波一段，固定轮换：体修吃力段 → 中性段 → 法修吃力段 → 中性段；同一波对所有人一样 */
 const TR_GROUP=[['iron','hex','armor','stun'],['swarm','fast','elite','guard'],['ward','silence'],['swarm','fast','elite','guard']];
-function traitOf(k){if(vilOn())return null;   /* 新手村里没有特殊妖潮 */
+function traitOf(k){if(vilOn())return null;   /* 新手村里没有特殊妖潮；11-03 22:50 John：新手期（前 30 波）和还没转职时只出中性特色，不针对体修/法修 */
   if(k<1)return null;if(S.traits[k]!==undefined)return S.traits[k];
   const t=15+45*k+25,av=x=>(FEAT[TRAITS[x].need]??0)<=t,prev=k>1?traitOf(k-1):null;
-  const seg=Math.floor((k-1)/5),G=TR_GROUP[seg%4].filter(av),pool0=G.length?G:TR_GROUP[1].filter(av),pool=pool0.filter(x=>x!==prev).length?pool0.filter(x=>x!==prev):pool0;
+  const seg=Math.floor((k-1)/5),G=(k+1<STAIR_B[0]||!S.path?TR_GROUP[1]:TR_GROUP[seg%4]).filter(av),pool0=G.length?G:TR_GROUP[1].filter(av),pool=pool0.filter(x=>x!==prev).length?pool0.filter(x=>x!==prev):pool0;
   S.traits[k]=pool.length?pool[(k*7+seg*3)%pool.length]:null;return S.traits[k];
 }
 const curTrait=()=>inSurge()?traitOf(waveK()):null;
