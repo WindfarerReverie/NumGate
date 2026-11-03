@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "girl", "sbjs": "supabase.js"};if(/(^|\.)youfeng\.app$|\.pages\.dev$/.test(location.hostname))window.NG_CFG.url=location.origin+'/sb';</script>
-<script>(function(){var B="20261103104427";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261103105216";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>星愿魔法少女</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" media="print" onload="this.media='all'">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -945,7 +945,10 @@ function ago(ts){const m=Math.round((Date.now()-ts)/60000);if(m<1)return '刚刚
 const armed={};
 function renderSlots(){
   const box=$('slots');box.innerHTML='';
-  for(let i=1;i<=SLOTS;i++){
+  /* 11-03 10:51 John：存档和排行榜一样排——波数最远的在最上面；波数一样称号低的在前，再比倒下少；空位放最后 */
+  const ord=[];for(let i=1;i<=SLOTS;i++)ord.push(i);const A=i=>Save.slots[i];
+  ord.sort((a,b)=>{const x=A(a),y=A(b);if(!x||!y)return (x?0:1)-(y?0:1)||a-b;return (y.bestWave||0)-(x.bestWave||0)||(x.bestRealm||0)-(y.bestRealm||0)||((x.deaths??1e9)-(y.deaths??1e9))||a-b});
+  for(const i of ord){
     const s=Save.slots[i];const el=document.createElement('div');el.className='slot';
     if(s){
       el.innerHTML='<div class="info"><h3>存档 '+i+'<em class="wtag '+(s.world||MYW)+'"></em><span>'+ago(s.updated||s.created)+'</span></h3><p>最高 <b>'+wRealm(s.world||MYW,s.bestRealm||0)+'</b> · 第 <b>'+(s.bestWave||0)+'</b> 波 · 星钻 <b>'+fmt(s.coins)+'</b> · '+s.runs+' 局</p></div>';
