@@ -288,7 +288,7 @@ drawBoss=function(o){
   ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(x-w/2,y-r-16,w,7);ctx.fillStyle=C.minus;ctx.fillRect(x-w/2,y-r-16,w*p,7);
   outlined(L.name+' · '+REALMS[o.realm||0]+(S.fb.mirror?' · 许愿镜 +'+30*S.fb.mirror+'%':''),x,y-r-40,13,o.realm>S.rR?C.minus:'#ffd677',CN);{const sec=Math.max(0,o.hp)/Math.max(1e-9,dps()*dmgMul(o));outlined('需 '+(sec<10?sec.toFixed(1):Math.round(sec))+' 秒',x,y-r-26,13,'#fff',CN)}
   bossEvoFront(o,'#ffe9a8');
-  outlined('冲破结界扣 '+Math.round(bossHpF()*100)+'% 元气',x,y+r+18,12,C.minus,CN);
+  {const E=bossEta(o);outlined((E!=null?E+' 秒后冲破结界 · ':'冲破结界')+'扣 '+Math.round(bossHpF()*100)+'% 元气',x,y+r+18,E!=null&&E<=6?15:12,C.minus,CN)}
 };
 
 /* ---------- gate icons ---------- */
@@ -359,7 +359,8 @@ draw=function(){
     S.zc=0;for(const o of S.objs)if(o.k==='z')S.zc++;
     for(const o of S.objs)if(o.k==='z'){drawZ(o);drawZFx(o)}
     if(S.hexT>0)outlined('星速 −25% '+Math.ceil(S.hexT)+'s',S.x,squadY+sw()*.3+40,13,C.minus,CN);
-    if(S.shieldT>0)outlined('泡泡护盾 '+Math.ceil(S.shieldT)+'s',S.x,squadY+sw()*.3+(S.hexT>0?72:40),14,'#ffb6e6',CN);
+    if(S.xinT>0)outlined('负能量缠身 星力 −35% '+Math.ceil(S.xinT)+'s',S.x,squadY+sw()*.3+(S.hexT>0?58:40),13,C.minus,CN);
+    if(S.shieldT>0)outlined('泡泡护盾 '+Math.ceil(S.shieldT)+'s',S.x,squadY+sw()*.3+40+18*((S.hexT>0)+(S.xinT>0))+(S.hexT>0?14:0),14,'#ffb6e6',CN);
     if(S.temp&&tempOn(S.temp.k))outlined(TEMPS[S.temp.k].n+' 生效中',S.x,squadY+sw()*.3+56,13,'#ffb347',CN);
     drawBullets();drawSquadT();
     if(tip&&S.tipObj)drawRing(S.tipObj);
