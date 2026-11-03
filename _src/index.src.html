@@ -1169,7 +1169,8 @@ function bgmTick(){if(!actx||!SND.bgmG)return;const k=bgmWant(),now=actx.current
    Enemy HP is set from a lagged copy of your in-run firepower (shop perks excluded), so big gains
    buy a stretch of mowing, the next surge catches up, and each surge is harsher than the last. */
 const CYC=60,MOW=40;   /* 11-02 17:41 John：45 秒一波，刚打完又来一波 → 喘息 25 秒→40 秒，妖潮仍 20 秒，一循环 60 秒 */
-const PRE=15;   // first mowing stretch is 15s longer (40s) to build up before wave 1
+const PRE=15;
+const BOSS_CALM=10,BOSS_CALM_MAX=40,CALM_AFTER=12;   /* 16:12 John：妖潮→缓和（至少 10 秒，零星小妖）→大妖单独上场→斩完至少 12 秒割草才来下一波妖潮 */   // first mowing stretch is 15s longer (40s) to build up before wave 1
 const wt=()=>Math.max(0,S.t-PRE-(S.wOff||0));   /* 11-02 21:01：回去重修＝波数计数往回拨（wOff），时间照走 */
 const kEff=()=>{if(!S)return 0;const rr=realmOf(S.count);return Math.min(45,2.4*(Math.max(1,S.maxR)-1)+2.4*Math.min(1,Math.max(0,rr.r>=S.maxR?rr.frac:0)))};   // difficulty index: follows your realm, so playing for hours inside one realm doesn't keep inflating enemies
 const waveK=()=>Math.floor(wt()/CYC);
@@ -1447,11 +1448,11 @@ function spawnZombies(){
   const x0=mid+8,x1=roadX+roadW-8;
   if(S.bossAlive||S.bossNext||(vilOn()&&!S.vil.u.n))return;
   if(S.stage&&!S.stage.lite)return;   /* 新妖展示期间不刷别的妖 */   /* 新手村还没教打妖时不刷妖；大妖在场时不刷小妖（大妖自己召唤的除外） */
-  const n=Math.round(zBase()+ri(0,1)-.2);let gAlive=0;for(const o of S.objs)if(o.k==='z'&&!o.dead&&o.type==='guard')gAlive++;
+  const lull=!!S.bossWait,n=lull?1:Math.round(zBase()+ri(0,1)-.2);let gAlive=0;for(const o of S.objs)if(o.k==='z'&&!o.dead&&o.type==='guard')gAlive++;
   const cx=rand(x0+22,x1-22);
   const hpB=hpUnit(),atkB=1;
   for(let i=0;i<Math.max(1,n);i++){
-    let type='n';const q=Math.random(),P=zProbs();let acc=0;
+    let type='n';const q=Math.random(),P=lull?[]:zProbs();let acc=0;
     for(const [ty,pp] of P){acc+=pp;if(q<acc){type=ty;break}}
     if(type==='guard'){if(gAlive>=(inSurge()?2:1))type='n';else gAlive++}   /* 护法妖同时最多 1 只（妖潮 2 只），不能刷成一片 */
     if(stageNeed(type)){startStage(type);if(i===0)return;continue}   /* 15:37 John：新妖第一次出现时单独放出来、圈亮、再讲 */
@@ -1897,6 +1898,7 @@ function goalText(){
   const left=Math.max(0,9-((rr.layer-1)+rr.frac));
   return '下一境 <b>'+(REALMS[cur+1]||'')+'</b>：还差 '+left.toFixed(1)+' 层到九层圆满 · 解锁 '+unlockList(cur+1).slice(0,3).join('、');
 }
+function calmAfterBoss(){if(S.t<PRE||inSurge())return;const l=MOW-wph();if(l<CALM_AFTER)S.wOff=(S.wOff||0)+(CALM_AFTER-l)}   /* 斩完/漏掉大妖后，离下一波妖潮至少留 CALM_AFTER 秒 */
 function regroup(){   // 斩大妖后整顿：冲击波重创小妖、6 秒不刷妖、回 15% 气血、左道马上来一排好门
   S.regroup=6;const n=skillPool(8,z=>!z.boss,0);heal(.15,'整顿');S.goodRow=true;S.spawnL=Math.min(S.spawnL,.4);
   S.fxBomb=Math.max(S.fxBomb||0,.5);toast('斩大妖 · 整顿 6 秒','冲击波震散 '+n+' 只妖，气血 +15%，左边来了好门');
@@ -1927,7 +1929,7 @@ function killZ(o){
   burst(o.x,o.y,o.boss?C.boss:C.zomb,o.boss?60:(o.type==='brute'?16:8),o.boss?320:170);
   const now=performance.now();if(now-lastKillSnd>45){sfx('kill');lastKillSnd=now}
   if(o.boss){
-    S.bossAlive=false;if(!o.fin)regroup();
+    S.bossAlive=false;calmAfterBoss();if(!o.fin)regroup();
     {const sl=slot();if(sl&&o.look){sl.bossSeen=sl.bossSeen||{};sl.bossSeen[o.look.bi]=(sl.bossSeen[o.look.bi]||0)+1}}
     if(o.fin){ftext(o.x,o.y,'证道成圣',C.gold,34);S.fxBreak=1.2;S.won=true;setTimeout(()=>endRun('clear'),900);return}
     if(S.maxR<TOPR&&((o.heart&&o.heartR===S.maxR)||S.count>=capOf(S.maxR)*.98)){   // only breaks through if you are still at the bottleneck (a 心魔 left over after a 破境丹 no longer counts)
@@ -1961,13 +1963,15 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}sprFxTick(dt);S.fxBom
     if(S.jieHold&&!S.objs.some(o=>o.k==='gate'&&!o.dead&&o.x1<=mid+2&&o.y<squadY)){S.jieCD=JIE_EVERY;S.jieHold=false;S.jieWarned=false;S.jieWarn=false;spawnJie()}
     S.spawnTrap-=v*dt;if(S.spawnTrap<=0){if(has('trap')&&!surgeSoon())spawnTrap();S.spawnTrap=H*rand(1.8,2.6)}
     S.regroup=Math.max(0,(S.regroup||0)-dt);
-    S.spawnR-=dt;if(S.spawnR<=0&&!(S.regroup>0)){spawnZombies();S.spawnR=(S.bossAlive?1.4:1)*rand(.85,1.15)*zIv()}
+    S.spawnR-=dt;if(S.spawnR<=0&&!(S.regroup>0)){spawnZombies();S.spawnR=(S.bossAlive?1.4:S.bossWait?2.6:1)*rand(.85,1.15)*zIv()}
     if(vilOn()&&!S.path){const cap=Math.max(S.vilWC||0,2,Math.floor(1.5+.6*rCode(realmOf(S.count))));S.vilWC=cap;const over=waveK()-cap;if(over>0){S.wOff=(S.wOff||0)+CYC*over;if(S.bossK!=null)S.bossK-=over}}   /* 13:57 新手村拉长到 20～30 分钟：村里的波数跟着境界走（筑基约第 13 波），不让时间拖长了妖跟着变强、出村一下子跳到二十几波 */
     const sg=inSurge();
     if(sg&&!S.surgeOn){S.surgeOn=true;S.Dref=Math.max(S.Dref,refDps());if(!(S.rwF<1)){(S.cks=S.cks||[]).push({w:waveK()+1,f:S.Dref*(S.M||1),t:S.t});if(S.cks.length>60)S.cks.shift()}S.maxWave=Math.max(S.maxWave,waveK()+1);(S.wl=S.wl||[]).push({w:waveK()+1,t:Math.round(S.t),L:+layersOf(S.count).toFixed(3),c:Math.round(S.coins),D:+S.Dref.toPrecision(5)});if(S.wl.length>80)S.wl.shift();   /* 每波开打时记一笔，重修估算用 */{const tr=traitOf(waveK());toast('第 '+(waveK()+1)+' 波妖潮'+(tr?' · '+TRAITS[tr].n:''),tr?TRAITS[tr].d+'（克制：'+TRAITS[tr].c.map(x=>PNAME[x]).join('、')+'）':'撑住 20 秒，多去右道清怪')}sfx('surge')}
     for(const k of ['surge','bomb','bolt','shield','freeze'])if(has(k)&&!S.unl[k]){S.unl[k]=1;if(k!=='surge'&&!vilOn())toast('解锁新技能：'+TIPS[k].t,'在右下角，点一下就能用')}
     if(!sg&&S.surgeOn){S.surgeOn=false;vilEv('surge');queuePick('撑过第 '+(waveK()+1)+' 波');const add=S.bombs<bombCap();if(add)S.bombs++;
-      if(!S.tut&&S.bossK<waveK()-1&&!S.bossAlive){S.bossK=waveK()-1;S.bossNext=S.t+1.2;toast('妖潮退去 · 大妖来了',add?'雷劫符 +1 · 小妖暂停，大妖单独上场':'小妖暂停，大妖单独上场')}else toast('妖潮退去',add?'雷劫符 +1，抓紧刷兵':'抓紧刷兵');sfx('calm')}
+      if(!S.tut&&S.bossK<waveK()-1&&!S.bossAlive){S.bossK=waveK()-1;S.bossWait=S.t;toast('妖潮退去 · 喘口气',(add?'雷劫符 +1 · ':'')+'先清掉剩下的小妖，大妖随后单独上场')}else toast('妖潮退去',add?'雷劫符 +1，抓紧刷兵':'抓紧刷兵');sfx('calm')}
+    if(S.bossWait){const el=S.t-S.bossWait,left=S.objs.filter(o=>o.k==='z'&&!o.dead&&!o.boss&&o.y>-20).length;if((el>=BOSS_CALM&&left<=3)||(el>=20&&left<=6)||el>=BOSS_CALM_MAX){S.bossWait=0;S.bossNext=S.t+.6}}   /* 16:12 John：妖潮过后要有缓和期——零星几只小妖，清得差不多了再来大妖 */
+    if(!sg&&S.t>=PRE&&(S.bossWait||S.bossNext||S.bossAlive)&&MOW-wph()<CALM_AFTER)S.wOff=(S.wOff||0)+dt;   /* 大妖没打完，下一波妖潮不开始 */
     if(S.bossNext&&S.t>=S.bossNext){S.bossNext=0;spawnBoss()}   /* 11-03 John：妖潮和大妖不一起上——妖潮退了，大妖单独登场（小妖暂停） */
 
   }
@@ -2033,7 +2037,7 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}sprFxTick(dt);S.fxBom
       if(o.y+o.r>=line&&(o.boss||o.type==='elite')&&S.fb.bell>=5&&!(S.bellGuard>0)&&S.shieldT<=0){S.bellGuard=25;o.y=line*.4;S.fxBell=.8;ftext(o.x,line-40,'镇魂钟：镇住了！',C.gold,20);sfx('bell');continue}
       if(o.y+o.r>=line&&S.path==='ti'&&tiLv('gang')&&!o.ganged&&S.shieldT<=0){o.ganged=true;const L=tiLv('gang'),dd=Math.min(o.hp,dps()/pathAtk()*(.3+.2*L)*psG()*dmgMul(o,'p')*(o.boss?.3:1));dNote('gang',dd);o.hp-=dd;o.hit=.12;burst(o.x,o.y,'#ffd677',12,200,3);
         if(o.hp<=0){o.dead=true;killZ(o);continue}o.y-=o.boss?H*.05:28+4*L;(S.fxGang=S.fxGang||[]).push({x:o.x,y:line,t:.35});fxAdd(6,o.x,line-10,110,.4,{grow:.3});continue}
-      if(o.y+o.r>=line){o.dead=true;burst(o.x,o.y,o.boss?C.boss:C.zomb,o.boss?40:10,200);leakHit(o);if(o.boss)S.bossAlive=false}
+      if(o.y+o.r>=line){o.dead=true;burst(o.x,o.y,o.boss?C.boss:C.zomb,o.boss?40:10,200);leakHit(o);if(o.boss){S.bossAlive=false;calmAfterBoss()}}
     } else if(o.y>=line){
       o.dead=true;
       if(o.rid){if(colOf(S.x)===colOf((o.x0+o.x1)/2))applyGate(o);else if(GT[o.g].bad)vilEv('dodge_'+o.g)}   // row gates: only the one in your column
@@ -2965,7 +2969,7 @@ const TIPS={
   art:{t:'三选一强化',d:'斩掉大妖或破境时会暂停，给你 3 个强化选 1 个。选之前会告诉你下一波是什么，标着“克制下一波”的那个最划算。强化上限随境界提高。'},
   surge:{t:'妖潮',d:'每隔一阵会来一波妖潮，二十秒内妖魔又多又强。撑过去，就有一段轻松的时间刷修为。你打得越轻松（妖魔老是死在很远的地方），之后的妖潮就越凶；被压到大阵附近或倒下后，会稍微缓一缓。'},
   bomb:{t:'雷劫符',d:'右下角的雷劫符：落下天雷，威力等于你全力输出 10 秒，从离大阵最近的妖劈起，大妖最多掉 20% 的血。妖越厚劈掉的越少，清不了场——在妖刚压上来时用最值。每撑过一波妖潮多一张，最多 3 张。'},
-  boss:{t:'大妖',d:'妖潮退去后，大妖单独上场（这时不刷小妖）。每个大境界的大妖都不一样，境界越高越凶。血很厚、走得慢，提前去右道打它。让它破阵，扣 20%～40% 气血（境界越高扣得越多）、跌 3 层修为。'},
+  boss:{t:'大妖',d:'妖潮退去后先缓一口气（只零星来几只小妖），清得差不多了大妖再单独上场；大妖没打完，下一波妖潮不会来。每个大境界的大妖都不一样，境界越高越凶。血很厚、走得慢，提前去右道打它。让它破阵，扣 20%～40% 气血（境界越高扣得越多）、跌 3 层修为。'},
   run:{t:'疾风妖',d:'跑得特别快，留意右道上方，看到就去打。'},
   bottle:{t:'瓶颈',d:'修为到了九层就卡住了，再吃丹也不涨。斩掉这一波的大妖（心魔）才能破境，进入下一个大境界。'},
   brk:{t:'破境丹',d:'卡在瓶颈时才会出现。打开锁撞上去，直接破境，不用打心魔。'},
@@ -3138,7 +3142,7 @@ function vilTick(dt){if(!vilOn())return;const v=S.vil,T=VIL[v.i];if(!T)return;
   if(v.pop&&S.t>=(v.popAt||0)&&running&&!paused&&!tip&&!pickOpts&&!intelOn&&!S.deathOpen&&!cut&&!S.pathAnim){vilPop();return}
   v.xl=Math.min(v.xl,S.x);v.xr=Math.max(v.xr,S.x);
   if(T.row&&!v.pop){v.rowT-=dt;if(v.rowT<=0&&!S.vilRow&&!S.objs.some(o=>o.k==='gate'&&!o.dead&&o.g===T.row[0])){S.vilRow=T.row.slice();v.rowT=6}}
-  if(T.setup==='guard'&&!v.pop&&!v.setDone&&!S.bossAlive&&!S.bossNext&&!inSurge()){v.setDone=true;vilGuard()}
+  if(T.setup==='guard'&&!v.pop&&!v.setDone&&!S.bossAlive&&!S.bossNext&&!S.bossWait&&!inSurge()){v.setDone=true;vilGuard()}
   if(T.setup==='guard'&&v.setDone&&!S.objs.some(o=>o.k==='z'&&!o.dead&&o.type==='guard')&&vilGot('k_guard')<1){v.setDone=false}   // 护法漏过去了：再来一组
   if(T.setup==='pet'&&!v.pop){const s=slot();if(s){const pc=petCur();if(pc.l>=petCap()){toast('灵宠这个境界已经养满','这一步自动完成');vilNext(false);return}const c=petLvCost(pc.l);if(s.coins<c){bankCoins();if(s.coins<c){s.coins=c;commit(Save.cur)}if(!v.setDone)toast('村长送你 '+fmt(c)+' 灵石','点上面的「灵宠」→ 培养');renderPets();if(!$('ovPause').hidden)renderPause()}v.setDone=true}}   /* 15:28 John：灵石不够培养卡在这一步 → 整个任务期间灵石不够就补到够一级，养满了直接算完成 */
   if(vilDoneNow())vilNext(false)}
@@ -4053,7 +4057,7 @@ function renderPause(){   // 暂停页：当前阶段 + 每项数值 / 本境界
    h+='<div class="r"><b>本波妖物</b><span class="v">（当前'+(S.surgeOn?'妖潮':'割草')+'时 · 普攻打死要多久）</span></div>';
    for(const t of types){const d=defOf({type:t,band:b});h+='<div class="r"><b>'+ri(b?'mon_'+t+'_'+b:'mon_'+t,'big')+monName(t,b)+'</b><span class="v">普攻 <b>'+fS(hu*ZHP[t]/(atk*Math.max(.05,1-d.p)))+'</b> · 物防 '+pc(d.p)+' · 法防 '+pc(d.m)+'</span>'+(t==='guard'?'<span class="n">护法：身边的妖物防、法防再 +'+pc(.4+.04*b)+'；掌心雷劈它伤害 ×2 并破罩 4 秒</span>':t==='brute'?'<span class="n">剑意越高物防越低；法术无视它的护甲</span>':t==='hex'?'<span class="n">法防高：用普攻、剑气打它更划算</span>':'')+'</div>'}
    {const sk=has('bskill')||waveK()>=6?'；会'+[has('bskill')?'读条（可打断）':'',waveK()>=8?'天威（打不断，开金钟罩）':'','召唤护法'].filter(Boolean).join('、'):'';
-    h+='<div class="r"><b>'+ri('boss_'+clamp(S.peakR|0,0,17),'big')+'本波大妖</b><span class="v">普攻约 <b>'+fS(bh/.85/atk)+'</b> 打死 · 物防 15% · 法防 15%</span><span class="n">妖潮退去后单独上场'+sk+'</span></div>'}}
+    h+='<div class="r"><b>'+ri('boss_'+clamp(S.peakR|0,0,17),'big')+'本波大妖</b><span class="v">普攻约 <b>'+fS(bh/.85/atk)+'</b> 打死 · 物防 15% · 法防 15%</span><span class="n">妖潮退去、缓一会儿后单独上场'+sk+'</span></div>'}}
   {const c=petCur(),RD=PET_RD[c.role],sl=slot(),cost=petLvCost(c.l),nx=petNextForm(c.line,c.l);h+='<h4>灵石强化（随时可用）</h4><div class="r"><b>'+ri('pet_'+c.i,'big')+petName(c.i+1)+'</b><span class="v">'+PET_LINES[c.line].n+' · Lv'+c.l+(nx?'（Lv'+nx.at+' 进化为「'+petName(nx.i+1)+'」）':'')+' · '+RD.n+' · 伤害约为你普攻的 '+Math.round(petRate()*100)+'% · 总灵石 '+fmt(sl?sl.coins:0)+'</span><span class="n">'+(c.l>=petCap()?'<button class="sb" disabled>本境界已养满</button>':'<button class="sb" data-pet="up"'+(sl&&sl.coins>=cost?'':' disabled')+'>培养 💰'+fmt(cost)+'</button>')+' <button class="sb" data-pet="list">换路线 / 详情</button> <button class="sb" data-pet="shop">商店 · 立刻生效</button></span></div>'}
   {const d=S.dsrc||{},tot=Object.values(d).reduce((a,b)=>a+b,0);if(tot>0){const fa=S.path==='fa',pc=v=>Math.round((v||0)/tot*100)+'%',sum=a=>a.reduce((x,k)=>x+(d[k]||0),0);
     const nm={atk:'剑气（普攻）',pet:'灵宠',fire:fa?spName('fire'):'火符',sword:fa?spName('sword'):'万剑诀',bolt:fa?spName('bolt'):'掌心雷',bomb:'雷劫符',gourd:'紫金葫芦',jj:'剑气纵横',gang:'剑罡护体',crow:'火鸦',orb:'护法飞剑',cloud:'雷云',sys:'破境天雷 / 整顿'};
@@ -4127,7 +4131,7 @@ function rewindWave(c,mode){const from=waveK()+1;
   if(mode==='pause'){S.deaths=(S.deaths||0)+1;const sl=slot();if(sl){sl.deaths=(sl.deaths||0)+1;commit(Save.cur)}}   // 主动重修也算一次重修（排行榜比的是重修次数）
   S.deathOpen=false;S.rwF=1;S.M=1;
   Object.assign(S,{objs:[],bullets:[],parts:[],texts:[],cfx:[],guards:[],stage:null,comboGate:null,tipObj:null,surgeOn:false,bossAlive:false,shieldT:0,freezeT:0,hexT:0,zouT:0,regroup:0,leakAcc:0,leakRate:0,lastHp:null,hpLossRate:0,dangerShow:0,pet:null,petOrbs:[],fxPet:[]});
-  S.hpF=1;S.hpTold=false;S.wOff=S.t-PRE-((c-1)*CYC+.01);S.bossK=c-2;S.bossNext=0;if(S.temp)S.temp.wave=c-1;S.rwFrom=Math.max(S.rwFrom||0,from);S.dirPh=undefined;S.x=lmid;S.immR=null;
+  S.hpF=1;S.hpTold=false;S.wOff=S.t-PRE-((c-1)*CYC+.01);S.bossK=c-2;S.bossNext=0;S.bossWait=0;if(S.temp)S.temp.wave=c-1;S.rwFrom=Math.max(S.rwFrom||0,from);S.dirPh=undefined;S.x=lmid;S.immR=null;
   paused=false;show(null);skillUI();if(coachOn()&&!cSeen('rw'))setTimeout(()=>{if(S&&running&&!coach)startCoach('rw')},1500);
   toast(c<from?'回到第 '+c+' 波重修':'重打第 '+c+' 波','气血回满 · 妖怪按第 '+c+' 波的强度'+(c<from?' · 趁现在割草、吃门、攒灵石':''));saveRun()}
 function endRun(dead){
