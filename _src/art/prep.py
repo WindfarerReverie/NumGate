@@ -99,6 +99,10 @@ MAP['XPLAT'] = ('xplat', 160)
 MAP['DIV'] = ('div', 900)
 MAP['GDIV'] = ('g_div', 900)
 MAP['LEAF'] = ('leaf', 64)
+# 11-03 15:12 新手任务卡上的动作小图标（代替表情符号）
+for _n in ['tap','drag','lr','up','num','right','nocross','hourglass','target','refresh','break','scroll']:
+    MAP['VI_' + _n] = ('vi_' + _n, 128)
+    MAP['GVI_' + _n] = ('g_vi_' + _n, 128)
 # 11-03 14:59 护山大阵 / 梦境结界（完好 + 破损两张，按气血交叉淡入）
 for pre, gp in [('', ''), ('G', 'g_')]:
     MAP[pre + 'W1'] = (gp + 'ward', 900)
