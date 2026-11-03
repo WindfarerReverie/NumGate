@@ -288,7 +288,7 @@ drawBoss=function(o){
   ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(x-w/2,y-r-16,w,7);ctx.fillStyle=C.minus;ctx.fillRect(x-w/2,y-r-16,w*p,7);
   outlined(L.name+' · '+REALMS[o.realm||0]+(S.fb.mirror?' · 许愿镜 +'+30*S.fb.mirror+'%':''),x,y-r-40,13,o.realm>S.rR?C.minus:'#ffd677',CN);{const sec=Math.max(0,o.hp)/Math.max(1e-9,dps()*dmgMul(o));outlined('需 '+(sec<10?sec.toFixed(1):Math.round(sec))+' 秒',x,y-r-26,13,'#fff',CN)}
   bossEvoFront(o,'#ffe9a8');
-  {const E=bossEta(o);outlined((E!=null?E+' 秒后冲破结界 · ':'冲破结界')+'扣 '+Math.round(bossHpF()*100)+'% 元气',x,y+r+18,E!=null&&E<=6?15:12,C.minus,CN)}
+  {const E=bossEta(o);outlined((E!=null?E+' 秒后冲破结界 · ':'冲破结界')+'扣 '+Math.round(bossHpF()*newbBoss()*100)+'% 元气',x,y+r+18,E!=null&&E<=6?15:12,C.minus,CN)}
 };
 
 /* ---------- gate icons ---------- */
