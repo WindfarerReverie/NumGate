@@ -1257,7 +1257,7 @@ const dBase=w=>calAt(WCAL.D,w)+(vilOn()?0:1-vilFade())*calAt(WOFF,w);
 /* 11-03 20:03 John：台阶式难度。新手期（约前 30 波）以爽为主；之后每到台阶口难度陡增一截、逼玩家回去养成，冲过去后这一档缓慢成长让人爽；越往后一档越长。
    做法：在原曲线 base(w) 上叠 stairAt：台阶上只跟原曲线涨一半（STAIR_LAM），台阶口回到原曲线并再高 STAIR_H；新手期整体降一点。 */
 const STAIR_B=[30,40,50,60,80,100,120,150,180,220,260,310,370,440,520,610,710];   /* 台阶口（按显示的波数） */
-const STAIR_NEW=-.25,STAIR_S0=.55,STAIR_H=.2,STAIR_LAM=.5;   /* 20:40 第一轮验证：体修不养成也一路到第 84 波 → 台阶口抬高 */
+const STAIR_NEW=-.25,STAIR_S0=1.5,STAIR_H=1.5,STAIR_LAM=.3;   /* 11-04 02:40 John：第 53 波体修不养成、只选长期还是没难度 → 普通机器人比真人弱约一个大境界，改用加强火力的机器人复现 John 的进度再定：每道墙 +1.5（原第 30 波 +0.55、之后每道 +0.2），台阶上的平缓只压三成（原五成）。实测接近 John 水平：不养成第 40 多波卡住、倒 2～4 次；养成后能继续往前。20:40 第一轮验证：体修不养成也一路到第 84 波 → 台阶口抬高 */
 const stairBase=w=>dBase(w)+gwAt(w);
 function stairAt(w){const L=w+1;if(L<6)return 0;if(L<STAIR_B[0])return STAIR_NEW*Math.min(1,(L-6)/4);
   let k=0;while(k+1<STAIR_B.length&&STAIR_B[k+1]<=L)k++;if(k===STAIR_B.length-1&&L>=STAIR_B[k]+100)k+=Math.floor((L-STAIR_B[k])/100);
