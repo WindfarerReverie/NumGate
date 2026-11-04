@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0f1420">
 <style>[hidden]{display:none!important}html,body{margin:0;height:100%;background:#0f1420}</style>
 <script>window.NG_CFG={"url": "https://rsnucakekepfavknkqpj.supabase.co", "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzbnVjYWtla2VwZmF2a25rcXBqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1MTg4NzcsImV4cCI6MjEwOTA5NDg3N30.nfZVgwiEAnE0cua9jDFD2ns7Cv3X7g25RK3_M9xTKVY", "ver": "xian", "sbjs": "supabase.js"};if(/(^|\.)youfeng\.app$|\.pages\.dev$/.test(location.hostname))window.NG_CFG.url=location.origin+'/sb';</script>
-<script>(function(){var B="20261104022809";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
+<script>(function(){var B="20261104191608";try{fetch("version.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json()}).then(function(j){if(j&&j.v&&j.v!==B){var k="ngv_"+j.v;if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1);location.replace(location.pathname+"?v="+j.v+location.hash)}}).catch(function(){})}catch(e){}})();</script>
 <title>御剑斩妖录</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -798,10 +798,12 @@ async function netPush(){
 }
 /* 12:03 John：大乘一层 149 波没上榜 → 两个世界合并后每个存档要新建一条榜单记录，数据库防作弊规则不许“新建时境界 > 60 或分数 > 30000”，被拒了；
    旧记录又因为“已经有新记录”被藏起来。改法（不动数据库规则）：先按上限建，再一步步补到真实值（每步都在规则允许范围内：境界每次 ≤ +10、分数每次 ≤ +300） */
-async function scoreStep(x){const T={realm:x.best_realm,score:x.score};const y=Object.assign({},x,{best_realm:Math.min(60,T.realm),score:Math.min(30000,T.score)});
+async function scoreStep(x){const T={realm:x.best_realm,score:x.score};   /* 11-04 自查：原来不管有没有旧记录，都先把分数/境界压回上限（3 万 / 60）再一步步补，最多补 80 步 → 高分存档补不回真实值、补的过程中榜单显示偏低。改成：从数据库里现有的值往上补，每步都在防作弊规则允许范围内，被拒就等一下再试 */
+  let cur=null;try{const q=await Net.sb.from('scores').select('score,best_realm').eq('id',x.id).eq('ver',x.ver).eq('slot',x.slot).limit(1);cur=q&&q.data&&q.data[0]}catch(e){}
+  const y=Object.assign({},x,{best_realm:Math.min(T.realm,cur?Math.max(cur.best_realm||0,0):60),score:Math.min(T.score,cur?Math.max(cur.score||0,0):30000)});
   let r=await Net.sb.from('scores').upsert([y]);if(r&&r.error&&!/NG_CHEAT/.test(r.error.message||''))return;
-  for(let k=0;k<80&&(y.best_realm<T.realm||y.score<T.score);k++){y.best_realm=Math.min(T.realm,y.best_realm+10);y.score=Math.min(T.score,y.score+300);
-    r=await Net.sb.from('scores').upsert([y]);if(r&&r.error){await new Promise(z=>setTimeout(z,1100));y.best_realm=Math.max(60,y.best_realm-10);y.score=Math.max(0,y.score-300)}}}
+  for(let k=0,fail=0;k<400&&fail<20&&(y.best_realm<T.realm||y.score<T.score);k++){const pr=y.best_realm,ps=y.score;y.best_realm=Math.min(T.realm,pr+10);y.score=Math.min(T.score,ps+300);
+    r=await Net.sb.from('scores').upsert([y]);if(r&&r.error){y.best_realm=pr;y.score=ps;fail++;await new Promise(z=>setTimeout(z,1100))}}}
 const RK_VERS=['xian','girl'];for(const w of 'xg')for(const g of '12'){RK_VERS.push(w+g);for(const p of 'tfn')RK_VERS.push(w+g+p)}
 async function fetchRank(n=50){
   /* 11-02 20:09 John：怪物强度跟波数走，能重修 → 排名先比波数（越远越前），波数一样境界越低越前，再比倒下次数（越少越前），最后比得分 */
@@ -1251,7 +1253,7 @@ function traitOf(k){if(vilOn())return null;   /* 新手村里没有特殊妖潮�
 }
 const curTrait=()=>inSurge()?traitOf(waveK()):null;
 const nextTrait=()=>traitOf(inSurge()?waveK()+1:waveK());
-const PNAME={inf_sp:'法术精进',inf_mp:'灵力精进',coin:'灵石',path_ti:'体修',path_fa:'法修',inf_dmg:'剑意精进',inf_rate:'剑速精进',inf_hp:'淬体精进',rate:'剑速',dmg:'剑意',spread:'剑雨',pierce:'破甲',gourd:'紫金葫芦',mirror:'照妖镜',bell:'镇魂钟',armor:'护体',cd:'技能精通'};
+const PNAME={fa_auto:'灵符感应',inf_sp:'法术精进',inf_mp:'灵力精进',coin:'灵石',path_ti:'体修',path_fa:'法修',inf_dmg:'剑意精进',inf_rate:'剑速精进',inf_hp:'淬体精进',rate:'剑速',dmg:'剑意',spread:'剑雨',pierce:'破甲',gourd:'紫金葫芦',mirror:'照妖镜',bell:'镇魂钟',armor:'护体',cd:'技能精通'};
 const ZHP={n:1,run:.6,brute:7,elite:6,hex:2,guard:2.5};
 function zProbs(){const sg=inSurge(),P=[];   // [type, chance]; the rest are plain monsters
   const tr=sg?traitOf(waveK()):null,f=x=>tr==='elite'&&x==='elite'?2:tr==='hex'&&x==='hex'?3:tr==='guard'&&x==='guard'?3:tr==='fast'&&x==='run'?2.5:tr==='armor'&&x==='brute'?2.5:1;
@@ -1283,7 +1285,7 @@ const WEASE=.6;   // 校准用的机器人操作比一般人好：第 10 波起�
    现在＝平均玩家在第 w 波的火力 D(w) × 额外强度 e^GW(w) ×（你的火力/平均火力）^0.3。GW 前期比原来低一点（John：前期稍难），中期平一段，之后每波 +1.2%，越往后越有压力。 */
 const GW={w:[0,3,10,13,17,22,30,40,50,100,150,200,550],g:[.04,-.05,-.05,.1,.7,1.2,2.0,2.3,2.5,3.3,4.3,5.3,12.3]};   /* 11-03 01:20：4 小时模拟里法修第 160 波后压力又掉到 0.2～0.3 → 第 100 波后加陡（每波约 +2%） */
 function gwAt(w){const W=GW.w,G=GW.g,n=W.length-1;if(w>=W[n])return G[n]+.02*(w-W[n]);let i=1;while(W[i]<w)i++;const u=(w-W[i-1])/(W[i]-W[i-1]);return G[i-1]+(G[i]-G[i-1])*u}
-function eScale(w){if(w==null)w=wPos();const vk=vilOn()?.6+.35*S.vil.i/(VIL.length-1):1-.05*vilFade();if(vk<1)w=Math.min(w,1.5+.7*S.vil.i);const D=Math.exp(dBase(w));return vk*D*Math.exp(gwAt(w)+(vilOn()?0:(1-vilFade())*stairAt(w)))*Math.pow(Math.max(1e-9,S.Dref)/D,WF)}   /* 新手村：本事还没学全，妖从六成血开始、随任务慢慢加到九成五（大妖五成→九成），强度也跟着任务进度走，卡在某一步不会越来越难；出村不会突然变难 */   // 第 w 波的怪物强度：平均水平的玩家打第 w 波时的强度 ×（你的火力 / 平均火力）^0.3
+function eScale(w){if(w==null)w=wPos();const vk=vilOn()?.6+.35*S.vil.i/(VIL.length-1):1-.05*vilFade();if(vk<1&&S.vil){const wc=1.5+.7*S.vil.i;if(vilOn())w=Math.min(w,wc);else if(w>wc)w-=(w-wc)*vilFade()}   /* 11-04 自查：出村后 5 分钟里原来一直封顶、到点一下子撤掉 → 改成随保护慢慢放开 */const D=Math.exp(dBase(w));return vk*D*Math.exp(gwAt(w)+(vilOn()?0:(1-vilFade())*stairAt(w)))*Math.pow(Math.max(1e-9,S.Dref)/D,WF)}   /* 新手村：本事还没学全，妖从六成血开始、随任务慢慢加到九成五（大妖五成→九成），强度也跟着任务进度走，卡在某一步不会越来越难；出村不会突然变难 */   // 第 w 波的怪物强度：平均水平的玩家打第 w 波时的强度 ×（你的火力 / 平均火力）^0.3
 const kMix=()=>WF*kEff()+(1-WF)*calAt(WCAL.K,wPos());   // 后期加压曲线也主要看波数
 function hpAtF(f,sg){if(!S||S.t<PRE||vilNS()||S.tut)return f();const w0=S.wOff||0,s0=S.surgeOn,cur=wph(),tp=sg?MOW+10:Math.min(cur,MOW-5);S.wOff=w0+(cur-tp);S.surgeOn=!!sg;let r;try{r=f()}finally{S.wOff=w0;S.surgeOn=s0}return r}
 const hpAt=sg=>hpAtF(hpUnit,sg);   /* 16:27 John：面板很猛、实际打不动——面板把割草和妖潮分开写 */
@@ -1544,7 +1546,7 @@ function zSeparate(dt){
 function spawnZombies(){
   const x0=mid+8,x1=roadX+roadW-8;
   if(S.bossAlive||S.bossNext||(vilOn()&&!S.vil.u.n))return;
-  if(S.stage&&!S.stage.lite)return;   /* 新妖展示期间不刷别的妖 */   /* 新手村还没教打妖时不刷妖；大妖在场时不刷小妖（大妖自己召唤的除外） */
+  if(S.stage&&S.stage.t&&!S.stage.lite)return;   /* 新妖展示期间不刷别的妖（技能教学的 stage 没有 t，不拦） */   /* 新手村还没教打妖时不刷妖；大妖在场时不刷小妖（大妖自己召唤的除外） */
   const lull=!!S.bossWait,n=lull?1:Math.round(zBase()+ri(0,1)-.2);let gAlive=0;for(const o of S.objs)if(o.k==='z'&&!o.dead&&o.type==='guard')gAlive++;
   const cx=rand(x0+22,x1-22),placed=[];   /* 11-04 02:00 John：怪不要叠在一起出来 → 每只单独找空位、前后错开 */
   const hpB=hpUnit(),atkB=1;
@@ -1745,7 +1747,7 @@ function dangerRaw(){
     const sp=PACE*(z.boss?v*.3:(v*.5+(z.sp||0))*(z.fast||1)*(S.surgeOn?1.1:1)*monSpd(z));zs.push([z,Math.max(.3,(line-z.y-z.r)/Math.max(1,sp))+(S.freezeT||0)])}
   zs.sort((a,b)=>a[1]-b[1]);
   let need=0,pred=0;
-  for(const [z,t] of zs){const h=Math.max(0,z.hp)/Math.max(1e-6,dmgMul(z));need+=h;
+  for(const [z,t] of zs){const h=Math.max(0,z.hp)/Math.max(1e-6,dmgMul(z,S.path==='fa'?'m':'p'));need+=h;
     if(need>D*t){need-=h;
       if(S.shieldT>t)continue;
       pred+=leakHp(z)*(z.boss&&skReady('shield')?.35:1)}}
@@ -1808,7 +1810,7 @@ function defOf(o){let p=0,m=0;const t=tierOf(o);
 const dmgKind=src=>src==='gang'||src==='atk'||src==='jj'||src==='rage'||(src==='pet'&&petCur().role==='claw')?'p':'m';
 function dmgMul(o,kind){
   let m=1;if(S.iceAmp>0&&S.slowT>0)m*=S.iceAmp;
-  if(o.realm!=null){const gap=(o.boss?o.realm:Math.min(o.realm,S.rR+1))-S.rR;m=gap>0?Math.pow(.5,gap):gap<0?Math.min(3,1-.5*gap):1}   // realm suppression
+  if(o.realm!=null){const gap=(o.boss?o.realm:Math.min(o.realm,S.rR+1))-S.rR;m*=gap>0?Math.pow(.5,gap):gap<0?Math.min(3,1-.5*gap):1}   // realm suppression（11-04 自查：原来是 m=，把寒冰增伤覆盖掉了）
   if((o.boss||o.type==='elite')&&S.fb.mirror)m*=1+.3*S.fb.mirror;
   if((o.boss||o.type==='elite')&&S.path==='ti')m*=1+.2*tiLv('pojun');
   if(o.type==='brute'&&tempOn('armor'))m*=2.5;
@@ -1965,7 +1967,7 @@ function rollPick(){   // always: one 短期 (this next wave), one 长期 (grows
   return out;
 }
 function pickScan(){
-  if(!S||pickOpts||!(S.pickQ>0)||coach||pop||S.brkPend)return;
+  if(!S||pickOpts||!(S.pickQ>0)||coach||pop||S.brkPend||S.deathOpen)return;   /* 11-04 自查：倒下页打开时不弹三选一（会盖住倒下页的按钮），重修后再弹 */
   if(S.maxR>=3&&!S.path&&vilOn()&&vilCur().id!=='path')return;   /* 新手村：任务做完才转职（跳过也行） */
   S.pickQ--;const pathNow=S.maxR>=3&&!S.path;const o=pathNow?['path_ti','path_fa']:rollPick();if(!o){S.coins+=1;return}
   pickOpts=o;paused=true;
@@ -2125,10 +2127,10 @@ if(S.fxBolt){S.fxBolt.t-=dt;if(S.fxBolt.t<=0)S.fxBolt=null}sprFxTick(dt);S.fxBom
           const dx=b.x-o.x,dy=b.y-o.y;
           if(dx*dx+dy*dy<(o.r+3)*(o.r+3)){
             if(b.shell){const R=46+4*S.mech;
-              for(const z of S.objs){if(z.k!=='z'||z.dead)continue;const ex=z.x-b.x,ey=z.y-b.y;if(ex*ex+ey*ey<(R+z.r)*(R+z.r)){const dd=b.dmg*dmgMul(z);dNote('pet',Math.min(z.hp,dd));z.hp-=dd;z.hit=.08;if(z.hp<=0){z.dead=true;killZ(z)}}}
+              for(const z of S.objs){if(z.k!=='z'||z.dead)continue;const ex=z.x-b.x,ey=z.y-b.y;if(ex*ex+ey*ey<(R+z.r)*(R+z.r)){const dd=b.dmg*dmgMul(z,dmgKind('pet'));dNote('pet',Math.min(z.hp,dd));z.hp-=dd;z.hit=.08;if(z.hp<=0){z.dead=true;killZ(z)}}}
               burst(b.x,b.y,'#ffb347',26,260,4);burst(b.x,b.y,'#fff3c4',10,140,3);S.shake=Math.min(10,S.shake+2);dead=true;break}
             {const dd=b.dmg*dmgMul(o,'p');dNote(b.big?'jj':'atk',Math.min(o.hp,dd));o.hp-=dd;
-             if(tiEvo('splash'))for(const q of S.objs){if(q===o||q.k!=='z'||q.dead)continue;const ex=q.x-o.x,ey=q.y-o.y;if(ex*ex+ey*ey<900){const d2=b.dmg*.3*dmgMul(q);dNote('atk',Math.min(q.hp,d2));q.hp-=d2;q.hit=.05;if(q.hp<=0){q.dead=true;killZ(q)}}}}o.hit=.06;
+             if(tiEvo('splash'))for(const q of S.objs){if(q===o||q.k!=='z'||q.dead)continue;const ex=q.x-o.x,ey=q.y-o.y;if(ex*ex+ey*ey<900){const d2=b.dmg*.3*dmgMul(q,'p');dNote('atk',Math.min(q.hp,d2));q.hp-=d2;q.hit=.05;if(q.hp<=0){q.dead=true;killZ(q)}}}}o.hit=.06;
             if(o.hp<=0){o.dead=true;if(!o.boss)kdNote(o.y/cLine());killZ(o)}
             if(b.p>0){b.p--;b.dmg*=.8}else dead=true;
             break;
@@ -2471,7 +2473,7 @@ function drawBoss(o){
   bossEvoFront(o,glow);
   const w=r*3.2,p=clamp(o.hp/o.hp0,0,1);
   ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(x-w/2,y-r-16,w,7);ctx.fillStyle=C.minus;ctx.fillRect(x-w/2,y-r-16,w*p,7);
-  outlined(L.name+' · '+REALMS[o.realm||0]+(S.fb.mirror?' · 照妖镜 +'+30*S.fb.mirror+'%':''),x,y-r-40,13,o.realm>S.rR?C.minus:'#ffd677',CN);{const sec=Math.max(0,o.hp)/Math.max(1e-9,dps()*dmgMul(o));outlined('需 '+(sec<10?sec.toFixed(1):Math.round(sec))+' 秒',x,y-r-26,13,'#fff',CN)}
+  outlined(L.name+' · '+REALMS[o.realm||0]+(S.fb.mirror?' · 照妖镜 +'+30*S.fb.mirror+'%':''),x,y-r-40,13,o.realm>S.rR?C.minus:'#ffd677',CN);{const sec=Math.max(0,o.hp)/Math.max(1e-9,dps()*dmgMul(o,S.path==='fa'?'m':'p'));outlined('需 '+(sec<10?sec.toFixed(1):Math.round(sec))+' 秒',x,y-r-26,13,'#fff',CN)}
   {const E=bossEta(o);outlined((E!=null?E+' 秒后破阵 · ':'破阵')+'扣 '+Math.round(bossHpF()*newbBoss()*100)+'% 气血',x,y+r+18,E!=null&&E<=6?15:12,C.minus,CN)}
 }
 
@@ -2532,7 +2534,7 @@ const BT=[['120,230,255',3],['255,225,90',4],['255,150,50',5],['225,110,255',6]]
 function pjImg(){const G=ART_PRE==='g_',p=S&&S.path;return artImg(G?(p==='ti'?'pj_ti':'pj_fa'):(p==='fa'?'pj_fa':'pj_ti'))}
 function drawBullets(){
   {const im=ART_ON&&pjImg();if(im){const T=ltTier(),h=17+3.6*T,LT=bgLight();   /* 11-03 23:30：剑气按长期强化分 5 档：白 → 蓝 → 紫 → 金 → 彩，越来越大，二档起带残影 */
-    let i=0;for(const b of S.bullets){if(b.shell||b.big)continue;const c=T?ltTint(im,T===4?'h'+(i++%6):LT_COL[T]):null,src=c||im,k=c?c.k:1,w=h*im.naturalWidth/im.naturalHeight,an=Math.atan2(b.vx,-b.vy);
+    let i=0;const TC=T?(T===4?[0,1,2,3,4,5].map(q=>ltTint(im,'h'+q)):[ltTint(im,LT_COL[T])]):null;for(const b of S.bullets){if(b.shell||b.big)continue;const c=TC?TC[T===4?(i++%6):0]:null,src=c||im,k=c?c.k:1,w=h*im.naturalWidth/im.naturalHeight,an=Math.atan2(b.vx,-b.vy);
       ctx.save();ctx.translate(b.x,b.y);if(an)ctx.rotate(an);
       if(T>=2&&!LT){const ga=ctx.globalAlpha;ctx.globalAlpha=ga*.32;ctx.drawImage(src,-w*k/2,-h*.3+h*.55-(k-1)*h/2,w*k,h*k*1.15);ctx.globalAlpha=ga}
       ctx.drawImage(src,-w*k/2,-h*.3-(k-1)*h/2,w*k,h*k);ctx.restore()}
@@ -3073,7 +3075,7 @@ const INTEL={
   hex:{e:'🔮',a:'头上会读条，读满后你的剑速 −25%，持续 4 秒。',c:{ti:'读条时横移过去先打它。',fa:'火符直接点掉它，别让读条读满。',x:'读条时先打掉它。'}},
   guard:{e:'🛡',a:'身边一圈里的妖物防、法防再 +40%（越进阶越高），打它们非常费劲。同时最多 1 只（妖潮 2 只）。',c:{ti:'掌心雷劈它：伤害 ×2、破罩 4 秒，再清圈里的妖。',fa:'火符或掌心雷点掉它：破罩 4 秒。',x:'先用掌心雷点掉护法妖，再清其他。'}}};
 let intelOn=null;
-function intelThreat(o){const d=Math.max(1e-9,dps()*dmgMul(o)),sec=Math.max(0,o.hp)/d;return {sec,lv:sec<.6?['低','#4a9b5b']:sec<2.5?['中','#c98a2a']:['高','#c9473d']}}
+function intelThreat(o){const d=Math.max(1e-9,dps()*dmgMul(o,S.path==='fa'?'m':'p')),sec=Math.max(0,o.hp)/d;return {sec,lv:sec<.6?['低','#4a9b5b']:sec<2.5?['中','#c98a2a']:['高','#c9473d']}}
 function intelScan(){if(!S||S.tut||vilOn()||intelOn||tip||pickOpts||S.deathOpen||S.pathAnim||(S.stage&&S.stage.ph==='show'))return;const s=slot();if(!s||s.noIntel)return;s.intel=s.intel||{};
   for(const o of S.objs){if(o.k!=='z'||o.dead||o.intelChk)continue;o.intelChk=1;const vb=o.boss?0:bandOf(o),key=o.boss?(o.look?'b'+o.look.bi:null):o.type+(vb?'_'+vb:'');if(!key||s.intel[key])continue;if(!o.boss&&!INTEL[o.type])continue;if(!S.stage&&o.y<squadY){S.stage={t:o.boss?'boss':o.type,ph:'show',o,mins:[],lite:1,t1:S.t};return}if(!S.stage)openIntel(key,o);return}}   /* 进阶妖：先放慢圈亮它，再弹卡，关卡后再圈几秒 */
 function openIntel(key,o){intelOn=key;paused=true;drag=null;const boss=key[0]==='b'&&o.boss,vb=boss?0:bandOf(o),I=boss?null:INTEL[o.type],th=intelThreat(o),sec=th.sec<.1?'不到 0.1':th.sec<10?th.sec.toFixed(1):String(Math.round(th.sec));
@@ -3103,7 +3105,7 @@ const TIPS={
   four:{t:'四条道都是坏门',d:'这一排左右四条道都是坏门，躲不掉，挑最轻的那扇撞。'},
   brute:{t:'石甲妖',d:'皮厚，破阵扣的气血比小妖多。看到它优先打。'},
   fb:{t:'法宝',d:'在三选一里可以选紫金葫芦（定时收妖）、照妖镜（打精英和大妖更痛）、镇魂钟（定时震退妖魔），自动帮你作战，等级上限随境界提高。'},
-  dodge:{t:'坏门错开了：可以全躲',d:'左右两边的坏门没有同时到。先待在晚到的那一侧，等早到的一破阵，立刻横移过去，一扇都不用撞。'},
+  dodge:{t:'坏门错开了：可以全躲',d:'左右两边的坏门没有同时到。先待在晚到的那一侧，等早到的那一排过去，立刻横移过去，一扇都不用撞。'},
   elite:{t:'噬元魔',d:'破阵扣一大截气血，还会吸走你的修为（最多一整层）。头上写着它的境界，境界比你高时，你打它很吃力。'},
   zou:{t:'走火入魔',d:'撞上去，剑速变慢一段时间。打它能缩短时间。'},
   shield:{t:'金钟罩',d:'屏幕下方新技能：六秒内妖魔破阵不会伤你，大妖也不例外。用完要等四十五秒。'},
@@ -3118,14 +3120,14 @@ const TIPS={
   guard:{t:'护法妖',d:'身边一圈里的妖受到的伤害减少 40%。先打护法妖，再清其他。'},
   shop:{t:'灵石：商店与灵宠',d:'打妖、吃门攒的灵石，可以在主页或暂停页（最上面一栏）随时花：培养灵宠，或进商店买永久强化。剑意、剑速、护体、丹药药效、灵石收益买了立刻生效；初始修为、开局剑诀、雷劫符储备从下一局开始。商店最下面还有「装扮」：移动拖尾和足下光环，只好看、不加属性，买一次永久拥有，随时换着用。'},
   intel:{t:'妖物情报',d:'每种新妖怪、每个境界的新大妖第一次出场前，游戏会暂停，介绍它的本事、以你现在的火力几秒能打死它、威胁高低和打法。不想看可以点「以后不再介绍」。'},
-  cast:{t:'大妖技能',d:'第三波起大妖会放技能：召唤小妖、冲锋、咒术（剑速 −25%）、封印（某个技能 6 秒不能用）——读条时打掉它 8% 的血就能打断。第六波起还会召唤护法（给大妖和周围减伤，先用掌心雷点掉）；第八波起会放天威——红色蓄力，打不断，只能开金钟罩硬扛，不然扣一大截气血。'},
+  cast:{t:'大妖技能',d:'第三波起大妖会放技能：召唤小妖、冲锋、咒术（剑速 −25%）、封印（某个技能 6 秒不能用）——读条时打掉它 8% 的血就能打断。第六波起还会召唤护法（给大妖和周围减伤，先用掌心雷点掉）；有的大妖第八波起还会放天威——红色蓄力，打不断，只能开金钟罩硬扛，不然扣一大截气血。'},
   path:{t:'体修 / 法修',d:'踏入筑基时二选一，选了就不能改。体修靠剑气硬推：受伤 −15%、气血上限 ×1.15、剑雨和破甲上限各 +1，但技能冷却 +40%、威力 −30%，每个技能还要耗灵力（慢慢回，符箓门 +30），要挑着放。法修靠法术：七种法术立刻全会，用「灵力」施法（灵力一直在回，法术间隔很短）；剑气前期 ×0.7，越往后越弱，到'+REALMS[10]+'只剩 ×0.1；三选一会出现法术升级和被动法术（火鸦、护法飞剑、雷云，自动清怪）；'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时各进化一种法术。两条路的数值都跟着境界涨。'},
   save:{t:'存档与长线修炼',d:'这是一场长线修炼：前几个大境界十几分钟，越往后越久，修到圣人要几十个小时。随时点暂停 →「存档退出」，下次从原地接着打；平时每 30 秒也会自动存。气血耗尽也不清档：可以回到之前的波次重修，或者选择结束本局结算。'},
   factr:{t:'法修克制',d:'小妖进阶后各有新本事，法修有对应的法术克它：火符烧死的小妖不分裂、炸中护法妖破罩；寒冰诀让疾风妖不能猛冲；掌心雷给石甲妖破甲并打断狂暴、打断咒怨妖读条；万剑诀斩中的噬元魔 3 秒内不能吞噬回血。场上出现被克制的妖时，对应的法术按钮会发金光。体修不用管这些。对症的法术打它伤害还 ×1.5。灵力不够把所有法术都放出去，要看场上是哪种妖、挑对症的那个放。'},
   tier:{t:'小妖进阶',d:'每过 3 个大境界，六族小妖换一批更凶的样子（脚下金菱 = 第几次进阶）。每进一阶都走得快 6%、破阵伤害 +15%，各族还会长出新本事——小妖一族第 3 阶起死后分裂（第 5 阶分裂 2 只）；疾风妖一族每阶再快 8%，第 4 阶起挨打后猛冲；石甲妖一族每阶受伤再少 6%，第 4 阶起半血狂暴；噬元魔一族吸修为更狠，第 3 阶起身边有妖死就吞噬回血；咒怨妖一族读条更快，第 4 阶起咒成时让身边的妖加速；护法妖一族护罩更大更强，第 4 阶起护罩里的妖回血。触发时头上会飘字，第一次遇到新的一阶会先暂停介绍。体修直接打就行；法修看「法修克制」，用对症的法术打。'},
   yq:{t:'波数与妖怪强度',d:'左上角的「第 N 波」：越往后的波次，妖怪越强。要靠三选一、法宝、灵宠、技能时机把自己养强；顶不住就回去重修：回到之前的波次，再一路打上来。格子颜色：绿＝你比这一波的平均水平强，红＝偏弱。'},
   hp:{t:'气血',d:'左上角的红条。任何妖撞破大阵都扣气血：小妖约 2%，石甲妖约 5%，噬元魔约 8%（进阶后更多），大妖 20%～40%，同时少掉一点修为。气血不会自己慢慢回：撑过一波妖潮 +10%、斩大妖后整顿 +15%、破境 +30%、选「淬体精进」+30%。淬体精进、体修「金身」能加气血上限。气血归零会弹出选项：回到之前的波次重修（数值全保留），或结束本局。'},
-  mana:{t:'法修 · 灵力与被动法术',d:'法修屏幕下方的蓝色圆球是灵力：每个法术耗灵力，灵力一直在回（火符一发 30 灵力、威力大、爆炸范围大，要挑妖最密的时候放），破境回满，补技能的门给法修改为灵力 +40。剑气前期 ×0.7，越往后越弱，到'+REALMS[10]+'只剩 ×0.1。三选一会出现法术升级（火符、万剑诀、掌心雷、寒冰诀、灵力）和被动法术（火鸦、护法飞剑、雷云），被动会自己放、后期能清掉大部分小妖；大妖和大波还得你主动放。'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时法术各进化一次（三昧真火、万剑归宗、冰封千里、五雷正法、法相天地）。暂停页「输出构成」能看到普攻、法术、自动各占多少。'},
+  mana:{t:'法修 · 灵力与被动法术',d:'法修屏幕下方的蓝色圆球是灵力：每个法术耗灵力，灵力一直在回（火符一发 30 灵力、威力大、爆炸范围大，要挑妖最密的时候放），破境回满，补技能的门对法修是灵力 +40。剑气前期 ×0.7，越往后越弱，到'+REALMS[10]+'只剩 ×0.1。三选一会出现法术升级（火符、万剑诀、掌心雷、寒冰诀、灵力）和被动法术（火鸦、护法飞剑、雷云），被动会自己放、后期能清掉大部分小妖；大妖和大波还得你主动放。'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时法术各进化一次（三昧真火、万剑归宗、冰封千里、五雷正法、法相天地）。暂停页「输出构成」能看到普攻、法术、自动各占多少。'},
   tibr:{t:'体修 · 被动与进化',d:'三选一会出现体修被动：剑罡护体（冲到大阵的妖先被重创并震退）、战意（气血越低伤害越高）、剑气纵横（定期射出穿透巨剑）；以及体修升级：重剑、连斩、金身（气血上限）、破军（打噬元魔和大妖更痛）。'+[4,5,6,7,8].map(r=>REALMS[r]).join('、')+'时剑气各进化一次（金光剑气、剑罡溅射、不坏金身、万剑齐发、不灭金身：每个大境界一次气血归零保住 30%）。'},
   death:{t:'倒下与重修',d:'气血耗尽不会清档。自己填回到第几波（也有「前 3 / 8 / 15 / 30 波」「第 1 波」快捷键）：数值、境界、灵石全保留，气血回满，妖怪按那一波的强度出现。旁边会算好：那一波的妖约为现在的几成、打回现在要多久、预计多得多少修为、实力涨多少、打回来时难度降多少、多得多少灵石——自己算账。平时也可以在暂停页「回去重修」主动回去。每次重修（包括主动的）都记在存档里，排行榜会比重修次数。也可以直接结束本局结算。'},
   rank:{t:'排行榜',d:'先比打到第几波；波数一样，境界越低越靠前；再比重修次数（倒下、主动回去重修都算），越少越前；最后比得分。每个存档单独上榜，修炼中的存档也会更新。名字后面显示「重修 N 次」，一次都没有的显示「不死」。'},
@@ -3285,7 +3287,7 @@ function vilGoal(){const v=S.vil,T=VIL[v.i];if(!T)return '';
   if(T.id==='jie'&&S.rR<2)ex='（到'+REALMS[2]+'才会降）';
   if(T.id==='path'&&S.maxR<3)ex='（现在 '+REALMS[Math.max(1,S.maxR)]+'）';
   const stuck=T.id!=='path'&&T.id!=='jie'&&S.t-(v.t0||0)>150;   /* 卡在一步超过两分半：提醒可以跳过 */
-  return '<b>新手任务 '+v.i+'/'+(VIL.length-1)+'</b>：'+T.t+ex+(stuck?'<br><small>卡住了可以点「跳过」</small>':'')+' <span class="vsk" data-v="one">跳过</span>'}
+  return '<b>新手任务 '+v.i+'/'+(VIL.length-1)+'</b>：'+T.t+ex+(stuck?'<br><small>卡住了可以点「跳过」</small>':'')+(T.id==='path'?' <span class="vsk" data-v="all">退出新手村</span>':' <span class="vsk" data-v="one">跳过</span>')}
 $('goal').addEventListener('pointerdown',e=>{const b=e.target.closest('.vsk');if(!b||!vilOn())return;e.preventDefault();e.stopPropagation();
   if(b.dataset.v==='all')vilEnd(false);else{const T=vilCur();if(T&&T.id==='path'){toast('最后一步','升到'+REALMS[3]+'选完路线就出村；不想等就点「退出新手村」');return}vilNext(true)}});
 const VIL_VP={"drag": ["hero", [["vi_tap", "按住屏幕"], ["vi_drag", "左右拖"], ["ic_qi", "左道：门"], ["mon_n", "右道：妖"]]], "qi": ["ic_qi", [["vi_lr", "走到它正下方"], ["ic_qi", "撞上去"], ["vi_up", "修为涨"]]], "pump": ["ic_qi", [["pj_ti", "站它下面开火"], ["vi_num", "数字变大"], ["ic_qi", "再撞上去"]]], "kill": ["mon_n", [["vi_right", "去右道"], ["pj_ti", "自动开火"], ["vi_up", "打妖也涨修为"], ["vi_nocross", "别让它破阵"]]], "xin": ["ic_xin", [["ic_xin", "红门：掉修为"], ["vi_lr", "换到旁边那扇"]]], "art": ["ic_art", [["lock", "先开火打开锁"], ["ic_art", "再撞上去"], ["ic_dmg", "整局永久变强"]]], "surge": ["ic_bomb", [["mon_n", "妖一下子变多"], ["ic_bomb", "压上来时点它"], ["vi_hourglass", "撑过去"]]], "boss": ["boss", [["pj_ti", "站它下面一直打"], ["vi_nocross", "别让它破阵"], ["vi_up", "斩了修为大涨"]]], "fb": ["ic_gourd", [["lock", "先打开锁"], ["ic_gourd", "撞上去拿法宝"], ["ic_orb", "自己帮你打"]]], "bolt": ["ic_bolt", [["mon_n", "找妖最多那列"], ["ic_bolt", "点一下劈整列"]]], "guard": ["mon_guard", [["ic_t_guard", "罩着旁边的妖"], ["vi_target", "先打它"]]], "shield": ["ic_shield", [["ic_shield", "点一下"], ["ic_armor", "6 秒破阵不伤"]]], "freeze": ["ic_freeze", [["ic_freeze", "点一下"], ["ic_freeze", "全场定住 3.5 秒"]]], "fu": ["ic_fu", [["lock", "先开锁"], ["ic_fu", "撞上去"], ["vi_refresh", "技能马上补回"]]], "vein": ["ic_vein", [["lock", "先开锁"], ["ic_vein", "修为 = 6 扇聚气丹"], ["vi_up", "升层最快"]]], "cast": ["boss", [["vi_hourglass", "头上出读条"], ["pj_ti", "猛打它"], ["vi_break", "打掉 8% 就断"]]], "jie": ["ic_jie", [["pj_ti", "集火劈开锁"], ["vi_up", "修为 +1.2 层"], ["vi_lr", "劈不开躲右道"]]], "stats": ["vi_scroll", [["vi_tap", "点左上「第 N 波」"], ["vi_scroll", "看数值一览"]]], "pet": ["pet_0", [["vi_tap", "点「灵宠」"], ["ic_coin", "点「培养」"], ["pet_0", "自己找妖打"]]], "jar": ["jar", [["ic_qi", "吃丹"], ["mon_n", "打妖"], ["boss", "斩大妖"], ["jar", "攒满送修为"]]], "path": ["hero", [["ic_qi", "打涨再吃"], ["ic_vein", "开灵脉：修为 ×6"], ["ic_jie", "劈天劫"], ["boss", "斩大妖"], ["jar", "攒聚灵瓶"]]]};   /* 14:26 John：任务说明能用图就用图，不要一大串字 → 弹窗 = 一张大图 + 几步带图标的短句，原来的长说明收进「详细说明」 */
@@ -3385,7 +3387,7 @@ const TOUR=[   /* 14:26 John：说明别一大串字 → 每步一句话 */
   ['btns','速度、声音、暂停','调速度 · 调声音 · 暂停和存档。'],
   ['@left','左道：门','绿门加修为，红门扣修为；带锁的先打开。'],
   ['@right','右道：妖','妖往下冲，撞破大阵就扣气血。'],
-  ['@ward','护山大阵','底下这道光墙：小妖撞破它掉修为，大妖撞破还扣气血。'],
+  ['@ward','护山大阵','底下这道光墙：妖撞破它会扣气血、掉修为，大妖扣得最多。'],
   ['@squad','你的队伍','按住屏幕左右拖：左道吃门，右道打妖。'],
   ['skills','技能','会陆续出现在这里，点一下就放。'],
   ['goal','新手任务','当前任务在这里；做完给灵石，不想做点「跳过」。']];
@@ -3417,7 +3419,7 @@ const COACH={
   xin:{t:'躲开！',s:'撞上会掉修为',bad:1,slow:.4,max:4},
   lock:{t:'先把锁打开',s:'对准它开火，锁没开撞上去没用',slow:.45,max:4},
   surge:{t:'妖潮来了！',s:'撑住 20 秒',banner:1,max:2.2},
-  boss:{t:'大妖：别让它破阵',s:'破阵扣 '+Math.round(bossHpF()*newbBoss()*100)+'% 气血',slow:.45,max:3},
+  boss:{t:'大妖：别让它破阵',get s(){return '破阵扣 '+(S?Math.round(bossHpF()*newbBoss()*100):20)+'% 气血'},slow:.45,max:3},
   run:{t:'跑得快，先打它',slow:.5,max:2.2},brute:{t:'皮厚，漏了损失大',slow:.5,max:2.2},elite:{t:'噬元魔：漏了跌一层',slow:.5,max:2.4},
   four:{t:'全是坏门：挑最轻的',bad:1,slow:.45,max:2.6},dodge:{t:'错开了：等一下再横移',s:'可以一扇都不撞',slow:.45,max:2.8},
   trap:{t:'右道坏门：侧身躲开',bad:1,slow:.5,max:2.2},zou:{t:'走火入魔：撞了会变慢',bad:1,slow:.5,max:2.2},
@@ -3540,7 +3542,7 @@ function coachScan(dt){
     if(key&&!cSeen(key)&&COACH[key]&&startCoach(key,o))return;
   }
   // staged lesson in progress: when its monsters are pressing, teach the skill right then
-  if(S.stage){const st=S.stage,zs=S.objs.filter(z=>z.k==='z'&&!z.dead&&z.st===st.k);
+  if(S.stage&&S.stage.k){const st=S.stage,zs=S.objs.filter(z=>z.k==='z'&&!z.dead&&z.st===st.k);   /* 11-04 自查：S.stage 也被新妖登场用（没有 k），只处理技能教学的 */
     if(!zs.length||S.t-st.t0>25)S.stage=null;
     else if(zs.some(z=>z.y>line*(st.k==='freeze'?.3:.38))){const key=st.k==='shield'?'use_shieldg':'use_'+st.k,g=st.k==='shield'?S.objs.find(o=>o.k==='gate'&&!o.dead&&o.rid&&o.x1<=mid&&!GT[o.g].bad&&o.y<line*.7):null;
       if(skReady(st.k)&&!cSeen(key)&&startCoach(key,g||zs[0])){S.stage=null;return}}}
@@ -3814,7 +3816,7 @@ function skillPool(sec,inArea,bossCap,src){src=src||'sys';const kind=dmgKind(src
     if(z.boss){const d=Math.min(pool*m,z.hp0*bossCap);dNote(src,Math.min(z.hp,d));z.hp-=d;pool-=d/m;z.hit=.15;if(z.hp<=0){z.dead=true;killZ(z)}continue}
     const need=z.hp/m;if(need<=pool){pool-=need;dNote(src,z.hp);z.hp=0;z.dead=true;if(src!=='sys'&&src!=='bomb'&&src!=='pet')kdNote(S.path==='fa'?Math.max(z.y/cLine(),.3):z.y/cLine());/* 灵宠不算进敌人强度；法修法术爆发不让导演过度加压 */killZ(z);n++}else{dNote(src,pool*m);z.hp-=pool*m;z.hit=.15;pool=0}}
   if(fa||CT.brk)ctrSay(CT);
-  S.poolLeft=Math.max(0,pool);   /* 没花完的伤害，给灵宠连击用 */
+  S.poolLeft=Math.max(0,pool)/Math.max(1e-9,dps()/pathAtk());   /* 没花完的伤害（折回“几秒火力”，和入参同单位），给灵宠连击用。11-04 自查：原来直接存伤害值，再传回来等于又乘了一次火力 */
   return n;
 }
 /* 法修克制（11-02 05:31 John：法修要针对每种进阶本事有应对法术；体修纯数值莽，不加） */

@@ -150,8 +150,9 @@ drawSquad=function(){
       ctx.fillStyle='#ffe2d0';ctx.beginPath();ctx.arc(x,y-3.4,1.7,0,6.28);ctx.fill();
       if(R>=8){ctx.fillStyle='#ffd36e';ctx.fillRect(x-1,y-5.8,2,.9)}
     }}
-  {const pl=Math.min(petCount(),S.rR||0);if(pl>=1)drawFaxiang(ctx,mechX(),squadY-2,.9+.03*pl,S.t,pl)}
-  drawBurstFx(S.x,squadY+2,false);drawHero(ctx,S.x,squadY+2,S.rR,S.t,1.35);drawBurstFx(S.x,squadY+2,true);
+  if(metaUnl('pet')){const c=petCur(),P=S.pet||petHome(),au=S.path==='ti'?'255,170,210':S.path==='fa'?'170,150,255':null;if(au){ctx.fillStyle='rgba('+au+',.18)';ctx.beginPath();ctx.ellipse(P.x,P.y+4,22,7,0,0,6.283);ctx.fill()}
+   ctx.save();if(S.pet&&S.pet.face<0){ctx.translate(P.x,0);ctx.scale(-1,1);ctx.translate(-P.x,0)}drawFaxiang(ctx,P.x,P.y,.85+.02*c.i,S.t,c.i+1);ctx.restore()}   /* 11-04 自查：跟修仙版一致——领养了才画、画在灵宠真实位置 */
+  drawBurstFx(S.x,squadY+2,false);drawPathBack(ctx,S.x,squadY+2,S.rR,S.t);drawHero(ctx,S.x,squadY+2,S.rR,S.t,1.35);drawPathFront(ctx,S.x,squadY+2,S.rR,S.t);drawBurstFx(S.x,squadY+2,true);
   const by=squadY-heroHH()-32,txt=(S.life>1?'第'+CNN(S.life)+'季 · ':'')+rName(realmOf(S.count));
   ctx.font='bold 15px '+CN;const tw=ctx.measureText(txt).width+20;
   const PX=clamp(S.x,tw/2+6,W-tw/2-6);   /* 名牌不出屏 */
@@ -375,6 +376,7 @@ draw=function(){
   ctx.fillStyle=g;ctx.fillRect(0,0,W,H*.2);
   if(S){drawSkillFx();drawSprFx();drawTexts()}   /* 11-02 15:25：女生版之前漏了手绘特效（g_fx_*）的绘制 */
   if(S&&S.flash>0){ctx.fillStyle='rgba(255,90,140,'+(S.flash*.4)+')';ctx.fillRect(0,0,W,H)}
+  if(S&&running){const bz=S.objs.find(o=>o.boss&&!o.dead&&o.eta!=null&&o.eta<8&&o.y>0);if(bz){const k=(1-bz.eta/8)*(.55+.45*Math.abs(Math.sin(S.t*(4+6*(1-bz.eta/8))))),gr=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*.35,W/2,H/2,Math.max(W,H)*.75);gr.addColorStop(0,'rgba(255,40,110,0)');gr.addColorStop(1,'rgba(255,40,110,'+(.42*k)+')');ctx.fillStyle=gr;ctx.fillRect(0,0,W,H)}}   /* 11-04 自查：补上大噩梦快冲破结界时的红边 */
   ctx.restore();
 };
 
@@ -406,7 +408,7 @@ Object.assign(TIPS,{
   jie:{t:'流星考验',d:'从见习魔法生起，每个称号里大约每 7 分钟，左边会来一次流星考验（来之前约 6 秒，左边上方会亮紫光倒计时预告）：走得很慢、锁很厚（要集中火力打一阵，右边的小怪这时会压上来）。打开后冲过去＝通过考验：魔力直接 +1.2 星、星力永久 ×1.08、回 10% 元气；没打开就撞上去，扣 15% 元气、掉魔力。不想冒险就躲到右边——但不去考验，变身会慢很多。'},
   hex:{t:'瞌睡精',d:'头上会读条，读满后你的星速 −25%，持续 4 秒。看到就先净化它。'},
   guard:{t:'黏人怪',d:'身边一圈里的小怪受到的伤害减少 40%。先打黏人怪，再清其他。'},
-  cast:{t:'大噩梦的技能',d:'第三波起大噩梦会放技能：召唤小怪、冲刺、瞌睡咒（星速 −25%）、封印（某个魔法 6 秒不能用）。读条时打掉它 8% 的血就能打断。'},
+  cast:{t:'大噩梦的技能',d:'第三波起大噩梦会放技能：召唤烦恼球、冲刺、瞌睡咒（星速 −25%）、封印（某个魔法 6 秒不能用），读条时打掉它 8% 的体力就能打断。第六波起还会召唤黏人（给大噩梦和周围减伤，先用彩虹光束点掉）；有的大噩梦第八波起还会放噩梦咆哮：红色蓄力，打不断，只能开泡泡护盾硬扛，不然扣一大截元气。'},
   mech:{t:'萌宠',d:'主页「萌宠」里有两条养成路线：毛绒线（小猫 → 小狐 → … → 创世神兽，贴身扑扑，20 级起带冲击）和飞羽线（兔兔 → 月兔 → … → 彩虹星鲸，远程追踪魔法泡泡，越养魔法泡泡越多）。用星钻沿路线喂养，每级战力 +12%，每 5 级进化成下一个样子，等级不封顶。上场只带一只，哪个魔法系都能带。暂停页也能直接喂养。'}});
 petName=l=>(PETS[l-1]||PETS[0]).n;
 
@@ -504,3 +506,5 @@ PS_NAMES={crow:['星星小鸟','彩虹小鸟','星光青鸟','月光凤凰'],orb
 TIPS.psform={t:'被动进化',d:'被动魔法（星星小鸟、守护星、彩虹云）和星弓系被动（星光护盾、勇气、星光纵横）在 Lv8、Lv14、Lv20 各进化一次：改名字、换样子、威力也变强。星星小鸟、彩虹云、星光纵横的巨箭会跟在你身边，小鸟从身边飞出去；守护星绕身，形态越高越大越亮；星光护盾是身上的光罩，勇气是脚下的火焰（元气越低越旺）。魔法按钮右上角是等级，Lv8 银框、Lv14 金框、Lv20 彩虹框。'};
 FB_NAMES={gourd:['招财猫','金铃招财猫','幸运招财猫','黄金招财猫'],mirror:['许愿镜','星星许愿镜','月光魔镜','彩虹魔镜'],bell:['安眠音乐盒','星空音乐盒','月光音乐盒','梦幻旋转木马']};
 TIPS.psform.d=TIPS.psform.d.replace('魔法按钮右上角','魔法道具（招财猫、许愿镜、安眠音乐盒）也一样，Lv8、Lv14、Lv20 进化，绕着你浮在身边。魔法按钮右上角');
+/* 11-04 自查：选世界文字（TXW）在修仙版里转义过、躲开了文字替换，女生版要自己的说法 */
+Object.assign(TXW,{pick:'开始新一季，去哪个世界？',pickD:'两个世界玩法一样、进度互通：星钻、商店、萌宠、纪录都带着走。以后每开新的一局，都可以在主页换到另一个世界。',go:'新一季去',next:'下一季换去「',noweb:'在网站上才能去另一个世界'});
