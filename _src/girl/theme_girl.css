@@ -1,0 +1,22 @@
+/* ===== 女生版配色 ===== */
+:root{--bg:#1a1430;--panel:rgba(40,28,64,.92);--ink:#fff4fa;--muted:#c8b4d8;--plus:#7ab8ff;--minus:#ff6b8a;--gold:#ff9ec7;--toxic:#7ff0c8;
+  --display:"ZCOOL KuaiLe","Russo One","PingFang SC",system-ui,sans-serif}
+.go{color:#4a1030;background:linear-gradient(180deg,#ffd0e6,#ff8fc0);box-shadow:0 5px 0 #b04a80}
+.go:active{box-shadow:0 2px 0 #b04a80}
+.go.alt{background:linear-gradient(180deg,#f0e6ff,#c4b0ec);box-shadow:0 5px 0 #7a62b0;color:#2a1a48}
+.go.alt:active{box-shadow:0 2px 0 #7a62b0}
+.card h1{color:#ffb8da;text-shadow:0 3px 0 #a0306a,0 0 22px rgba(255,158,199,.6)}
+.sb{color:#4a1030}
+#hRealmWrap b{color:#ffc8e2}
+.rule.l{border-color:#ff9ec7}.rule.r{border-color:#b49aff}
+.rule.l strong{color:#ff9ec7}.rule.r strong{color:#c8b0ff}
+
+.cover h1.ttl{font-family:var(--display);font-size:clamp(42px,12.5vw,54px);background:linear-gradient(180deg,#ffffff 0%,#ffd6ec 45%,#ff8fc0 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 3px 0 #8a2a5e) drop-shadow(0 0 14px rgba(255,158,199,.7))}
+.cover{box-shadow:0 10px 30px rgba(120,40,120,.45)}
+/* 11-02 15:25 John：封面标题挡住人物脸 → 改成一行放在顶部星空处 */
+.cover h1.ttl{top:10px;bottom:auto;font-size:clamp(32px,9.6vw,42px);line-height:1.1;white-space:nowrap}
+.cover h1.ttl br{display:none}
+
+.backbar{background:rgba(30,20,52,.97);border-bottom-color:rgba(255,158,199,.3)}
+.rk.t10{background:rgba(255,158,199,.1);outline-color:rgba(255,158,199,.4)}.rk.t10 b.no{background:rgba(255,158,199,.25)}

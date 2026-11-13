@@ -1,5 +1,6 @@
 -- 御剑斩妖录 / 星愿魔法少女 · 后台数据库（在 Supabase 的 SQL Editor 里整段粘贴，点 Run）
--- ver = 'xian'（修仙版）或 'girl'（女生版），两个版本的存档和排行榜分开
+-- ver：11-03 起两个世界互通——saves 用 'one'（一个账号一份，6 个存档位）；scores 用 'x1'/'x2'/'g1'/'g2'（x=修仙界 g=魔法少女界，1=存档 1～3、2=存档 4～6，slot 仍是 1～3）。
+-- 旧的 'xian'/'girl' 行保留不删：第一次登录新版时自动合并（修仙放 1～3，女生放 4～6）；排行榜对已合并的玩家不再显示旧行。表结构没有改。
 
 create table if not exists public.saves (
   id uuid not null references auth.users(id) on delete cascade,
