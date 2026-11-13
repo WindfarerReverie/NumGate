@@ -53,7 +53,8 @@ def cut(start, end, new, keep_end=True):
 # ---------------------------------------------------------------- 头部
 # 1) 去掉 Supabase 配置（含项目地址和 key），换成平台适配层 KDPlatform（集中写在文件开头）
 adapter = open(ADAPTER, encoding='utf-8').read().strip()
-cut('<script>window.NG_CFG=', '</script>\n', '<script>\n' + adapter + '\n</script>\n', keep_end=False)
+SDK_TAG = '<script src="//s1.hdslb.com/bfs/seed/toy/app/sdk/toy-sdk.js"></script>\n'   # B站 Toy 官方接入方式（站内域名）
+cut('<script>window.NG_CFG=', '</script>\n', SDK_TAG + '<script>\n' + adapter + '\n</script>\n', keep_end=False)
 
 # 2) 去掉 version.json 自动刷新（Toy 包是静态上传的，不需要也不能这样拉新版本）
 cut('<script>(function(){var B="', '</script>\n', '', keep_end=False)
@@ -148,7 +149,7 @@ async function showRankBoard(){
   rankTabs();const B=KDPlatform.BOARDS.find(b=>b.id===rankBoard)||{};
   $('rankList').innerHTML='<p class="sync">加载中…</p>';
   try{const res=await KDPlatform.getRank(rankBoard);if(rankBoard!==res.board)return;
-    $('rankNote').textContent=(B.desc||'')+(res.local?' · 现在是本机记录，上线后接入B站排行榜，和大家一起比':'');
+    $('rankNote').textContent=(B.desc||'')+(res.local?' · 现在是本机记录（没连上B站排行榜，登录B站后再打开就能和大家一起比）':'');
     rankRows($('rankList'),res,rankBoard,50)}
   catch(e){$('rankList').innerHTML='<p class="sync">排行榜暂时加载不了</p>'}
 }
@@ -161,7 +162,7 @@ async function endRank(){   // 结算页：列出每个榜上自己的成绩
       d.innerHTML='<b>'+(RANK_IC[b.id]||'•')+'</b><div><div class="who"></div><div class="what">'+(res.local?'本机最好':'第 '+((+m.rank)||'-')+' 名')+(extraTxt(m.extra)?' · '+extraTxt(m.extra):'')+'</div></div><span class="sc">'+(RANK_FMT[b.id]||fmt)(+m.value||0)+'</span>';
       d.querySelector('.who').textContent=b.name;box.appendChild(d)}
     el.innerHTML='';el.appendChild(box);
-    if(local){const p=document.createElement('p');p.className='sync';p.textContent='本机记录 · 上线后接入B站排行榜';el.appendChild(p)}
+    if(local){const p=document.createElement('p');p.className='sync';p.textContent='本机记录 · 登录B站后成绩会上B站排行榜';el.appendChild(p)}
   }catch(e){el.innerHTML='<p class="sync">排行榜暂时加载不了</p>'}
 }
 
@@ -176,7 +177,7 @@ rep("const OVS=['ovLogin','ovRank',", "const OVS=['ovRank',")
 
 # 13) 玩法说明里排行榜那条，换成 5 个榜的说法
 cut("  rank:{t:'排行榜',d:'", "\n",
-    "  rank:{t:'排行榜',d:'五个榜：境界榜（最高境界）、得分榜、波次榜、速通榜（最快证道成圣）、通关榜（证道次数）。每个存档的成绩都算，名字后面显示「倒下 N 次」，一次都没倒过的显示「不死」。现在先记本机最好成绩，上线后接入B站排行榜。'},\n",
+    "  rank:{t:'排行榜',d:'五个榜：境界榜（最高境界）、得分榜、波次榜、速通榜（最快证道成圣）、通关榜（证道次数）。每个存档的成绩都算，自己那一行后面显示「倒下 N 次」，一次都没倒过的显示「不死」。在B站里玩，成绩直接上B站排行榜；没登录时先记在这台设备上。'},\n",
     keep_end=False)
 
 # 14) 按钮事件：去掉登录/注册/单机/退出，排行榜返回改用新变量
