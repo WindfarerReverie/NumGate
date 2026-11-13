@@ -51,9 +51,9 @@ window.KDPlatform = (function () {
   /* ---------- 排行榜定义：slot = 平台榜位（1–5）。order：desc 越大越好，asc 越小越好 ----------
    * 平台每个榜只留每人的最高分，所以 asc 榜（速通用时）上报时取负数，读回来再取反。 */
   var BOARDS = [
+    { id: 'wave',   slot: 3, name: '波次榜', desc: '比打到的最远波次',   order: 'desc' },
     { id: 'realm',  slot: 1, name: '境界榜', desc: '比最高境界',       order: 'desc' },
     { id: 'score',  slot: 2, name: '得分榜', desc: '比单个存档最高得分', order: 'desc' },
-    { id: 'wave',   slot: 3, name: '波次榜', desc: '比打到的最高波次',   order: 'desc' },
     { id: 'clear',  slot: 4, name: '速通榜', desc: '比最快证道成圣用时', order: 'asc'  },
     { id: 'clears', slot: 5, name: '通关榜', desc: '比证道成圣次数',     order: 'desc' }
   ];
